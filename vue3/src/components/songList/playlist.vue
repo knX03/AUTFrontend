@@ -35,7 +35,7 @@ function selectALlPlaylist() {
 function toSongPlaylist(row) {
   router.push({
     path: '/playlistDetails',
-    query: {ID: row}
+    query: {playlist_ID: row}
   })
 }
 

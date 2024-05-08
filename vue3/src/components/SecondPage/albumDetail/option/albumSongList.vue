@@ -6,9 +6,12 @@ import bus from "@/eventbus.js";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 
-let user = ref(
-    {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
-)
+
+import useUserStore from '@/store/userStore.js'
+
+
+const userStore = useUserStore();
+const userID = userStore.user_ID;
 let songList = ref([{
   song_ID: '',
   song_Name: '',
@@ -44,7 +47,7 @@ function selectSongByAlbum(data) {
   }).then(resp => {
     if (resp.data.code === 200) {
       songList.value = resp.data.data;
-      selectLikeSong(user.value.user_ID)
+      selectLikeSong(userID)
     } else if (resp.data.code === 500) {
       ElMessage({
         message: "error",
@@ -74,12 +77,12 @@ function selectLikeSong(user_ID) {
 function likeSong(row) {
   axios({
     method: 'GET',
-    url: 'http://localhost/song/likeSong?song_ID=' + row + "&user_ID=" + user.value.user_ID,
+    url: 'http://localhost/song/likeSong?song_ID=' + row + "&user_ID=" + userID,
   }).then(resp => {
     if (resp.data.code === 200) {
       myLikeSong.value = resp.data.data
       ElMessage.success("添加成功！")
-      selectLikeSong(user.value.user_ID)
+      selectLikeSong(userID)
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
