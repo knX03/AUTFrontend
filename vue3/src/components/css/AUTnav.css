@@ -1,0 +1,43 @@
+a {
+    text-decoration: none;
+}
+
+/*导航容器*/
+.container {
+    width: 1290px;
+}
+
+/*导航栏标题*/
+.navbar-brand {
+    margin-left: 100px;
+    margin-right: 200px;
+}
+
+/*搜索框*/
+#searchBox input {
+    border-radius: 0.975rem
+}
+
+/*分割线*/
+#split {
+    width: 1px;
+    height: 30px;
+    background-color: white;
+    opacity: 0.7;
+    position: relative;
+    left: -90px;
+}
+
+/*导航栏头像*/
+.nav_avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 30%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+
+.message_mod {
+    cursor: pointer;
+}
