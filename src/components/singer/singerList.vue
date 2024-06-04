@@ -4,6 +4,7 @@ import {getCurrentInstance, onMounted, ref} from "vue";
 import axios from "axios";
 import bus from "@/eventbus.js";
 import router from "@/router/index.js";
+import {aSelectAllSinger} from "@/api/api.js";
 
 // ctx等同于Vue2.x的this
 const {ctx} = getCurrentInstance()
@@ -37,11 +38,7 @@ bus.on('singerListChange', (data) => {
 
 /*查询所有歌手*/
 function selectAllSinger() {
-  let that = this;
-  axios({
-    method: 'GET',
-    url: 'http://localhost/singer/allSingers',
-  }).then(resp => {
+  aSelectAllSinger().then(resp => {
     if (resp.data.code === 200) {
       singerList.value = resp.data.data
     } else if (resp.data.code === 500) {

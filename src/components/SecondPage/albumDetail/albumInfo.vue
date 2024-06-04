@@ -2,16 +2,13 @@
 
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {ElMessage} from "element-plus";
-import bus from "@/eventbus.js";
+import {ElMessage, ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
-import useUserStore from '@/store/userStore.js'
+import {aCollectAlbum, aDeleteAlbum, aIfCollectAlbum, aSelectDetailAlbum, aSelectSingerDetail} from "@/api/api.js";
+import router from "@/router/index.js";
 
-const userStore = useUserStore()
 const route = useRoute()
-let dialogVisible = ref(false)
-let messageCode = ref("")
-let disabled = ref(false)
+let ifCollect = ref(false)
 let colletBUTX = ref("收藏")
 let user = ref({user_ID: '', user_name: ''})
 let album = ref({
@@ -25,26 +22,27 @@ let album = ref({
 })
 
 let singer = ref({
+  singer_ID: '',
   singer_Name: '',
   singer_Avatar: ''
 })
-const userID = userStore.user_ID;
 
-
+const toSinger = (singer_ID) => {
+  router.push({
+    path: '/singerDetail',
+    query: {singer_ID}
+  })
+}
 onMounted(() => {
-  let FAlbum_ID = route.query.album_ID
-  bus.emit('album_ID', FAlbum_ID)
-  ifCollectAlbum(FAlbum_ID, userID)
+  const FAlbum_ID = route.query.album_ID
+  ifCollectAlbum(FAlbum_ID)
   selectDetailAlbum(FAlbum_ID)
 })
 
 
 /*专辑详情查询*/
 function selectDetailAlbum(FAlbum_ID) {
-  axios({
-    method: 'get',
-    url: 'http://localhost/album/selectDetail?album_ID=' + FAlbum_ID,
-  }).then(resp => {
+  aSelectDetailAlbum(FAlbum_ID).then(resp => {
     if (resp.data.code === 200) {
       album.value = resp.data.data;
       /*查询歌手详细信息*/
@@ -57,10 +55,7 @@ function selectDetailAlbum(FAlbum_ID) {
 
 /*歌手详情查询*/
 function selectSingerDetail(singer_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/singer/selectSingerDetail?singer_ID=' + singer_ID,
-  }).then(resp => {
+  aSelectSingerDetail(singer_ID).then(resp => {
     if (resp.data.code === 200) {
       singer.value = resp.data.data;
     } else if (resp.data.code === 500) {
@@ -70,37 +65,53 @@ function selectSingerDetail(singer_ID) {
 }
 
 /*查询专辑是否收藏*/
-function ifCollectAlbum(album_ID, user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/ifCollectAlbum?album_ID=' + album_ID + "&user_ID=" + user_ID,
-  }).then(resp => {
+function ifCollectAlbum(album_ID) {
+  aIfCollectAlbum(album_ID).then(resp => {
     if (resp.data.code === 302) {
       colletBUTX.value = "已收藏"
-      disabled.value = true;
+      ifCollect.value = true;
     } else if (resp.data.code === 200) {
-      disabled.value = false;
+      ifCollect.value = false;
     }
+  }).catch(resp => {
+    console.log(resp)
   })
 }
 
 function
 collectAlbum(row) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/collectAlbum?album_ID=' + row + "&user_ID=" + userID,
-  }).then(resp => {
+  aCollectAlbum(row).then(resp => {
     if (resp.data.code === 200) {
       ElMessage.success("收藏成功！")
       colletBUTX.value = "已收藏"
-      disabled.value = true;
+      ifCollect.value = true;
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
     }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
   })
 }
 
-
+function delColAlbum(row) {
+  aDeleteAlbum(row).then(resp => {
+    if (resp.data.code === 200) {
+      ElMessage.success('删除成功！')
+      colletBUTX.value = "收藏"
+      ifCollect.value = false;
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
+  })
+}
 </script>
 
 <template>
@@ -108,12 +119,12 @@ collectAlbum(row) {
     <img :src="album.album_Cover" class="Cover_mod">
     <div class="albumInfo_mod">
       <div class="basicInfo_mod">
-        <label>{{ album.album_Name }}</label>
+        <span>{{ album.album_Name }}</span>
       </div>
       <div class="ALSingerInfo_mod">
-        <img :src="singer.singer_Avatar">
-        <span>{{ singer.singer_Name }}</span>
-        <span style="color: #8a8a8a">{{ album.create_Time }}发布</span>
+        <img :src="singer.singer_Avatar" style="cursor: pointer" @click="toSinger(singer.singer_ID)">
+        <span style="cursor: pointer" @click="toSinger(singer.singer_ID)">{{ singer.singer_Name }}</span>
+        <span style="color: #e7e7e7">{{ album.create_Time }} 发布</span>
       </div>
       <!--todo 播放、下载功能待实现-->
       <div class="playAndLoad_mod">
@@ -121,7 +132,11 @@ collectAlbum(row) {
           <img src="/src/photos/logo/playWhite.png">
           <span>播放全部</span>
         </el-button>
-        <el-button type="info" :disabled="disabled" @click="collectAlbum(album.album_ID)">
+        <el-button type="info" v-if="!ifCollect" @click="collectAlbum(album.album_ID)">
+          <img src="/src/photos/logo/collect.png">
+          {{ colletBUTX }}
+        </el-button>
+        <el-button type="warning" v-if="ifCollect" @click="delColAlbum(album.album_ID)">
           <img src="/src/photos/logo/collect.png">
           {{ colletBUTX }}
         </el-button>
@@ -136,9 +151,9 @@ collectAlbum(row) {
 
 <style scoped>
 .first_mod {
-  width: 1684px;
-  height: 250px;
-  background-color: #f7f9fc;
+  width: 100%;
+  height: 240px;
+  background-image: linear-gradient(#333333, #ffffff);
 }
 
 /*专辑封面*/
@@ -171,12 +186,13 @@ collectAlbum(row) {
   align-items: center;
 }
 
-.basicInfo_mod label {
+.basicInfo_mod span {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: #000000;
+  color: #ffffff;
 }
+
 
 /*用户信息模块*/
 .ALSingerInfo_mod {
@@ -199,9 +215,12 @@ collectAlbum(row) {
 .ALSingerInfo_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
-  color: #444444;
+  color: #e7e7e7;
 }
 
+.ALSingerInfo_mod span:hover {
+  color: #ffffff;
+}
 
 /*播放和下载按钮*/
 .playAndLoad_mod {

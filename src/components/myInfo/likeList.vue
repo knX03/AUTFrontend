@@ -3,13 +3,17 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
 import useUserStore from '@/store/userStore.js'
+import {aSelectLikePlaylist} from "@/api/api.js";
 
 const userStore = useUserStore()
+const userID = userStore.user_ID;
 let likeList = ref([{
   playlist_ID: '',
   playlist_Name: '',
   playlist_Cover: '',
 }])
+
+let LSwitch = ref(true)
 
 const toPlaylist = (playlist_ID) => {
   if (playlist_ID === 10000) {
@@ -26,16 +30,12 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  const userID = userStore.user_ID;
-  selectLikeDetail(userID)
+  selectLikeDetail()
 })
 
 /*用户收藏的歌单详情*/
-function selectLikeDetail(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/likePlaylist?user_ID=' + user_ID,
-  }).then(resp => {
+function selectLikeDetail() {
+  aSelectLikePlaylist().then(resp => {
     if (resp.data.code === 200) {
       likeList.value = resp.data.data
     } else if (resp.data.code === 500) {
@@ -59,8 +59,8 @@ function selectLikeDetail(user_ID) {
           <span class="songPlaylistsName_mod">{{ list.playlist_Name }}</span>
         </router-link>
       </div>
-
     </div>
+
   </div>
 </template>
 
@@ -73,6 +73,7 @@ function selectLikeDetail(user_ID) {
   margin-bottom: 50px;
   padding-top: 20px;
   background-image: linear-gradient(#ffffff, #c7c7c7, #dea582, #c7c7c7, #FFFFFF);
+  padding-left: 70px;
 }
 
 /*标题*/

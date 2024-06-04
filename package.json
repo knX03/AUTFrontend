@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@vue/cli-service": "^5.0.8",
     "alice-player": "^0.0.4",
+    "ant-design-vue": "^4.2.1",
     "axios": "^1.6.5",
     "bootstrap": "^5.3.0-alpha1",
     "element-plus": "^2.5.3",
@@ -20,7 +22,9 @@
     "sass": "^1.70.0",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
-    "vue3-emoji-picker": "^1.1.8"
+    "vue3-cookies": "^1.0.6",
+    "vue3-emoji-picker": "^1.1.8",
+    "xijs": "^1.2.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",

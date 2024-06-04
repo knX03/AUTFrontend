@@ -40,38 +40,35 @@ function changeSexLogo() {
 
 <template>
   <div class="avatar_container">
-    <div class="backgroundPage_mod"></div>
-    <div class="myAvatar_mod">
-      <img :src="user.user_Avatar">
-    </div>
-    <div class="myName">
-      <span>{{ user.user_Name }}</span>
-      <img id="sexLogo" :src=sex_logo>
+    <div class="backgroundPage_mod">
+      <div class="myAvatar_mod">
+        <img :src="user.user_Avatar">
+      </div>
+      <div class="myName">
+        <span>{{ user.user_Name }}</span>
+        <img id="sexLogo" :src=sex_logo>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .avatar_container {
-  width: 1684px;
+  /*  width: 1684px;*/
+  width: 100%;
   height: 350px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   background-image: url("../../photos/background/sky1.jpg");
   background-size: cover;
 }
 
 .backgroundPage_mod {
-  width: 1684px;
+  width: 100%;
   height: 350px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   backdrop-filter: blur(50px);
-
 }
 
 /*头像*/

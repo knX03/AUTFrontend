@@ -117,16 +117,37 @@
 #editform .el-date-editor.el-input {
     width: 300px !important;
 }
-
 /*性别选择器*/
-#user_Sex .el-radio{
+#user_Sex .el-radio {
     color: white;
     font-family: STXihei, serif;
 }
 
+#user_Sex .el-radio__input.is-checked .el-radio__inner {
+    border-color: #e58c43;
+    background: #e58c43;
+}
+
+#user_Sex .el-radio__input.is-checked + .el-radio__label {
+    color: #e58c43;
+}
+
+#user_Sex .el-radio__inner:hover {
+    border-color: #e58c43;
+}
 
 /*简介输入框*/
 #eidtuserIntroduction .el-textarea__inner {
     width: 300px;
     height: 100px;
+    max-height: 200px;
+}
+
+#eidtuserIntroduction .el-textarea .el-input__count {
+    position: absolute;
+    font-size: 12px;
+    line-height: 14px;
+    bottom: 5px;
+    left: 230px;
+    right: inherit;
 }

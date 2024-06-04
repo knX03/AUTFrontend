@@ -4,6 +4,7 @@ import axios from "axios";
 import {ElMessage, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {Cloudy, PartlyCloudy, Sunny} from "@element-plus/icons-vue";
+import {aCheckName, aGenerateCode, aUserReg, aVerifyEmail} from "@/api/api.js";
 
 let ctx = getCurrentInstance()
 let loading = ref(false)
@@ -77,11 +78,7 @@ function nextStep() {
   if (active.value === 2) {
     loading.value = true
     ElMessage('正在发送验证码，请前往填写的邮箱处查看！')
-    axios({
-      method: 'post',
-      url: 'http://localhost/user/generateCode',
-      data: userForm.value,
-    }).then(resp => {
+    aGenerateCode(userForm.value).then(resp => {
       if (resp.data.code === 200) {
         loading.value = false
       } else if (resp.data.code === 400) {
@@ -104,10 +101,7 @@ function returnStep() {
 
 /*检查用户名是否存在*/
 function checkName(row) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/user/checkName?user_Name=' + row,
-  }).then(resp => {
+  aCheckName(row).then(resp => {
     if (resp.data.code === 302) {
       ElMessage.error(resp.data.msg)
       userForm.value.user_Name = ''
@@ -118,11 +112,7 @@ function checkName(row) {
 
 /*验证邮箱*/
 function verifyEmail() {
-  axios({
-    method: 'POST',
-    url: 'http://localhost/user/ifExist',
-    data: userForm.value
-  }).then(resp => {
+  aVerifyEmail(userForm.value).then(resp => {
     if (resp.data.code === 302) {
       buttonSwitch.value = true
       ElNotification({
@@ -149,11 +139,7 @@ function submitUser() {
   const TIME_COUNT = 3000;
   active.value = 3
   loading.value = true
-  axios({
-    method: 'POST',
-    url: 'http://localhost/user/userReg',
-    data: userForm.value,
-  }).then(resp => {
+  aUserReg(userForm.value).then(resp => {
     loading.value = false
     if (resp.data.code === 200) {
       ElNotification({
@@ -231,9 +217,9 @@ window.addEventListener('load', () => {
     // 当输入值时，调用循环显示函数
     showNum()
     cutAct('focus')
-    if (codeInput.value.length === 4) {
-      submitUser()
-    }
+    /*    if (codeInput.value.length === 4) {
+          submitUser()
+        }*/
   })
 })
 

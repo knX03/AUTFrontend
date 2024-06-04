@@ -2,23 +2,31 @@
 
 
 import {onMounted, ref} from "vue";
-import axios from "axios";
-import bus from "@/eventbus.js";
 import {useRoute} from "vue-router";
-
+import {aFollowUser, aIfFollowUser, aSelectSingerDetail, aUserUnfollowFan} from "@/api/api.js";
+import router from "@/router/index.js";
+import {ElMessageBox, ElNotification} from "element-plus";
 
 const route = useRoute()
 let user = ref(
     {user_Name: '', user_ID: ''}
 )
 let singer = ref({
+  user_ID: '',
   singer_ID: '',
   singer_Name: '',
   singer_Avatar: '',
   singer_Age: '',
   singer_Introduction: '',
 })
+let ifFolSinger = ref(false)
 
+const toUserInfo = (user_ID) => {
+  router.push({
+    path: '/userDetail',
+    query: {user_ID}
+  })
+}
 
 onMounted(() => {
   let FSinger_ID = route.query.singer_ID
@@ -28,16 +36,55 @@ onMounted(() => {
 
 /*歌手详情查询*/
 function selectSingerDetail(singer_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/singer/selectSingerDetail?singer_ID=' + singer_ID,
-  }).then(resp => {
+  aSelectSingerDetail(singer_ID).then(resp => {
     if (resp.data.code === 200) {
       singer.value = resp.data.data;
+      ifFollowSinger(singer.value.user_ID)
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
     }
   })
+}
+
+function ifFollowSinger(ID) { //ID为歌手相应的用户ID
+  aIfFollowUser(ID).then(resp => {
+    ifFolSinger.value = resp.data.data;
+  })
+}
+
+function followSinger(ID) {
+  aFollowUser(ID).then(resp => {
+    if (resp.data.code === 200) {
+      ifFolSinger.value = true
+      ElNotification({
+        title: "关注成功！",
+        type: 'success',
+        duration: 2000,
+      })
+    }
+  })
+}
+
+function unFollowSinger(ID) {
+  ElMessageBox.confirm('确认取消关注该好友吗？', {
+    confirmButtonText: '仍然取消',
+    cancelButtonText: '继续关注',
+    type: 'warning',
+  }).then(_ => {
+    aUserUnfollowFan(ID).then(resp => {
+      if (resp.data.code === 200) {
+        ifFolSinger.value = false
+        ElNotification({
+          title: "已取关！",
+          type: 'success',
+          duration: 2000,
+        })
+      } else {
+        console.log(resp.data.msg)
+      }
+    })
+  }).catch(_ => {
+  });
 }
 </script>
 
@@ -52,12 +99,25 @@ function selectSingerDetail(singer_ID) {
       </div>
       <div class="singerNameEN_mod">
         <span>{{ singer.singer_Name }}</span>
+        <span class="toSingerU_mod" @click="toUserInfo(singer.user_ID)">个人页 ></span>
       </div>
       <!--todo 播放和下载功能待实现-->
-      <div class="playAndLoad_mod">
+      <div class="playAndLoad_mod" id="PAL_mod">
         <el-button type="warning">
           <img src="/src/photos/logo/playWhite.png">
           <span>播放全部</span>
+        </el-button>
+        <el-button type="warning" plain v-if="!ifFolSinger" @click="followSinger(singer.user_ID)">
+          <el-icon>
+            <Plus/>
+          </el-icon>
+          &nbsp;关注
+        </el-button>
+        <el-button type="warning" v-if="ifFolSinger" @click="unFollowSinger(singer.user_ID)">
+          <el-icon>
+            <Check/>
+          </el-icon>
+          &nbsp;关注
         </el-button>
       </div>
     </div>
@@ -69,9 +129,9 @@ function selectSingerDetail(singer_ID) {
 歌手信息部分
  */
 .first_mod {
-  width: 1684px;
-  height: 250px;
-  background-color: #f7f9fc;
+  width: 100%;
+  height: 240px;
+  background-image: linear-gradient(#333333, #ffffff);
 }
 
 /*歌手海报*/
@@ -108,7 +168,7 @@ function selectSingerDetail(singer_ID) {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: #000000;
+  color: #ffffff;
 }
 
 /*用户信息模块*/
@@ -127,7 +187,16 @@ function selectSingerDetail(singer_ID) {
 .singerNameEN_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
-  color: #3f3f3f;
+  color: rgba(232, 232, 232, 0.82);
+}
+
+.toSingerU_mod {
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.toSingerU_mod:hover {
+  color: #ffffff;
 }
 
 
@@ -144,7 +213,7 @@ function selectSingerDetail(singer_ID) {
 
 .playAndLoad_mod span {
   font-family: STXihei, serif;
-  color: #000000;
+  color: #ffffff;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
@@ -156,21 +225,16 @@ function selectSingerDetail(singer_ID) {
   cursor: pointer;
 }
 
-.playAndLoad_mod .el-button {
-  color: #FFF;
+#PAL_mod >>> .el-button {
   border-radius: 12px;
-
 }
 
-.playAndLoad_mod .el-button span {
+
+#PAL_mod >>> .el-button span {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/*播放按钮*/
-.playAndLoad_mod .el-button--warning {
-
-}
 
 </style>

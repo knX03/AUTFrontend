@@ -2,14 +2,10 @@
 
 
 import {onMounted, ref} from "vue";
-import axios from "axios";
 import router from "@/router/index.js";
 import {ElMessage, ElMessageBox} from "element-plus";
-import bus from "@/eventbus.js";
-import useUserStore from '@/store/userStore.js'
+import {aDeletePlaylist, aSelectLikePlaylist} from "@/api/api.js";
 
-const userStore = useUserStore()
-const userID = userStore.user_ID;
 let likeList = ref([{
   playlist_ID: '',
   create_By: '',
@@ -26,15 +22,12 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  selectLikePlaylist(userID)
+  selectLikePlaylist()
 })
 
 /*查询用户所收藏的歌单*/
-function selectLikePlaylist(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/likePlaylist?user_ID=' + user_ID,
-  }).then(resp => {
+function selectLikePlaylist() {
+  aSelectLikePlaylist().then(resp => {
     if (resp.data.code === 200) {
       likeList.value = resp.data.data
       if (likeList.value.length > 0) {
@@ -52,13 +45,10 @@ function deletePlaylist(row) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(_ => {
-    axios({
-      method: 'get',
-      url: 'http://localhost/songPlaylist/deleteLikePlaylist?playlist_ID=' + row.playlist_ID + "&user_ID=" + userID,
-    }).then(resp => {
+    aDeletePlaylist(row.playlist_ID).then(resp => {
       if (resp.data.code === 200) {
         ElMessage.success('删除成功！')
-        selectLikePlaylist(userID)
+        selectLikePlaylist()
       } else if (resp.data.code === 500) {
         console.log(resp.data.msg)
       }

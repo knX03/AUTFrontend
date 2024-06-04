@@ -2,8 +2,8 @@
 import {defineProps, onMounted, ref} from "vue";
 import router from "@/router/index.js";
 import axios from "axios";
-import bus from "@/eventbus.js";
 import {useRoute} from "vue-router";
+import {aGetSingerAlbums} from "@/api/api.js";
 
 const route = useRoute()
 let albumList = ref([
@@ -21,10 +21,7 @@ onMounted(() => {
 })
 
 function getSingerAlbums(ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/getSingerAlbums?singer_ID=' + ID,
-  }).then((resp) => {
+  aGetSingerAlbums(ID).then((resp) => {
     if (resp.data.code === 200) {
       albumList.value = resp.data.data
       if (albumList.value.length > 0) {

@@ -24,6 +24,7 @@
     border-radius: 20px;
     background-color: #626262;
 }
+
 /*标题*/
 .createPlaylistForm .el-dialog__title {
     font-size: 25px;
@@ -40,9 +41,9 @@
 }
 
 /*按钮位置*/
-#formbutton  {
+#formbutton {
     position: relative;
-   top: 30px;
+    top: 30px;
 }
 
 /*使用id选择器提高权重，覆写组件样式 ,按钮样式*/
@@ -85,13 +86,31 @@
     color: black;
 }
 
+.creatForm .el-select {
+    width: 150px;
+}
 
 #creatform .el-date-editor.el-input {
     width: 200px !important;
 }
 
+
 /*简介输入框*/
 #playlist_Introduction .el-textarea__inner {
     width: 300px;
     height: 100px;
+    max-height: 200px;
+}
+
+#playlist_Introduction .el-textarea .el-input__count {
+    position: absolute;
+    font-size: 12px;
+    line-height: 14px;
+    bottom: 5px;
+    left: 230px;
+    right: inherit;
+}
+
+#spLabel .el-select__wrapper.is-focused {
+    box-shadow: 0 0 0 1px #b0601b inset;
 }

@@ -2,6 +2,7 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
+import {aSelectAllAlbum} from "@/api/api.js";
 
 let albumList = ref([
   {
@@ -17,10 +18,7 @@ onMounted(() => {
 
 /*查询所有*/
 function selectAllAlbum() {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/allAlbums',
-  }).then(resp => {
+  aSelectAllAlbum().then(resp => {
     if (resp.data.code === 200) {
       albumList.value = resp.data.data
     } else if (resp.data.code === 500) {

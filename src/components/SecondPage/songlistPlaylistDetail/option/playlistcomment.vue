@@ -1,18 +1,14 @@
 <script setup>
 import {defineProps, onMounted, ref, watch} from "vue";
-import axios from "axios";
 import {useRoute} from "vue-router";
-import bus from "@/eventbus.js";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
 import 'vue3-emoji-picker/css';
 import EmojiPicker from 'vue3-emoji-picker';
-import useUserStore from '@/store/userStore.js'
+import {aGetComments, aPostComment} from "@/api/api.js";
 
-
-const userStore = useUserStore();
 const route = useRoute()
 let playlist_ID = ref()
-let textarea = ref('')
+const {list_ID} = defineProps(['list_ID']);
 let textCount = ref(130)
 let comment = ref([{
   comment: "",
@@ -22,12 +18,10 @@ let comment = ref([{
 }])
 
 let commentForm = ref({
-  user_ID: '',
   ID: '',
   text: '',
   type: ''
 })
-const userID = userStore.user_ID;
 
 //禁用的emoji组
 const emojiGroup = ref([
@@ -41,24 +35,20 @@ const emojiGroup = ref([
 const type = ref("playlist")
 let commentExist = ref(true)
 
-watch(textarea, (textarea) => {
+watch(() => commentForm.value.text, (textarea) => {
       textCount.value = 130 - textarea.length;
     }
 );
 
-const {list_ID} = defineProps(['list_ID']);
+
 onMounted(() => {
   playlist_ID.value = list_ID
   commentForm.value.ID = list_ID
-  commentForm.value.user_ID = userID;
   getComments(list_ID)
 })
 
 function getComments(playlist_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/comment/getComments?ID=' + playlist_ID + '&type=' + type.value
-  }).then(resp => {
+  aGetComments(playlist_ID, type.value).then(resp => {
     if (resp.data.code === 200) {
       comment.value = resp.data.data
       if (comment.value.length > 0) {
@@ -80,28 +70,28 @@ function selectEmoji(emoji) {
   postComment_text.focus()
   postComment_text.selectionStart = startPos + emoji.i.length
   postComment_text.selectionEnd = startPos + emoji.i.length
-  textarea.value = resultText
+  commentForm.value.text = resultText
 }
 
 function postComment() {
-  if (textarea.value === '') {
+  if (commentForm.value.text === '') {
     ElMessage.error("写点东西吧，内容不能为空哦")
     return;
   }
   commentForm.value.type = type.value
-  commentForm.value.text = textarea.value
-  axios({
-    method: 'Post',
-    url: 'http://localhost/comment/postComment',
-    data: commentForm.value
-  }).then(resp => {
+  aPostComment(commentForm.value).then(resp => {
     if (resp.data.code === 200) {
       ElMessage.success("发表成功！")
-      textarea.value = ''
+      commentForm.value.text = ''
       getComments(playlist_ID.value)
     } else {
       console.log(resp.data.msg)
     }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
   })
 }
 
@@ -113,7 +103,7 @@ function postComment() {
       <div class="writeComment">
         <textarea class="postComm_container"
                   id="postComment_text"
-                  v-model="textarea"
+                  v-model="commentForm.text"
                   maxlength="130"
                   placeholder="说点什么吧"></textarea>
         <div class="commUtils_mod">

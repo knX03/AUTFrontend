@@ -2,16 +2,10 @@
 
 import {defineProps, onMounted, ref} from "vue";
 import router from "@/router/index.js";
-import bus from "@/eventbus.js";
-import axios from "axios";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
+import {aDeleteLikeSong, aLikeSong, aSelectLikeSong, aSongByAlbum} from "@/api/api.js";
 
 
-import useUserStore from '@/store/userStore.js'
-
-
-const userStore = useUserStore();
-const userID = userStore.user_ID;
 let songList = ref([{
   song_ID: '',
   song_Name: '',
@@ -41,13 +35,10 @@ onMounted(() => {
 
 /*根据跳转的专辑名字查询歌曲*/
 function selectSongByAlbum(data) {
-  axios({
-    method: 'get',
-    url: 'http://localhost/song/SongByAlbum?album_ID=' + data,
-  }).then(resp => {
+  aSongByAlbum(data).then(resp => {
     if (resp.data.code === 200) {
       songList.value = resp.data.data;
-      selectLikeSong(userID)
+      selectLikeSong()
     } else if (resp.data.code === 500) {
       ElMessage({
         message: "error",
@@ -55,37 +46,54 @@ function selectSongByAlbum(data) {
       })
       console.log(resp.data.msg)
     }
-
   })
 }
 
 /*查询喜欢的歌曲*/
-function selectLikeSong(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/song/selectLikeSong?user_ID=' + user_ID,
-  }).then(resp => {
-    if (resp.data.code === 200) {
+function selectLikeSong() {
+  aSelectLikeSong().then(resp => {
+    if (resp.status === 401) {
+      console.error(resp.status)
+    } else if (resp.data.code === 200) {
       myLikeSong.value = resp.data.data;
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
+  }).catch(resp => {
+    console.error(resp)
   })
 }
 
 /*添加至我喜欢*/
 function likeSong(row) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/song/likeSong?song_ID=' + row + "&user_ID=" + userID,
-  }).then(resp => {
+  aLikeSong(row).then(resp => {
     if (resp.data.code === 200) {
       myLikeSong.value = resp.data.data
       ElMessage.success("添加成功！")
-      selectLikeSong(userID)
+      selectLikeSong()
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
+  })
+}
+
+function dislikeSong(row) {
+  aDeleteLikeSong(row).then(resp => {
+    if (resp.data.code === 200) {
+      selectLikeSong()
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
   })
 }
 </script>
@@ -119,12 +127,14 @@ function likeSong(row) {
       <div class="like_mod">
         <img src="/src/photos/logo/like.png" @click="likeSong(item.song_ID)"
              v-if="myLikeSong.indexOf(item.song_ID) ===-1">
-        <img src="/src/photos/logo/喜欢.png"
+        <img src="/src/photos/logo/喜欢.png" @click="dislikeSong(item.song_ID)"
              v-if="myLikeSong.indexOf(item.song_ID) !==-1">
       </div>
-      <!--todo 下载功能待实现-->
+      <!--todo 下载功能可以更加完善-->
       <div class="download_mod">
-        <img src="/src/photos/logo/download.png" @click="downloadSong()">
+        <a :href=item.song_Directory :download="item.song_Name">
+          <img src="/src/photos/logo/download.png">
+        </a>
       </div>
     </div>
   </div>

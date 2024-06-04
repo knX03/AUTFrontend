@@ -1,13 +1,11 @@
 <script setup>
-import {getCurrentInstance, onBeforeMount, onMounted, reactive, ref} from "vue";
-import bus from "@/eventbus.js";
+import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
 import router from "@/router/index.js";
-import useUserStore from '@/store/userStore.js'
+import {aCollectSongToPlaylist, aDeleteLikeSong, aIfExistSong, aSelectCreateDetail, aSongByUser} from "@/api/api.js";
 
-const userStore = useUserStore()
-const userID = userStore.user_ID;
+
 const {ctx} = getCurrentInstance()
 let dialogVisible = ref(false)
 let playMusic = ref(false)
@@ -50,21 +48,15 @@ const toSinger = (singer_ID) => {
 }
 
 onMounted(() => {
-  selectSongByUser(userID)
-  selectCreateDetail(userID)
+  selectSongByUser()
+  selectCreateDetail()
 })
 
 
 /*查询用户喜欢的歌曲列表*/
-function selectSongByUser(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/song/SongByUser?user_ID=' + user_ID + '&currentPage=' + searchData.current + '&pageSize=' + searchData.limit,
-  }).then(resp => {
+function selectSongByUser() {
+  aSongByUser(searchData.current, searchData.limit).then(resp => {
     if (resp.data.code === 200) {
-      for (let i = 0; i < resp.data.data.rows.length; i++) {
-        resp.data.data.rows[i].song_Directory = "http://localhost:5173/" + resp.data.data.rows[i].song_Directory;
-      }
       songList.value = resp.data.data.rows
       if (songList.value.length > 0) {
         userLikeSongExist.value = true
@@ -77,11 +69,8 @@ function selectSongByUser(user_ID) {
 }
 
 /*查询用户所创建的歌单*/
-function selectCreateDetail(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/createPlaylist?user_ID=' + user_ID,
-  }).then(resp => {
+function selectCreateDetail() {
+  aSelectCreateDetail().then(resp => {
     if (resp.data.code === 200) {
       creatList.value = resp.data.data
     } else if (resp.data.code === 500) {
@@ -102,10 +91,7 @@ function ifExistSong() {
     ElMessage.error("请选择收藏的歌单！")
     return;
   }
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/IESong?playlist_ID=' + CLSong.value.playlist_ID + '&song_ID=' + CLSong.value.song_ID,
-  }).then(resp => {
+  aIfExistSong(CLSong.value.playlist_ID, CLSong.value.song_ID).then(resp => {
     if (resp.data.code === 302) {
       ElMessage.error(resp.data.msg)
       CLSong.value.playlist_ID = '';
@@ -118,11 +104,7 @@ function ifExistSong() {
 
 /*收藏歌曲至指定歌单*/
 function collectSongToPlaylist() {
-  console.log(CLSong.value)
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/CLSong?playlist_ID=' + CLSong.value.playlist_ID + '&song_ID=' + CLSong.value.song_ID,
-  }).then(resp => {
+  aCollectSongToPlaylist(CLSong.value.playlist_ID, CLSong.value.song_ID).then(resp => {
     if (resp.data.code === 200) {
       dialogVisible.value = false;
       CLSong.value.playlist_ID = '';
@@ -138,13 +120,10 @@ function deleteSong(row) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(_ => {
-    axios({
-      method: 'get',
-      url: 'http://localhost/song/deleteLikeSong?song_ID=' + row.song_ID + "&user_ID=" + userID,
-    }).then(resp => {
+    aDeleteLikeSong(row.song_ID).then(resp => {
       if (resp.data.code === 200) {
         ElMessage.success('删除成功！')
-        selectSongByUser(userID)
+        selectSongByUser()
       } else if (resp.data.code === 500) {
         console.log(resp.data.msg)
       }
@@ -153,7 +132,7 @@ function deleteSong(row) {
   });
 }
 
-//下载歌曲
+//todo 下载歌曲
 function downloadFile(filepath) {
   console.log(filepath)
   axios({
@@ -161,7 +140,7 @@ function downloadFile(filepath) {
     url: 'http://localhost/file/download',
     data: filepath,
     headers: {
-      'Content-Type': 'application/json;charset=utf-8'      //改这里就好了
+      'Content-Type': 'application/json;charset=utf-8'
     }
   }).then(resp => {
     if (resp.data.code === 200) {
@@ -185,7 +164,7 @@ function play(song_Directory) {
 
 function handleCurrentChange(val) {
   searchData.current = val
-  selectSongByUser(userID)
+  selectSongByUser()
 }
 </script>
 
@@ -206,6 +185,7 @@ function handleCurrentChange(val) {
           <div class="playMusic_button" @click="play(item.song_Directory)">
             <img src="/src/photos/logo/playGray.png">
           </div>
+          <!--todo 重写收藏歌单的表单，将歌单的封面，歌曲数量展示-->
           <div class="addPlaylist_button" @click="beforeCL(item.song_ID)">
             <img src="/src/photos/logo/addGray.png">
           </div>

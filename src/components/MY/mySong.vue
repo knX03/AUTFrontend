@@ -60,7 +60,7 @@ function downloadFile(filepath) {
     </div>
     <!--todo 播放和下载功能待实现-->
     <div class="buttonList_mod">
-      <el-button type="warning" round>
+      <el-button type="warning" plain round>
         播放全部
       </el-button>
       <el-button type="info" round @click="downloadSong()">下载全部</el-button>

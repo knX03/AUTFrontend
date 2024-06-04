@@ -1,16 +1,22 @@
 <script setup>
 
-import {getCurrentInstance, onMounted, ref} from "vue";
+import {getCurrentInstance, onMounted, ref, toRaw, watch} from "vue";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import bus from "@/eventbus.js";
 import router from "@/router/index.js";
 import useUserStore from '@/store/userStore.js'
+import {
+  aCheckPlaylistName,
+  aCreateNewPlaylist,
+  aGetAllPLTag,
+  aSelectCreateDetail,
+  aUploadPlaylistCover
+} from "@/api/api.js";
 
 const userStore = useUserStore()
 const {ctx} = getCurrentInstance()
 let dialogVisibleP = ref(false)
-let user = ref({user_ID: '', user_Name: '',})
 let fileType = ref(["png", "jpg", "jpeg"])
 
 let creatList = ref([{
@@ -26,7 +32,15 @@ let playlist = ref({
   playlist_Introduction: '',
   create_By: '',
   create_Time: '',
+  playlist_Tag: [],
 })
+
+//已有的标签列表
+const PLTagList = ref([
+  {tag_id: '', tag_name: ''}
+])
+
+let tagFlag = ref(false)
 
 let new_playlist_Cover = ref('src/photos/logo/addPlaylist.png')
 
@@ -38,21 +52,13 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  const userID = userStore.user_ID;
-  selectCreateDetail(userID)
-
-})
-
-bus.on('user', (data) => {
-  user.value = data
+  selectCreateDetail()
+  getAllPLTag()
 })
 
 /*用户创建的歌单详情*/
-function selectCreateDetail(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/createPlaylist?user_ID=' + user_ID,
-  }).then(resp => {
+function selectCreateDetail() {
+  aSelectCreateDetail().then(resp => {
     if (resp.data.code === 200) {
       creatList.value = resp.data.data
     } else if (resp.data.code === 500) {
@@ -61,18 +67,27 @@ function selectCreateDetail(user_ID) {
   })
 }
 
+/*查询所有歌单标签*/
+function getAllPLTag() {
+  aGetAllPLTag().then(resp => {
+    if (resp.data.code === 200) {
+      PLTagList.value = resp.data.data;
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  })
+}
+
 function /*新建歌单*/
 createPlaylist() {
-  playlist.value.create_By = user.value.user_ID
   if (playlist.value.playlist_Name == null) {
     ElMessage.error("重申一遍！名称不能为空！")
     return;
   }
-  axios({
-    method: 'POST',
-    url: 'http://localhost/songPlaylist/createNewPlaylist',
-    data: playlist.value,
-  }).then(resp => {
+  if (playlist.value.playlist_Cover.length === 0) {
+    playlist.value.playlist_Cover = new_playlist_Cover.value
+  }
+  aCreateNewPlaylist(playlist.value).then(resp => {
     if (resp.data.code === 200) {
       dialogVisibleP.value = false
       playlist.value.playlist_Name = null
@@ -84,7 +99,7 @@ createPlaylist() {
         message: resp.data.msg,
         type: "success"
       })
-      selectCreateDetail(user.value.user_ID)
+      selectCreateDetail()
     } else if (resp.data.code === 500) {
       dialogVisibleP.value = false
       ElMessage({
@@ -97,13 +112,9 @@ createPlaylist() {
 
 function /*检查歌单名是否存在*/
 checkPlaylistName(row) {
-  console.log(row)
   if (row == null) {
     ElMessage.error("名称不能为空！")
-    axios({
-      method: 'GET',
-      url: 'http://localhost/songPlaylist/checkPlaylistName?playlist_Name=' + row,
-    }).then(resp => {
+    aCheckPlaylistName(row).then(resp => {
       if (resp.data.code === 302) {
         ElMessage({
           message: resp.data.msg,
@@ -131,13 +142,9 @@ uploadCover(item) {
   //上传文件的需要formdata类型;所以要转
   let FormDatas = new FormData()
   FormDatas.append('file', item.file);
-  axios({
-    method: 'post',
-    url: 'http://localhost/songPlaylist/uploadCover',
-    headers: ctx.headers,
-    data: FormDatas
-  }).then(resp => {
+  aUploadPlaylistCover(FormDatas).then(resp => {
     if (resp.data.code === 200) {
+      playlist.value.playlist_Cover = resp.data.data
       ElMessage.success("封面上传成功！")
     } else {
       ElMessage({
@@ -163,7 +170,6 @@ function beforeUpload(file) {
     //如果文件类型不在允许上传的范围内
     if (fileType.value.indexOf(FileExt) !== -1) {
       new_playlist_Cover.value = URL.createObjectURL(new Blob([file]));//赋值图片的url，用于图片回显功能
-      //new_playlist_Cover.value = URL.createObjectURL(new Blob([file]));
       return true;
     } else {
       ElMessage({
@@ -174,6 +180,13 @@ function beforeUpload(file) {
     }
   }
 }
+
+//todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
+watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
+  let tags = toRaw(newValue)
+  console.log("new" + newValue);
+  console.log("raw" + tags);
+});
 </script>
 
 <template>
@@ -211,7 +224,28 @@ function beforeUpload(file) {
             <el-input v-model="playlist.playlist_Name" @blur="checkPlaylistName(playlist.playlist_Name)"></el-input>
           </el-form-item>
           <el-form-item size="large" label="简介：" id="playlist_Introduction">
-            <el-input type="textarea" v-model="playlist.playlist_Introduction" placeholder="200"></el-input>
+            <el-input type="textarea"
+                      v-model="playlist.playlist_Introduction"
+                      placeholder="200"
+                      maxlength="200"
+                      show-word-limit></el-input>
+          </el-form-item>
+          <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
+          <el-form-item label="标签" id="spLabel">
+            <el-select
+                v-model="playlist.playlist_Tag"
+                multiple
+                size="large"
+                placeholder="选择标签"
+            >
+              <el-option
+                  v-for="item in PLTagList"
+                  :key="item.tag_id"
+                  :label="item.tag_name"
+                  :value="item.tag_id"
+                  :disabled="tagFlag"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item id="formbutton">
             <el-button size="large" @click="dialogVisibleP=false">取消</el-button>
@@ -244,6 +278,7 @@ function beforeUpload(file) {
   background-image: linear-gradient(#ffffff, #c7c7c7, #8DB799, #c7c7c7, #FFFFFF);
   margin-bottom: 50px;
   padding-top: 20px;
+  padding-left: 70px;
 }
 
 /*标题*/
@@ -267,6 +302,7 @@ function beforeUpload(file) {
 
 
 }
+
 /*歌单封面*/
 .songPlaylistsCover_mod {
   height: 200px;
@@ -320,7 +356,7 @@ function beforeUpload(file) {
   font-family: STXihei, serif;
   font-size: 15px;
   font-weight: 600;
-  color: white;
+  color: #000000;
   position: relative;
   left: 30px;
 }

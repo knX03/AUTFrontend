@@ -1,12 +1,27 @@
 <script setup>
-import {getCurrentInstance, onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, markRaw, onMounted, reactive, ref, watch} from "vue";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import bus from "@/eventbus.js";
 import useUserStore from '@/store/userStore.js'
+import useFlagStore from '@/store/flagStore.js'
+import {
+  aChangeUserInfo,
+  aCheckName,
+  aGetSumFollowAndFan,
+  aSelectUserInfoByID,
+  aUploadUserAvatar,
+  aUserDetail
+} from "@/api/api.js";
+import followForm from "@/components/myInfo/otherForm/followForm.vue";
+import fansForm from "@/components/myInfo/otherForm/fansForm.vue";
+
 
 const userStore = useUserStore()
+const flagStore = useFlagStore();
+
 const {ctx} = getCurrentInstance()
+const userID = userStore.user_ID;
 let dialogVisible = ref(false)
 let fileList = ref([])
 let fileType = ref(["png", "jpg", "jpeg"])
@@ -16,7 +31,6 @@ let new_user_avatar = ref('')
 let sex_logo = ref("")
 
 let user = ref({
-  user_ID: '',
   user_Name: '',
   user_Sex: '',
   user_Age: '',
@@ -26,7 +40,6 @@ let user = ref({
 })
 
 let form = reactive({
-  user_ID: '',
   user_Name: '',
   user_Sex: '',
   user_Age: '',
@@ -35,22 +48,39 @@ let form = reactive({
   user_Introduction: '',
 })
 
+let sumFollowAndFan = ref({
+  followSum: 0,
+  fanSum: 0
+})
+
+const detailForm = ref([
+  {id: 1, name: '关注', component: markRaw(followForm)},
+  {id: 2, name: '粉丝', component: markRaw(fansForm)}])
+
+// 默认显示的组件页面
+const selComponent = ref();
+
 bus.on('userInfo', (data) => {
   user.value = data
   form = user.value
+  new_user_avatar.value = data.user_Avatar;
   changeSexLogo()
 })
+
+//监听关注与粉丝的变化
+watch(() => flagStore.flag, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    getSumFollowAndFan(userID)
+  }
+},)
+
 onMounted(() => {
-
-
+  getSumFollowAndFan(userID)
 })
 
 /* 用户详情查询*/
-function selectUserDetail(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/user/DetailByID?user_ID=' + user_ID,
-  }).then(resp => {
+function selectUserDetail() {
+  aUserDetail().then(resp => {
     if (resp.data.code === 200) {
       user.value = resp.data.data;
       new_user_avatar.value = resp.data.data.user_Avatar
@@ -59,6 +89,14 @@ function selectUserDetail(user_ID) {
       bus.emit('user', user.value)
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
+    }
+  })
+}
+
+function getSumFollowAndFan(userID) {
+  aGetSumFollowAndFan(userID).then(resp => {
+    if (resp.data.code === 200) {
+      sumFollowAndFan.value = resp.data.data
     }
   })
 }
@@ -73,10 +111,7 @@ function checkName(row) {
   if (row == null) {
     ElMessage.error('名称不能为空！')
   }
-  axios({
-    method: 'GET',
-    url: 'http://localhost/user/checkName?user_Name=' + row,
-  }).then(resp => {
+  aCheckName(row).then(resp => {
     if (resp.data.code === 302) {
       ElMessage.error(resp.data.msg)
       form.user_Name = ''
@@ -94,15 +129,11 @@ function onSubmit() {
     })
     return;
   }
-  axios({
-    method: 'POST',
-    url: 'http://localhost/user/changeUserInfo',
-    data: form,
-  }).then(resp => {
+  aChangeUserInfo(form).then(resp => {
     if (resp.data.code === 200) {
       dialogVisible.value = false
       ElMessage.success(resp.data.msg)
-      selectUserDetail(resp.data.data)
+      selectUserDetail()
     } else if (resp.data.code === 500) {
       dialogVisible.value = false
       ElMessage({
@@ -122,7 +153,6 @@ function catchSubmit() {
 
 /*上传头像前的验证*/
 function beforeUpload(file) {
-  console.log(file)
   if (file.type !== "" || file.type != null || file.type !== undefined) {
     //截取文件的后缀，判断文件类型
     const FileExt = file.name.replace(/.+\./, "").toLowerCase();
@@ -147,26 +177,20 @@ function beforeUpload(file) {
       })
       return false;
     }
-
   }
 }
 
 /*上传头像*/
 function uploadAvatar(item) {
-  console.log(item)
   ElMessage({
     message: "头像正在上传！",
     type: 'success',
   })
   let FormDatas = new FormData()
   FormDatas.append('file', item.file);
-  axios({
-    method: 'post',
-    url: 'http://localhost/user/uploadAvatar',
-    headers: ctx.headers,
-    data: FormDatas
-  }).then(resp => {
+  aUploadUserAvatar(FormDatas).then(resp => {
     if (resp.data.code === 200) {
+      form.user_Avatar = resp.data.data
       ElMessage({
         message: "头像上传成功！",
         type: 'success',
@@ -179,6 +203,17 @@ function uploadAvatar(item) {
       })
     }
   })
+}
+
+function followDetail() {
+  flagStore.flag = true
+  selComponent.value = detailForm.value[0].component;
+
+}
+
+function fansDetail() {
+  flagStore.flag = true
+  selComponent.value = detailForm.value[1].component;
 }
 
 /*不同的性别对应不同的logo*/
@@ -210,14 +245,29 @@ function changeSexLogo() {
       <div class="userAvatar_mod">
         <img :src="user.user_Avatar">
       </div>
-      <div class="usernameLogo_mod">
-        <span class="username_mod">{{ user.user_Name }}</span>
-        <img src="/src/photos/logo/editGray.png" class="changeINFOButton_mod" @click=beChangeInfo() alt="">
-      </div>
-
-      <!--修改性别时切换性别logo-->
-      <div class="InfoLogo">
-        <img id="sexLogo" :src=sex_logo alt="">
+      <div class="userIN_mod">
+        <div class="usernameLogo_mod">
+          <span class="username_mod">{{ user.user_Name }}</span>
+          <img src="/src/photos/logo/editGray.png" class="changeINFOButton_mod" @click=beChangeInfo() alt="">
+        </div>
+        <!--修改性别时切换性别logo-->
+        <div class="InfoLogo">
+          <img id="sexLogo" :src=sex_logo alt="">
+        </div>
+        <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
+          <el-tooltip
+              class="box-item"
+              :content="user.user_Introduction"
+              placement="bottom"
+              effect="light"
+          >
+            <span>{{ user.user_Introduction }}</span>
+          </el-tooltip>
+        </div>
+        <div class="followAndFans">
+          <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
+          <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
+        </div>
       </div>
     </div>
   </div>
@@ -251,7 +301,11 @@ function changeSexLogo() {
             </el-radio-group>
           </el-form-item>
           <el-form-item size="large" label="简介：" id="eidtuserIntroduction">
-            <el-input type="textarea" v-model="form.user_Introduction" placeholder="200"></el-input>
+            <el-input type="textarea"
+                      v-model="form.user_Introduction"
+                      placeholder="200"
+                      maxlength="200"
+                      show-word-limit></el-input>
           </el-form-item>
           <el-form-item>
             <el-button size="large" @click="catchSubmit()">取消</el-button>
@@ -274,6 +328,11 @@ function changeSexLogo() {
       </div>
     </el-dialog>
   </div>
+  <div v-if="flagStore.flag">
+    <KeepAlive>
+      <component :is="selComponent"></component>
+    </KeepAlive>
+  </div>
 </template>
 
 <style scoped>
@@ -288,7 +347,7 @@ function changeSexLogo() {
 .userInfo_mod {
   width: 100%;
   height: 240px;
-  background-image: linear-gradient(to right, #426666, #25F8CD);
+  background-image: linear-gradient(#414141, #ababab, #ffffff);
 }
 
 /*用户头像模块*/
@@ -315,17 +374,28 @@ function changeSexLogo() {
   transform: scale(1.2, 1.2);
 }
 
+.userIN_mod {
+  /*选项模块*/
+  min-width: 300px;
+  height: 224px;
+  /* padding-top: 23px; */
+  position: relative;
+  top: -104px;
+  left: 298px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
 
 /*用户信息展示模块*/
 .usernameLogo_mod {
-  position: relative;
-  top: -88px;
-  left: 298px;
   width: 125px;
   height: 25px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
 .username_mod {
@@ -343,14 +413,12 @@ function changeSexLogo() {
 }
 
 .InfoLogo {
-  position: relative;
-  top: -75px;
-  left: 298px;
   width: 125px;
   height: 25px;
   display: flex;
   align-items: center;
   justify-content: left;
+  margin-bottom: 15px;
 }
 
 .InfoLogo img {
@@ -365,6 +433,32 @@ function changeSexLogo() {
 .InfoLogo img:hover {
   animation: rotation 0.5s linear infinite;
   transition: 0.5s all ease-in-out;
+}
+
+/*简介*/
+.userIntroduction_mod {
+  font-family: STXihei, serif;
+  color: #ffffff;
+  font-size: 15px;
+  white-space: nowrap; /*强制单行显示*/
+  text-overflow: ellipsis; /*超出部分省略号表示*/
+  overflow: hidden; /*超出部分隐藏*/
+  width: 1000px; /*设置显示的最大宽度*/
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.followAndFans {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.followAndFans span {
+  font-family: STXihei, serif;
+  color: rgb(114, 69, 35);
+  cursor: pointer;
 }
 
 /*性别logo动画旋转*/

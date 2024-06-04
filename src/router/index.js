@@ -15,6 +15,10 @@ import dailyRecomm from '../views/SecondPage/dailyRecomm.vue'
 import signIn from '../views/LRF/signIn.vue'
 import signUp from '../views/LRF/signUp.vue'
 import forgetPass from '../views/LRF/fogerPass.vue'
+import userDetail from '../views/SecondPage/userDetail.vue'
+import artists from '../views/artists.vue'
+import {ElNotification} from "element-plus";
+import {store} from "xijs";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,18 +36,11 @@ const router = createRouter({
         {
             path: '/MY',
             name: 'MY',
+            meta: {
+                requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
+            },
             component: MY
         },
-        /*{
-            path: '/nav',
-            name: 'navAUT',
-            component: navAUT
-        },
-        {
-            path: '/secondNav',
-            name: 'secondNav',
-            component: secondNav
-        },*/
         {
             path: '/singer',
             name: 'singer',
@@ -62,6 +59,9 @@ const router = createRouter({
         {
             path: '/myInfo',
             name: 'myInfo',
+            meta: {
+                requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
+            },
             component: myInfo
         },
         {
@@ -83,21 +83,57 @@ const router = createRouter({
             path: '/dailyRecomm',
             name: 'dailyRecomm',
             component: dailyRecomm
-        },{
+        }, {
             path: '/signIn',
             name: 'signIn',
             component: signIn
-        },{
+        }, {
             path: '/signUp',
             name: 'signUp',
             component: signUp
-        },{
+        }, {
             path: '/forgetPass',
             name: 'forgetPass',
             component: forgetPass
+        }, {
+            path: '/userDetail',
+            name: 'userDetail',
+            component: userDetail
+        }, {
+            path: '/artists',
+            name: 'artists',
+            component: artists
         }
-
     ]
 })
+router.beforeEach((to, from, next) => {
+    if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
+        // 从本地存储localStorage获取当前的token是否存在
+        if (store.get('access_token').value) {
+            next()
+        } else {
+            ElNotification({
+                title: '请先登录!',
+                type: 'error',
+                duration: 1000,
+                position: 'top-left',
+            })
+            next('/signIn') //如果token不存在，就跳到首页
+        }
+    } else {
+        //token存在时候，进去登录页面就自动跳转到首页
+        if (store.get('access_token').value && to.path === '/signIn') {
+            next('/')
+            ElNotification({
+                title: '您已登录!',
+                type: 'success',
+                duration: 1000,
+                position: 'top-left',
+            })
+        } else {
+            next()
+        }
+    }
 
+});
 export default router

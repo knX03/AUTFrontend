@@ -24,7 +24,6 @@
 <style scoped>
 .bottom_mod {
   /*width: 100%;*/
-  width: 1684px;
   height: 100px;
   background-color: #707070;
   display: flex;

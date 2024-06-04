@@ -3,6 +3,7 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
+import {aChangeDailyList, aNineRandomPlaylist} from "@/api/api.js";
 
 const router = useRouter()
 let songList = ref([
@@ -40,10 +41,7 @@ onMounted(() => {
 
 /*展示随机十个歌单*/
 function selectSongPlaylist() {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/selectSongPlaylist'
-  }).then(resp => {
+  aNineRandomPlaylist().then(resp => {
     if (resp.data.code === 200) {
       songList.value = resp.data.data
     } else if (resp.data.code === 500) {
@@ -54,10 +52,7 @@ function selectSongPlaylist() {
 
 //根据日常修改日推
 function changeDailyList() {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/changeDailyList'
-  }).then(resp => {
+  aChangeDailyList().then(resp => {
     if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }

@@ -1,43 +1,43 @@
 <script setup>
+import {getCurrentInstance, onMounted, reactive, ref, toRaw, watch} from "vue";
 
-
-import {getCurrentInstance, onMounted, ref} from "vue";
-import bus from "@/eventbus.js";
-import axios from "axios";
-import {ElMessage} from "element-plus";
+import router from "@/router/index.js";
+import {ElMessage, ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
-import useUserStore from '@/store/userStore.js'
+import {
+  aChangePlaylistInfo,
+  aCheckPlaylistName,
+  aCollectPlaylist, aDeletePlaylist,
+  aDetailByID, aGetAllPLTag,
+  aIfCollectPlaylist, aIfMyPlaylist, aSelectPlaylistTags,
+  aSelectUserInfoByID, aUploadPlaylistCover
+} from "@/api/api.js";
+import useUserStore from "@/store/userStore.js";
 
-const userStore = useUserStore();
-const userID = userStore.user_ID;
-const {ctx} = getCurrentInstance()
+
 const route = useRoute()
 let dialogVisible = ref(false)
 let showEdit = ref(true)
 let collectBT = ref(true)
-let disabled = ref(false)
-let messageCode = ref("")
-let fileList = ref([])
+let ifCollect = ref(false)
 let fileType = ref(["png", "jpg", "jpeg"])
-let fileSize = ref(50)
-let fileName = ref("")
-let creator = ref("aa")
-let creator_Avatar = ref('src/photos/logo/avatarWhite.png')
 let new_playlist_Cover = ref("")
 let colletBUTX = ref("收藏")
 
-let user = ref(
-    {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
-)
-
+const userStore = useUserStore()
+let creator = ref({
+  ID: '',
+  name: '',
+  avatar: 'src/photos/logo/avatarWhite.png',
+})
 let songPlaylists = ref({
   playlist_ID: '',
   create_By: '',
   create_Time: '',
   playlist_Name: '',
   playlist_Cover: '',
-  playlist_introduction: '',
-  playlist_label: '',
+  playlist_Introduction: '',
+  playlist_Tag: [],
 })
 let playlistForm = ref({
   playlist_ID: '',
@@ -45,8 +45,8 @@ let playlistForm = ref({
   create_Time: '',
   playlist_Name: '',
   playlist_Cover: '',
-  playlist_introduction: '',
-  playlist_label: '',
+  playlist_Introduction: '',
+  playlist_Tag: [],
 })
 
 let songList = ref([{
@@ -56,79 +56,138 @@ let songList = ref([{
   song_cover: '',
 }])
 
+//歌单的标签列表
+let PLTags = ref([{
+  tag_id: '',
+  tag_name: '',
+}])
+
+//已有的标签列表
+const PLTagList = ref([
+  {tag_id: '', tag_name: ''}
+])
+
+let tagFlag = ref(false)
+
+const toUserInfo = (user_ID) => {
+  if (user_ID === userStore.user_ID) {
+    router.push({
+      path: '/myInfo',
+    })
+  } else {
+    router.push({
+      path: '/userDetail',
+      query: {user_ID}
+    })
+  }
+}
+
+const toPLbyTag = (tag_ID) => {
+  router.push({
+    path: '/songList',
+    query: {tag_ID}
+  })
+}
+
 onMounted(() => {
   let FPlaylist_ID = route.query.playlist_ID
   selectDetail(FPlaylist_ID)
+  selectPlaylistTags(FPlaylist_ID)
+  getAllPLTag()
+  editInfo(FPlaylist_ID)
 })
 
 /*根据跳转的歌单ID查询歌单详情*/
 function selectDetail(data) {
-  axios({
-    method: 'get',
-    url: 'http://localhost/songPlaylist/DetailByID?playlist_ID=' + data,
-  }).then(resp => {
+  aDetailByID(data).then(resp => {
     if (resp.data.code === 200) {
       songPlaylists.value = resp.data.data;
       new_playlist_Cover.value = resp.data.data.playlist_Cover;
       playlistForm.value = songPlaylists.value;
-      editInfo(userID)
       selectCreatorDetail(resp.data.data.create_By)
-      ifCollectPlaylist(songPlaylists.value.playlist_ID, userID)
+      ifCollectPlaylist(songPlaylists.value.playlist_ID)
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
   })
 }
 
+/*查询歌单的标签列表*/
+function selectPlaylistTags(playlist_ID) {
+  aSelectPlaylistTags(playlist_ID).then(resp => {
+    if (resp.data.code === 200) {
+      PLTags.value = resp.data.data
+    } else {
+      console.log(resp.data.Msg)
+    }
+  })
+}
+
 /*创建者详情查询*/
 function selectCreatorDetail(create_By) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/user/DetailByID?user_ID=' + create_By,
-  }).then(resp => {
+  aSelectUserInfoByID(create_By).then(resp => {
     if (resp.data.code === 200) {
-      creator.value = resp.data.data.user_Name
-      creator_Avatar.value = resp.data.data.user_Avatar
+      creator.value.ID = resp.data.data.user_ID
+      creator.value.name = resp.data.data.user_Name
+      creator.value.avatar = resp.data.data.user_Avatar
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
     }
   })
 }
 
-function editInfo(user_ID) {
-  showEdit.value = user_ID === songPlaylists.value.create_By;
-  collectBT.value = user_ID !== songPlaylists.value.create_By;
+/*查询所有歌单标签*/
+function getAllPLTag() {
+  aGetAllPLTag().then(resp => {
+    if (resp.data.code === 200) {
+      PLTagList.value = resp.data.data;
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  })
 }
 
+function editInfo(playlist_ID) {
+  aIfMyPlaylist(playlist_ID).then(resp => {
+    if (resp.data.code === 200) {
+      showEdit.value = resp.data.data;
+      collectBT.value = !resp.data.data;
+    }
+  }).catch(resp => {
+    showEdit.value = false;
+    collectBT.value = true;
+  })
+}
 
 /*查询歌单是否收藏*/
-function ifCollectPlaylist(playlist_ID, user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/ifCollectPlaylist?playlist_ID=' + playlist_ID + "&user_ID=" + user_ID,
-  }).then(resp => {
+function ifCollectPlaylist(playlist_ID) {
+  aIfCollectPlaylist(playlist_ID).then(resp => {
     if (resp.data.code === 302) {
+      ifCollect.value = true;
       colletBUTX.value = "已收藏"
-      disabled.value = true;
     } else if (resp.data.code === 200) {
-      disabled.value = false;
+      ifCollect.value = false;
     }
+  }).catch(resp => {
+    console.error(resp)
   })
 }
 
 function /*收藏歌单*/
 collectPlaylist(row) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/collectPlaylist?playlist_ID=' + row + "&user_ID=" + userID,
-  }).then(resp => {
+  aCollectPlaylist(row).then(resp => {
     if (resp.data.code === 200) {
       ElMessage.success(resp.data.msg)
+      ifCollect.value = true;
       colletBUTX.value = "已收藏"
-      disabled.value = true;
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
     }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
   })
 }
 
@@ -137,10 +196,7 @@ checkPlaylistName(row) {
   if (row == null) {
     ElMessage.error("名称不能为空！")
   }
-  axios({
-    method: 'GET',
-    url: 'http://localhost/songPlaylist/checkPlaylistName?playlist_Name=' + row,
-  }).then(resp => {
+  aCheckPlaylistName(row).then(resp => {
     if (resp.data.code === 302) {
       ElMessage.error(resp.data.msg)
       playlistForm.value.playlist_Name = ''
@@ -151,20 +207,22 @@ checkPlaylistName(row) {
 
 /*修改歌单资料*/
 function changePlaylistInfo() {
-  playlistForm.value.playlist_Cover = new_playlist_Cover.value;
   if (playlistForm.value.playlist_Name == null) {
     ElMessage.error('重申一遍！名称不能为空！')
     return;
   }
-  axios({
-    method: 'post',
-    url: 'http://localhost/songPlaylist/changePlaylistInfo',
-    data: playlistForm.value,
-  }).then(resp => {
-    if (resp.data.code === 200) {
+  aChangePlaylistInfo(playlistForm.value).then(resp => {
+    if (resp.status === 401) {
+      ElNotification({
+        title: '请先登录!',
+        type: 'error'
+      })
+    } else if (resp.data.code === 200) {
       dialogVisible.value = false
       ElMessage.success(resp.data.msg)
-      selectDetail(songPlaylists.value.playlist_ID)
+      songPlaylists.value = playlistForm.value
+      selectPlaylistTags(songPlaylists.value.playlist_ID)
+      //selectDetail(songPlaylists.value.playlist_ID)
     } else if (resp.data.code === 500) {
       dialogVisible.value = false
       ElMessage.error(resp.data.msg)
@@ -181,7 +239,10 @@ beforeUpload(file) {
     const isLt5M = file.size / 1024 / 1024 < 20; //这里做文件大小限制
     //如果大于50M
     if (!isLt5M) {
-      ElMessage('上传文件大小不能超过 20MB!');
+      ElMessage({
+        message: "上传文件大小不能超过 20MB!",
+        type: 'error',
+      })
       return false;
     }
     //如果文件类型不在允许上传的范围内
@@ -202,13 +263,9 @@ uploadCover(item) {
   //上传文件的需要formdata类型;所以要转
   let FormDatas = new FormData()
   FormDatas.append('file', item.file);
-  axios({
-    method: 'post',
-    url: 'http://localhost/songPlaylist/uploadCover',
-    headers: ctx.headers,
-    data: FormDatas
-  }).then(resp => {
+  aUploadPlaylistCover(FormDatas).then(resp => {
     if (resp.data.code === 200) {
+      playlistForm.value.playlist_Cover = resp.data.data
       ElMessage.success("封面上传成功！")
     } else {
       ElMessage({
@@ -217,47 +274,91 @@ uploadCover(item) {
       });
     }
   })
-
 }
+
+//取消收藏歌单
+function delColPlaylist(row) {
+  aDeletePlaylist(row).then(resp => {
+    if (resp.status === 401) {
+      ElNotification({
+        title: '请先登录!',
+        type: 'error'
+      })
+    } else if (resp.data.code === 200) {
+      ifCollect.value = false;
+      colletBUTX.value = "收藏"
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  })
+}
+
+//todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
+watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
+  let tags = toRaw(newValue)
+  console.log("new" + newValue);
+  console.log("raw" + tags);
+});
+
 </script>
 
 <template>
   <div class="first_mod">
-
     <img :src="songPlaylists.playlist_Cover" class="cover_mod">
-
     <div class="option_mod">
       <div class="basicInfo_mod">
-        <label class="playListName_mod">{{ songPlaylists.playlist_Name }}</label>
+        <span class="playListName_mod">{{ songPlaylists.playlist_Name }}</span>
         <img v-show="showEdit" src="/src/photos/logo/editGray.png" class="editInfo_mod"
              @click="dialogVisible=true">
       </div>
-      <div class="userInfo_mod">
-        <!--todo 歌单创建者的信息(附带跳转)-->
-        <img :src="creator_Avatar" @click="toUserInfo(creator)">
-        <label class="userName_mod" @click="toUserInfo(creator)">
-          {{ creator }}
-        </label>
-        <label class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</label>
+      <div class="plIntroduction_mod"
+           v-if="![null,''].includes(songPlaylists.playlist_Introduction)">
+        <el-tooltip
+            class="box-item"
+            :content="songPlaylists.playlist_Introduction"
+            placement="bottom"
+            effect="light"
+        >
+          <span>{{ songPlaylists.playlist_Introduction }}</span>
+        </el-tooltip>
       </div>
+      <div class="userInfo_mod">
+        <img :src="creator.avatar" @click="toUserInfo(creator.ID)">
+        <span class="userName_mod" @click="toUserInfo(creator.ID)">
+          {{ creator.name }}
+        </span>
+        <div class="playlistTag_mod" v-if="PLTags.length>0">
+          <span>标签：</span>
+          <label class="tag_mod" v-for="item in PLTags" @click="toPLbyTag(item.tag_id)">
+            {{ item.tag_name }}
+            <span v-if="PLTags.length>1"> /</span></label>
+        </div>
+        <span class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</span>
+      </div>
+
       <!--todo 播放和下载功能待实现-->
       <div class="playAndLoad_mod">
         <el-button type="warning">
           <img src="/src/photos/logo/playWhite.png">
-          <label>播放全部</label>
+          <span>播放全部</span>
         </el-button>
         <el-button type="info">
           <img src="/src/photos/logo/downLoadWhite.png">
-          <label>下载</label>
+          <span>下载</span>
         </el-button>
-      </div>
-      <!-- 收藏歌单功能-->
-      <div class="collect_mod" v-if="collectBT">
-        <el-button type="info" :disabled="disabled"
-                   @click="collectPlaylist(songPlaylists.playlist_ID)">
-          <img src="/src/photos/logo/collect.png">
-          {{ colletBUTX }}
-        </el-button>
+        <!-- 收藏歌单功能-->
+        <div class="collect_mod" v-if="collectBT">
+          <el-button type="info" v-if="!ifCollect"
+                     @click="collectPlaylist(songPlaylists.playlist_ID)">
+            <img src="/src/photos/logo/collect.png">
+            {{ colletBUTX }}
+          </el-button>
+          <el-button type="warning" v-if="ifCollect"
+                     @click="delColPlaylist(songPlaylists.playlist_ID)">
+            <img src="/src/photos/logo/collect.png">
+            {{ colletBUTX }}
+          </el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -266,7 +367,7 @@ uploadCover(item) {
   <!--编辑歌单资料-->
   <div class="editUserInfo" id="edituserinfo">
     <el-dialog
-        title="编辑个人信息"
+        title="编辑歌单信息"
         v-model="dialogVisible"
         width="50%"
     >
@@ -277,14 +378,28 @@ uploadCover(item) {
                       @blur="checkPlaylistName(playlistForm.playlist_Name)"></el-input>
           </el-form-item>
           <el-form-item label="简介：" id="eidtplaylist_introduction">
-            <el-input size="large" type="textarea" v-model="playlistForm.playlist_introduction"
-                      placeholder="200"></el-input>
+            <el-input size="large"
+                      type="textarea"
+                      v-model="playlistForm.playlist_Introduction"
+                      placeholder="200"
+                      maxlength="200"
+                      show-word-limit></el-input>
           </el-form-item>
-          <!--todo 标签模块暂时不需完善-->
+          <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
           <el-form-item label="标签">
-            <el-select size="large" v-model="playlistForm.playlist_label" placeholder="选择标签">
-              <el-option label="流行" value="shanghai"></el-option>
-              <el-option label="摇滚" value="beijing"></el-option>
+            <el-select
+                v-model="playlistForm.playlist_Tag"
+                multiple
+                size="large"
+                placeholder="选择标签"
+            >
+              <el-option
+                  v-for="item in PLTagList"
+                  :key="item.tag_id"
+                  :label="item.tag_name"
+                  :value="item.tag_id"
+                  :disabled="tagFlag"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -330,23 +445,22 @@ uploadCover(item) {
 
 /*选项模块*/
 .option_mod {
-
-  height: 250px;
-
+  min-width: 300px;
+  height: 224px;
+  padding-top: 23px;
   position: absolute;
   top: 79px;
   left: 430px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /*歌单基础信息*/
 .basicInfo_mod {
   width: 300px;
   height: 40px;
-
   display: flex;
-  position: relative;
-  top: 30px;
-  justify-content: space-evenly;
   align-items: center;
 }
 
@@ -359,22 +473,43 @@ uploadCover(item) {
 
 /*编辑选项*/
 .editInfo_mod {
+  margin-left: 20px;
   width: 30px;
   height: 30px;
   cursor: pointer;
 }
 
+/*简介*/
+.plIntroduction_mod {
+  font-family: STXihei, serif;
+  color: #ffffff;
+  font-size: 15px;
+  white-space: nowrap; /*强制单行显示*/
+  text-overflow: ellipsis; /*超出部分省略号表示*/
+  overflow: hidden; /*超出部分隐藏*/
+  width: 1000px; /*设置显示的最大宽度*/
+  display: inline-block;
+}
+
+/*自定义文字弹出背景*/
+.plIntroduction_mod .el-popper.is-customized {
+  /* Set padding to ensure the height is 32px */
+  padding: 6px 12px;
+  background: linear-gradient(90deg, rgb(159, 229, 151), rgb(204, 229, 129));
+}
+
+.plIntroduction_mod .el-popper.is-customized .el-popper__arrow::before {
+  background: linear-gradient(45deg, #b2e68d, #bce689);
+  right: 0;
+}
+
 
 /*用户信息模块*/
 .userInfo_mod {
-  width: 206px;
+  min-width: 165px;
   height: 30px;
-  position: relative;
-  top: 40px;
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  left: 15px;
 }
 
 .userInfo_mod img {
@@ -382,10 +517,9 @@ uploadCover(item) {
   height: 30px;
   border-radius: 50%;
   cursor: pointer;
-
 }
 
-.userInfo_mod label {
+.userInfo_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
   color: #ffffff;
@@ -393,21 +527,39 @@ uploadCover(item) {
 
 .userName_mod {
   cursor: pointer;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.playlistTag_mod {
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-right: 15px;
+}
+
+.tag_mod {
+  font-family: STXihei, serif;
+  font-size: 12px;
+  color: #1b80e4;
+  cursor: pointer;
+}
+
+.tag_mod:hover {
+  color: #5d98da;
 }
 
 /*播放和下载按钮*/
 .playAndLoad_mod {
   width: 233px;
   height: 50px;
-  position: absolute;
-  bottom: 24px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-
 }
 
-.playAndLoad_mod label {
+.playAndLoad_mod span {
   font-family: STXihei, serif;
   color: white;
   font-weight: 600;
@@ -440,7 +592,6 @@ uploadCover(item) {
 
 /*下载按钮*/
 .playAndLoad_mod .el-button--info {
-
   color: #FFF;
   backdrop-filter: blur(8px);
   background: #FFFFFF33;
@@ -449,9 +600,7 @@ uploadCover(item) {
 /*收藏按钮*/
 .collect_mod {
   width: 90px;
-  position: relative;
-  top: 114px;
-  left: 241px;
+  margin-left: 10px;
 }
 
 .collect_mod .el-button > span {

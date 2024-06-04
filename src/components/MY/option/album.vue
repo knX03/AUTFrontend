@@ -1,13 +1,10 @@
 <script setup>
 import {onMounted, ref} from "vue";
-import bus from "@/eventbus.js";
-import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
 import router from "@/router/index.js";
-import useUserStore from '@/store/userStore.js'
+import {aDeleteAlbum, aSelectLikeAlbum} from "@/api/api.js";
 
-const userStore = useUserStore()
-const userID = userStore.user_ID;
+
 let albumList = ref([{
   album_ID: '',
   album_Name: '',
@@ -33,15 +30,12 @@ const toSinger = (singer_ID) => {
 }
 
 onMounted(() => {
-  selectLikeAlbum(userID)
+  selectLikeAlbum()
 })
 
 /*查询用户所收藏的专辑*/
-function selectLikeAlbum(user_ID) {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/likeAlbum?user_ID=' + user_ID,
-  }).then(resp => {
+function selectLikeAlbum() {
+  aSelectLikeAlbum().then(resp => {
     if (resp.data.code === 200) {
       albumList.value = resp.data.data
       if (albumList.value.length > 0) {
@@ -59,13 +53,10 @@ function deleteAlbum(row) {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(_ => {
-    axios({
-      method: 'get',
-      url: 'http://localhost/album/deleteLikeAlbum?album_ID=' + row.album_ID + "&user_ID=" + userID,
-    }).then(resp => {
+    aDeleteAlbum(row.album_ID).then(resp => {
       if (resp.data.code === 200) {
         ElMessage.success('删除成功！')
-        selectLikeAlbum(userID)
+        selectLikeAlbum()
       } else if (resp.data.code === 500) {
         console.log(resp.data.msg)
       }

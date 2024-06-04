@@ -36,7 +36,6 @@ setInterval(() => {
 watch(value0, (newValue, oldValue) => {
   console.log('00')
   console.log(newValue, oldValue)
-
 })
 // setInterval(() => {
 //     number.value = Math.random()

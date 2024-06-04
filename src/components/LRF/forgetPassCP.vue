@@ -3,6 +3,7 @@ import {getCurrentInstance, ref} from "vue";
 import axios from "axios";
 import {ElMessage, ElNotification} from "element-plus";
 import router from "@/router/index.js";
+import {aGenerateCode, aUserForget} from "@/api/api.js";
 
 /* (跨域请求是否提供凭据信息(cookie、HTTP认证及客户端SSL证明等))
 axios.defaults.withCredentials = true
@@ -87,6 +88,15 @@ function verifyEmail() {
 
 /*发送验证码*/
 function sendCode() {
+  if (forgetForm.value.user_Email.length === 0) {
+    ElNotification({
+      title: '提示信息',
+      message: "邮箱为空，请先输入邮箱！",
+      type: 'error',
+      duration: 2000
+    })
+    return;
+  }
   buttonSwitch.value = true
   ElMessage('正在发送验证码，请前往填写的邮箱处查看！')
   let codeBT_mod = document.querySelector(".codeBT_mod"); //获取验证码按钮
@@ -100,15 +110,11 @@ function sendCode() {
       sendCodeBT.value = false;
       codeBT_mod.innerHTML = '获取验证码';
     } else {
-      codeBT_mod.innerHTML = `${time}秒后重新获取`;
+      codeBT_mod.innerHTML = `${time}秒后重发`;
       time--;
     }
   }, 1000);
-  axios({
-    method: 'post',
-    url: 'http://localhost/user/generateCode',
-    data: forgetForm.value,
-  }).then(resp => {
+  aGenerateCode(forgetForm.value).then(resp => {
     if (resp.data.code === 200) {
       buttonSwitch.value = false
     } else if (resp.data.code === 400) {
@@ -123,17 +129,12 @@ function sendCode() {
   })
 }
 
-/*todo 验证码无法校验  修改密码*/
 function submitUser() {
   /*跳转等待时间,单位毫秒*/
   const TIME_COUNT = 2000;
   active.value = 0
   loading.value = true;
-  axios({
-    method: 'POST',
-    url: 'http://localhost/user/userForget',
-    data: forgetForm.value
-  }).then(resp => {
+  aUserForget(forgetForm.value).then(resp => {
     if (resp.data.code === 200) {
       ElNotification({
         title: '提示信息',

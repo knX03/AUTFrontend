@@ -3,6 +3,7 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
+import {aTenRandomAlbum} from "@/api/api.js";
 
 
 let albumList = ref([
@@ -28,10 +29,7 @@ onMounted(() => {
 
 /*展示随机九个专辑*/
 function selectAlbum() {
-  axios({
-    method: 'GET',
-    url: 'http://localhost/album/selectAlbumNine'
-  }).then(resp => {
+  aTenRandomAlbum().then(resp => {
     if (resp.data.code === 200) {
       albumList.value = resp.data.data
     } else if (resp.data.code === 500) {
