@@ -2,7 +2,6 @@ import {defineStore} from 'pinia';
 
 const useUserStore = defineStore("userInfo", {
     state: () => ({
-        user_ID: '',
         user_Email: null,
         user_Name: "",
     }),

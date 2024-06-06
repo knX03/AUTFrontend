@@ -145,14 +145,6 @@ export const aGetUserFans = data => {
     })
 }
 
-//用户关注粉丝
-export const aUserFollowFan = (fanID) => {
-    return Service({
-        url: '/user/userFollowFan?fan_id=' + fanID,
-        method: 'GET',
-    })
-}
-
 //用户取消关注粉丝
 export const aUserUnfollowFan = (fanID) => {
     return Service({
@@ -187,6 +179,13 @@ export const aFollowUser = (ID) => {
     })
 }
 
+
+export const aIfMy = (ID) => {
+    return Service({
+        url: '/user/ifMy?ID=' + ID,
+        method: 'GET',
+    })
+}
 
 /*songPlaylist---------------------------------------------*/
 
@@ -241,7 +240,7 @@ export const aChangeDailyList = data => {
 /*查询用户所创建的歌单*/
 export const aSelectCreateDetail = data => {
     return Service({
-        url: '/songPlaylist/createPlaylist',
+        url: '/songPlaylist/createPlaylist?user_ID=' + data,
         method: 'GET',
     })
 }
@@ -280,7 +279,7 @@ export const aCollectSongToPlaylist = (playlist_ID, song_ID) => {
 /*用户收藏的歌单*/
 export const aSelectLikePlaylist = data => {
     return Service({
-        url: '/songPlaylist/likePlaylist',
+        url: '/songPlaylist/likePlaylist?user_ID=' + data,
         method: 'GET',
     })
 }
@@ -508,6 +507,15 @@ export const aUploadPlaylistCover = data => {
         data
     })
 }
+export const aUploadSong = data => {
+    console.log(data)
+    return Service({
+        url: '/file/uploadSong',
+        method: 'POST',
+        data
+    })
+}
+
 
 /*message---------------------------------------------------------*/
 export const aGetUserMessages = data => {

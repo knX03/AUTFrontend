@@ -4,7 +4,7 @@ import bus from "@/eventbus.js";
 import axios from "axios";
 import {useRoute} from "vue-router";
 import useUserStore from '@/store/userStore.js'
-import {aDelMess, aGetUserMessages, aLogOff, aSelectUserInfoByID, aUserDetail} from "@/api/api.js";
+import {aDelMess, aGetUserMessages, aIfMy, aLogOff, aSelectUserInfoByID, aUserDetail} from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {store} from "xijs";
@@ -38,9 +38,17 @@ onMounted(() => {
 })
 
 const toUserInfo = (user_ID) => {
-  router.push({
-    path: '/userDetail',
-    query: {user_ID}
+  aIfMy(user_ID).then(resp => {
+    if (resp.data.data) {
+      router.push({
+        path: '/myInfo',
+      })
+    } else {
+      router.push({
+        path: '/userDetail',
+        query: {user_ID}
+      })
+    }
   })
 }
 

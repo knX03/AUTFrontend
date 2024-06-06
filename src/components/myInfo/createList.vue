@@ -18,7 +18,7 @@ const userStore = useUserStore()
 const {ctx} = getCurrentInstance()
 let dialogVisibleP = ref(false)
 let fileType = ref(["png", "jpg", "jpeg"])
-
+const user_ID = ''
 let creatList = ref([{
   playlist_ID: '',
   playlist_Name: '',
@@ -52,13 +52,13 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  selectCreateDetail()
+  selectCreateDetail(user_ID)
   getAllPLTag()
 })
 
 /*用户创建的歌单详情*/
-function selectCreateDetail() {
-  aSelectCreateDetail().then(resp => {
+function selectCreateDetail(user_ID) {
+  aSelectCreateDetail(user_ID).then(resp => {
     if (resp.data.code === 200) {
       creatList.value = resp.data.data
     } else if (resp.data.code === 500) {

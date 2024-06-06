@@ -5,14 +5,12 @@ import {ElMessage, ElNotification} from "element-plus";
 import {
   aCollectPlaylist, aDeletePlaylist,
   aDetailByID,
-  aIfCollectPlaylist, aIfMyPlaylist,
+  aIfCollectPlaylist, aIfMy, aIfMyPlaylist,
   aSelectPlaylistTags,
   aSelectUserInfoByID
 } from "@/api/api.js";
 import router from "@/router/index.js";
-import useUserStore from "@/store/userStore.js";
 
-const userStore = useUserStore()
 const route = useRoute()
 let collectBT = ref(true)
 let ifCollect = ref(false)
@@ -64,16 +62,18 @@ const PLTagList = ref([
 let tagFlag = ref(false)
 
 const toUserInfo = (user_ID) => {
-  if (user_ID === userStore.user_ID) {
-    router.push({
-      path: '/myInfo',
-    })
-  } else {
-    router.push({
-      path: '/userDetail',
-      query: {user_ID}
-    })
-  }
+  aIfMy(user_ID).then(resp => {
+    if (resp.data.data) {
+      router.push({
+        path: '/myInfo',
+      })
+    } else {
+      router.push({
+        path: '/userDetail',
+        query: {user_ID}
+      })
+    }
+  })
 }
 
 const toPLbyTag = (tag_ID) => {

@@ -1,6 +1,5 @@
 <script setup>
-import {getCurrentInstance, markRaw, onMounted, reactive, ref, watch} from "vue";
-import axios from "axios";
+import {markRaw, onMounted, reactive, ref, watch} from "vue";
 import {ElMessage} from "element-plus";
 import bus from "@/eventbus.js";
 import useUserStore from '@/store/userStore.js'
@@ -9,7 +8,6 @@ import {
   aChangeUserInfo,
   aCheckName,
   aGetSumFollowAndFan,
-  aSelectUserInfoByID,
   aUploadUserAvatar,
   aUserDetail
 } from "@/api/api.js";
@@ -20,8 +18,6 @@ import fansForm from "@/components/myInfo/otherForm/fansForm.vue";
 const userStore = useUserStore()
 const flagStore = useFlagStore();
 
-const {ctx} = getCurrentInstance()
-const userID = userStore.user_ID;
 let dialogVisible = ref(false)
 let fileList = ref([])
 let fileType = ref(["png", "jpg", "jpeg"])
@@ -29,7 +25,7 @@ let fileSize = ref(50)
 let fileName = ref('')
 let new_user_avatar = ref('')
 let sex_logo = ref("")
-
+const userID = ""
 let user = ref({
   user_Name: '',
   user_Sex: '',
@@ -254,6 +250,10 @@ function changeSexLogo() {
         <div class="InfoLogo">
           <img id="sexLogo" :src=sex_logo alt="">
         </div>
+        <div class="followAndFans">
+          <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
+          <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
+        </div>
         <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
           <el-tooltip
               class="box-item"
@@ -263,10 +263,6 @@ function changeSexLogo() {
           >
             <span>{{ user.user_Introduction }}</span>
           </el-tooltip>
-        </div>
-        <div class="followAndFans">
-          <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
-          <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
         </div>
       </div>
     </div>
@@ -435,6 +431,20 @@ function changeSexLogo() {
   transition: 0.5s all ease-in-out;
 }
 
+.followAndFans {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.followAndFans span {
+  font-family: STXihei, serif;
+  color: rgb(114, 69, 35);
+  cursor: pointer;
+}
+
 /*简介*/
 .userIntroduction_mod {
   font-family: STXihei, serif;
@@ -448,18 +458,6 @@ function changeSexLogo() {
   margin-bottom: 15px;
 }
 
-.followAndFans {
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.followAndFans span {
-  font-family: STXihei, serif;
-  color: rgb(114, 69, 35);
-  cursor: pointer;
-}
 
 /*性别logo动画旋转*/
 @keyframes rotation {

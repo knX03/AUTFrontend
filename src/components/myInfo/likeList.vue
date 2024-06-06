@@ -6,7 +6,7 @@ import useUserStore from '@/store/userStore.js'
 import {aSelectLikePlaylist} from "@/api/api.js";
 
 const userStore = useUserStore()
-const userID = userStore.user_ID;
+const user_ID = ''
 let likeList = ref([{
   playlist_ID: '',
   playlist_Name: '',
@@ -30,12 +30,12 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  selectLikeDetail()
+  selectLikeDetail(user_ID)
 })
 
 /*用户收藏的歌单详情*/
-function selectLikeDetail() {
-  aSelectLikePlaylist().then(resp => {
+function selectLikeDetail(user_ID) {
+  aSelectLikePlaylist(user_ID).then(resp => {
     if (resp.data.code === 200) {
       likeList.value = resp.data.data
     } else if (resp.data.code === 500) {

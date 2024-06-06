@@ -9,10 +9,9 @@ import {
   aCheckPlaylistName,
   aCollectPlaylist, aDeletePlaylist,
   aDetailByID, aGetAllPLTag,
-  aIfCollectPlaylist, aIfMyPlaylist, aSelectPlaylistTags,
+  aIfCollectPlaylist, aIfMy, aIfMyPlaylist, aSelectPlaylistTags,
   aSelectUserInfoByID, aUploadPlaylistCover
 } from "@/api/api.js";
-import useUserStore from "@/store/userStore.js";
 
 
 const route = useRoute()
@@ -24,7 +23,6 @@ let fileType = ref(["png", "jpg", "jpeg"])
 let new_playlist_Cover = ref("")
 let colletBUTX = ref("收藏")
 
-const userStore = useUserStore()
 let creator = ref({
   ID: '',
   name: '',
@@ -70,16 +68,18 @@ const PLTagList = ref([
 let tagFlag = ref(false)
 
 const toUserInfo = (user_ID) => {
-  if (user_ID === userStore.user_ID) {
-    router.push({
-      path: '/myInfo',
-    })
-  } else {
-    router.push({
-      path: '/userDetail',
-      query: {user_ID}
-    })
-  }
+  aIfMy(user_ID).then(resp => {
+    if (resp.data.data) {
+      router.push({
+        path: '/myInfo',
+      })
+    } else {
+      router.push({
+        path: '/userDetail',
+        query: {user_ID}
+      })
+    }
+  })
 }
 
 const toPLbyTag = (tag_ID) => {

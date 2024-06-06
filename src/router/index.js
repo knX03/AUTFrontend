@@ -16,7 +16,8 @@ import signIn from '../views/LRF/signIn.vue'
 import signUp from '../views/LRF/signUp.vue'
 import forgetPass from '../views/LRF/fogerPass.vue'
 import userDetail from '../views/SecondPage/userDetail.vue'
-import artists from '../views/artists.vue'
+import artists from '../views/Artists/artists.vue'
+import artHome from '../views/Artists/artDetail/artHome.vue'
 import {ElNotification} from "element-plus";
 import {store} from "xijs";
 
@@ -103,6 +104,10 @@ const router = createRouter({
             path: '/artists',
             name: 'artists',
             component: artists
+        }, {
+            path: '/artHome',
+            name: 'artHome',
+            component: artHome
         }
     ]
 })
