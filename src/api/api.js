@@ -402,6 +402,15 @@ export const aGetSingerAlbums = data => {
         method: 'GET',
     })
 }
+
+//歌手用户查询自己创建的专辑列表
+export const aGetUserAlbums = data => {
+    return Service({
+        url: '/album/getUserAlbums',
+        method: 'GET',
+    })
+}
+
 /*Song--------------------------------------------------------------*/
 
 /*查询喜欢的歌曲*/
