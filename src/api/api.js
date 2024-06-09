@@ -482,6 +482,22 @@ export const aSelectSingerDetail = data => {
         method: 'GET',
     })
 }
+
+
+export const aGetSingerByUser = data => {
+    return Service({
+        url: '/singer/getSingerByUser',
+        method: 'GET',
+    })
+}
+
+
+export const aSinLogOff = data => {
+    return Service({
+        url: '/singer/sinLogOff?singer_token=' + data,
+        method: 'GET',
+    })
+}
 /*comment--------------------------------------------------------------*/
 
 export const aGetComments = (ID, type) => {
@@ -524,7 +540,13 @@ export const aUploadSong = data => {
         data
     })
 }
-
+export const aUploadAlCover = data => {
+    return Service({
+        url: '/file/uploadAlCover',
+        method: 'POST',
+        data
+    })
+}
 
 /*message---------------------------------------------------------*/
 export const aGetUserMessages = data => {

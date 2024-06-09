@@ -66,7 +66,7 @@ function changeDailyList() {
     <span class="title">歌单推荐</span>
     <div class="songList_mod">
       <div class="dailyRe">
-        <router-link to="#" @click="toDaily(10000)">
+        <router-link to="#" @click="toPlaylist(10000)">
           <img :src=dailyRe.url>
           <span>{{ dailyRe.today }}</span>
         </router-link>

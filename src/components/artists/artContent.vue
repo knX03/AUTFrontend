@@ -4,6 +4,7 @@ import homeMenu from "@/components/artists/menuDetail/homeMenu.vue";
 import worksManage from "@/components/artists/menuDetail/worksManage.vue";
 import dataMenu from "@/components/artists/menuDetail/dataMenu.vue";
 import publishWorks from "@/components/artists/menuDetail/publishWorks.vue";
+import {store} from "xijs";
 
 const menuRouteList = ref([
   {id: 4, name: '发布作品', component: markRaw(publishWorks)},
@@ -11,12 +12,11 @@ const menuRouteList = ref([
   {id: 2, name: '作品管理', component: markRaw(worksManage)},
   {id: 3, name: '数据中心', component: markRaw(dataMenu)},
 ])
+
+let singerToken = store.get('access_singer_token').value
+console.log(singerToken)
 // 默认显示的组件页面
-const selectedComponent = ref(publishWorks);
-const handleClose = () => {
-  console.log("close")
-  selectedComponent.value = publishWorks
-};
+const selectedComponent = ref(homeMenu);
 
 function selectChange(index) {
   selectedComponent.value = menuRouteList.value[index].component
@@ -63,7 +63,7 @@ function publishing() {
     <div class="menuDetail_mod">
       <el-scrollbar>
         <KeepAlive>
-          <component :is="selectedComponent" :close="handleClose"></component>
+          <component :is="selectedComponent"></component>
         </KeepAlive>
       </el-scrollbar>
     </div>

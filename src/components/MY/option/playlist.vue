@@ -13,6 +13,7 @@ let likeList = ref([{
   playlist_Name: '',
   playlist_Cover: '',
 }])
+const user_ID = ''
 let LikePlaylistExist = ref(false)
 const toPlaylist = (playlist_ID) => {
   router.push({
@@ -22,12 +23,12 @@ const toPlaylist = (playlist_ID) => {
 }
 
 onMounted(() => {
-  selectLikePlaylist()
+  selectLikePlaylist(user_ID)
 })
 
 /*查询用户所收藏的歌单*/
-function selectLikePlaylist() {
-  aSelectLikePlaylist().then(resp => {
+function selectLikePlaylist(user_ID) {
+  aSelectLikePlaylist(user_ID).then(resp => {
     if (resp.data.code === 200) {
       likeList.value = resp.data.data
       if (likeList.value.length > 0) {

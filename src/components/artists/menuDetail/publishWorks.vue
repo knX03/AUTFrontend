@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {ElMessage, ElNotification} from "element-plus";
-import {aGetUserAlbums, aUploadSong} from "@/api/api.js";
+import {aGetUserAlbums, aUploadAlCover, aUploadSong} from "@/api/api.js";
 import publishWorks from "@/components/artists/menuDetail/publishWorks.vue";
 
 let active = ref(0)
@@ -9,7 +9,7 @@ let fileType = ref(["mp3", "wav", "m4a"])
 let fileCoType = ref(["png", "jpg", "jpeg"])
 let fileList = ref([])
 let songFiles = ref([])
-let ifAlbumExist = ref(true)
+let ifAlbumExist = ref(false)
 let creatAlbum = ref(false)
 //回显封面
 let tempAlbumCover = ref("")
@@ -37,9 +37,6 @@ let agreeComitLet = ref(false)
 let ifNext = ref(false)
 //下一步
 const next = () => {
-  console.log(fileList.value.length)
-  console.log(album.value.album_Name.length)
-  console.log(ifSelect.value)
   if (fileList.value.length > 0 && album.value.album_Name.length > 0) {
     if (active.value++ >= 2) active.value = 2
   } else {
@@ -79,7 +76,6 @@ beforeUpload(file) {
       fileList.value.push(file)
       const fName = file.name.replace(/(.*\/)*([^.]+).*/ig, "$2");
       songFiles.value.push(fName)
-      console.log(fileList.value)
       return true;
     } else {
       ElMessage.error("上传文件格式不正确!");
@@ -182,9 +178,23 @@ function uploadCover(item) {
 //选择专辑
 function selectAlbum(item) {
   album.value = item
-  console.log(album.value)
 }
 
+function uploadAlCover() {
+  if (album.value.album_ID.length === 0) {
+    let aFormData = new FormData()
+    aFormData.append("alCover", albumCover.value)
+    aUploadAlCover(aFormData).then(resp => {
+      if (resp.data.code === 200) {
+        album.value.album_Cover = resp.data.data;
+        success()
+      }
+    })
+  } else {
+    success()
+  }
+
+}
 
 function success() {
   if (!agreeComitLet.value) {
@@ -204,7 +214,6 @@ function success() {
   songFiles.value.forEach((val, index) => {
     formData.append("songName", val);
   })
-
   const json = JSON.stringify(album.value);
   const blob = new Blob([json], {
     type: 'application/json'
@@ -469,11 +478,11 @@ function success() {
   </div>
 
   <div class="option_next_cancel">
-    <el-button type="info" round plain size="large" v-if="active===0" @click="close">取消</el-button>
+    <el-button type="info" round plain size="large" v-if="active===0">取消</el-button>
     <el-button type="info" round plain size="large" v-if="active===1" @click="last">上一步</el-button>
     <el-button type="warning" round plain size="large" v-if="active <1" :disabled="ifNext" @click="next">下一步
     </el-button>
-    <el-button type="warning" round plain size="large" v-if="active===1" @click="success">
+    <el-button type="warning" round plain size="large" v-if="active===1" @click="uploadAlCover">
       上传
     </el-button>
   </div>

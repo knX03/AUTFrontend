@@ -4,7 +4,14 @@ import bus from "@/eventbus.js";
 import axios from "axios";
 import {useRoute} from "vue-router";
 import useUserStore from '@/store/userStore.js'
-import {aDelMess, aGetUserMessages, aIfMy, aLogOff, aSelectUserInfoByID, aUserDetail} from "@/api/api.js";
+import {
+  aDelMess,
+  aGetSingerByUser,
+  aGetUserMessages,
+  aIfMy,
+  aLogOff, aSinLogOff,
+  aUserDetail
+} from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import {store} from "xijs";
@@ -32,7 +39,7 @@ let messageList = ref([{
 onMounted(() => {
   //store:js工具库所封装的localStorage（可实现过期时间）
   let token = store.get('access_token').value
-  console.log(token)
+  let stoken = store.get('access_singer_token').value
   selectUserDetail()
   getUserMessage()
 })
@@ -50,6 +57,29 @@ const toUserInfo = (user_ID) => {
       })
     }
   })
+}
+
+function toArtists() {
+  let singerToken = store.get('access_singer_token').value
+  if (singerToken === null) {
+    aGetSingerByUser().then(resp => {
+      if (resp.data.code === 200) {
+        console.log(resp.data.data)
+        store.set("access_singer_token", resp.data.data, Date.now() + 1000 * 60 * 60 * 24 * 7)
+        router.push({
+          path: '/artHome',
+        })
+      } else {
+        router.push({
+          path: '/artists',
+        })
+      }
+    })
+  } else {
+    router.push({
+      path: '/artHome',
+    })
+  }
 }
 
 function checkMessage(param) {
@@ -93,6 +123,15 @@ function getUserMessage() {
 
 function logOff() {
   let token = store.get('access_token').value
+
+  let singerToken = store.get('access_singer_token').value
+  if (singerToken != null) {
+    aSinLogOff(singerToken).then(resp => {
+      if (resp.data.code === 200) {
+        store.remove("access_singer_token")
+      }
+    })
+  }
   if (token != null) {
     aLogOff(token).then(resp => {
       if (resp.data.code === 200) {
@@ -124,6 +163,7 @@ function logOff() {
     })
   }
 }
+
 
 //登录
 function toSignIn() {
@@ -184,10 +224,9 @@ function delMess(mess_id) {
           <input class="form-control me-2" type="search" placeholder="搜索你想听的音乐" aria-label="Search">
         </form>
         <div class="navbar-nav me-auto">
-          <!--todo 注册歌手-->
-          <router-link to="/artists" href="#" class="nav-link">
+          <a href="#" class="nav-link" @click="toArtists">
             我是歌手
-          </router-link>
+          </a>
         </div>
         <div id="split" class="navbar-nav">
         </div>

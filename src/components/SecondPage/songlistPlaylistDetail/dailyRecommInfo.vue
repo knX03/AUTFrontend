@@ -190,9 +190,7 @@ function delColPlaylist(row) {
 
 <template>
   <div class="first_mod">
-
     <img :src="songPlaylists.playlist_Cover" class="cover_mod">
-
     <div class="option_mod">
       <div class="basicInfo_mod">
         <span class="playListName_mod">{{ songPlaylists.playlist_Name }}</span>
@@ -213,7 +211,6 @@ function delColPlaylist(row) {
         <span class="userName_mod" @click="toUserInfo(creator.ID)">
           {{ creator.name }}
         </span>
-        <!--todo 标签模块-->
         <div class="playlistTag_mod" v-if="PLTags.length>0">
           <span>标签：</span>
           <label class="tag_mod" v-for="item in PLTags" @click="toPLbyTag(item.tag_id)">

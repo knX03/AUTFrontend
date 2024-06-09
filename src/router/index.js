@@ -103,11 +103,15 @@ const router = createRouter({
         }, {
             path: '/artists',
             name: 'artists',
-            component: artists
+            component: artists,
+            meta: {
+                requireSingerAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
+            },
         }, {
             path: '/artHome',
             name: 'artHome',
-            component: artHome
+            component: artHome,
+
         }
     ]
 })
@@ -124,6 +128,12 @@ router.beforeEach((to, from, next) => {
                 position: 'top-left',
             })
             next('/signIn') //如果token不存在，就跳到首页
+        }
+    } else if (to.meta.requireSingerAuth) {
+        if (store.get('access_singer_token').value) {
+            next('/artHome')
+        } else {
+            next()
         }
     } else {
         //token存在时候，进去登录页面就自动跳转到首页

@@ -1,6 +1,5 @@
 <script setup>
 import {getCurrentInstance, onMounted, reactive, ref, toRaw, watch} from "vue";
-
 import router from "@/router/index.js";
 import {ElMessage, ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
@@ -12,7 +11,6 @@ import {
   aIfCollectPlaylist, aIfMy, aIfMyPlaylist, aSelectPlaylistTags,
   aSelectUserInfoByID, aUploadPlaylistCover
 } from "@/api/api.js";
-
 
 const route = useRoute()
 let dialogVisible = ref(false)
@@ -279,18 +277,19 @@ uploadCover(item) {
 //取消收藏歌单
 function delColPlaylist(row) {
   aDeletePlaylist(row).then(resp => {
-    if (resp.status === 401) {
-      ElNotification({
-        title: '请先登录!',
-        type: 'error'
-      })
-    } else if (resp.data.code === 200) {
+    if (resp.data.code === 200) {
       ifCollect.value = false;
       colletBUTX.value = "收藏"
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
   })
+
 }
 
 //todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
@@ -335,7 +334,6 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
         </div>
         <span class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</span>
       </div>
-
       <!--todo 播放和下载功能待实现-->
       <div class="playAndLoad_mod">
         <el-button type="warning">
