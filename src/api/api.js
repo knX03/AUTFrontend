@@ -498,6 +498,14 @@ export const aSinLogOff = data => {
         method: 'GET',
     })
 }
+
+
+export const aGetArtists = data => {
+    return Service({
+        url: '/singer/getArtists',
+        method: 'GET',
+    })
+}
 /*comment--------------------------------------------------------------*/
 
 export const aGetComments = (ID, type) => {

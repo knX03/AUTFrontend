@@ -181,6 +181,15 @@ function selectAlbum(item) {
 }
 
 function uploadAlCover() {
+/*  if (!agreeComitLet.value) {
+    ElNotification({
+      title: '请同意授权!',
+      type: 'error',
+      duration: 1000,
+      position: 'top-left',
+    })
+    return;
+  }*/
   if (album.value.album_ID.length === 0) {
     let aFormData = new FormData()
     aFormData.append("alCover", albumCover.value)
@@ -197,15 +206,6 @@ function uploadAlCover() {
 }
 
 function success() {
-  if (!agreeComitLet.value) {
-    ElNotification({
-      title: '请同意授权!',
-      type: 'error',
-      duration: 1000,
-      position: 'top-left',
-    })
-    return;
-  }
   active.value = 2
   let formData = new FormData()
   fileList.value.forEach((val, index) => {
@@ -220,9 +220,20 @@ function success() {
   });
   formData.append('album', blob)
   aUploadSong(formData).then(resp => {
-
+    if (resp.data.code === 200) {
+      setTimeout(() => {
+        ElNotification({
+          title: '上传成功，两秒后退出!',
+          type: 'success',
+          duration: 1000,
+          position: 'top-left',
+        })
+        location.reload();
+      }, 2000)
+    }
   })
 }
+
 </script>
 
 <template>
@@ -482,7 +493,8 @@ function success() {
     <el-button type="info" round plain size="large" v-if="active===1" @click="last">上一步</el-button>
     <el-button type="warning" round plain size="large" v-if="active <1" :disabled="ifNext" @click="next">下一步
     </el-button>
-    <el-button type="warning" round plain size="large" v-if="active===1" @click="uploadAlCover">
+    <el-button type="warning" round plain size="large" v-if="active===1" @click="uploadAlCover"
+               :disabled="!agreeComitLet">
       上传
     </el-button>
   </div>

@@ -77,7 +77,7 @@ function toArtists() {
     })
   } else {
     router.push({
-      path: '/artHome',
+      path: '/artists',
     })
   }
 }

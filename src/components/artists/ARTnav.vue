@@ -7,11 +7,15 @@ let user = ref({
   user_name: '我奥斯陆冬季ask看到',
   user_avatar: '/src/photos/userAvatar/0b4168ff7e2c6ef2.jpg',
 })
-
 const toUserInfo = () => {
   /* router.push({
      path: '/myInfo',
    })*/
+}
+
+//用户详情
+function userInfo(){
+
 }
 
 function logOff() {

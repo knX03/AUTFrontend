@@ -1,11 +1,14 @@
 <script setup>
-import {markRaw, ref} from "vue";
+import {markRaw, onMounted, reactive, ref} from "vue";
 import homeMenu from "@/components/artists/menuDetail/homeMenu.vue";
 import worksManage from "@/components/artists/menuDetail/worksManage.vue";
 import dataMenu from "@/components/artists/menuDetail/dataMenu.vue";
 import publishWorks from "@/components/artists/menuDetail/publishWorks.vue";
 import {store} from "xijs";
+import {aGetArtists} from "@/api/api.js";
 
+
+let singer = ref({singer_ID: '', singer_Name: '', singer_Avatar: ''})
 const menuRouteList = ref([
   {id: 4, name: '发布作品', component: markRaw(publishWorks)},
   {id: 1, name: '首页', component: markRaw(homeMenu)},
@@ -13,10 +16,12 @@ const menuRouteList = ref([
   {id: 3, name: '数据中心', component: markRaw(dataMenu)},
 ])
 
-let singerToken = store.get('access_singer_token').value
-console.log(singerToken)
 // 默认显示的组件页面
 const selectedComponent = ref(homeMenu);
+
+onMounted(() => {
+  singerInfo()
+})
 
 function selectChange(index) {
   selectedComponent.value = menuRouteList.value[index].component
@@ -25,18 +30,26 @@ function selectChange(index) {
 function publishing() {
   selectedComponent.value = menuRouteList.value[0].component
 }
+
+//歌手详情
+function singerInfo() {
+  aGetArtists().then(resp => {
+    singer.value = resp.data.data
+    console.log(singer.value)
+  })
+}
 </script>
 
 <template>
   <div class="artContent_mod">
     <div class="artMenu_mod" id="artmenu">
       <div class="artInfo">
-        <img src="/src/photos/userAvatar/jay.png">
-        <span>喀什假大空</span>
+        <img :src=singer.singer_Avatar>
+        <span>{{ singer.singer_Name }}</span>
         <el-button type="warning" plain round @click="publishing">发布作品</el-button>
       </div>
       <el-menu
-          default-active="0"
+          default-active="1"
           class="el-menu-vertical-demo"
           @select="selectChange"
       >
@@ -63,7 +76,7 @@ function publishing() {
     <div class="menuDetail_mod">
       <el-scrollbar>
         <KeepAlive>
-          <component :is="selectedComponent"></component>
+          <component :is="selectedComponent" :singer="singer"></component>
         </KeepAlive>
       </el-scrollbar>
     </div>
