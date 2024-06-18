@@ -85,7 +85,8 @@ function singerInfo() {
 
 <style scoped>
 .artContent_mod {
-  height: 829px;
+  //height: 951px;
+  height: 834px;
   background-color: #f5f6fa;
   display: flex;
   padding-top: 20px;
@@ -124,19 +125,19 @@ function singerInfo() {
   font-weight: bold;
 }
 
-#artmenu >>> .el-menu {
+#artmenu :deep(.el-menu) {
   border-right: 0px;
   transition: all 0.5s ease-in-out;
   width: 200px;
 }
 
-#artmenu >>> .el-menu-item.is-active {
+#artmenu :deep(.el-menu-item.is-active) {
   color: #e58c43;
   background-color: #f9f9f9;
   transition: all 0.5s ease-in-out;
 }
 
-#artmenu >>> .el-menu-item:hover {
+#artmenu :deep(.el-menu-item:hover) {
   background-color: #f9f9f9;
   transition: all 0.5s ease-in-out;
 }

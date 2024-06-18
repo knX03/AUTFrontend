@@ -181,15 +181,15 @@ function selectAlbum(item) {
 }
 
 function uploadAlCover() {
-/*  if (!agreeComitLet.value) {
-    ElNotification({
-      title: '请同意授权!',
-      type: 'error',
-      duration: 1000,
-      position: 'top-left',
-    })
-    return;
-  }*/
+  /*  if (!agreeComitLet.value) {
+      ElNotification({
+        title: '请同意授权!',
+        type: 'error',
+        duration: 1000,
+        position: 'top-left',
+      })
+      return;
+    }*/
   if (album.value.album_ID.length === 0) {
     let aFormData = new FormData()
     aFormData.append("alCover", albumCover.value)
@@ -523,11 +523,11 @@ function success() {
   flex-direction: column;
 }
 
-#uploadsong >>> .el-upload-dragger:hover {
+#uploadsong :deep(.el-upload-dragger:hover) {
   border-color: #e58c43;
 }
 
-#uploadsong >>> .el-upload-dragger .el-upload__text em {
+#uploadsong :deep(.el-upload-dragger .el-upload__text em ) {
   color: #e58c43;
 }
 
@@ -677,13 +677,13 @@ function success() {
   border-radius: 12px;
 }
 
-#upaci >>> .el-upload {
+#upaci :deep(.el-upload) {
   width: 100px;
   height: 100px;
   border-radius: 12px;
 }
 
-#upaci >>> .el-upload:focus {
+#upaci :deep(.el-upload:focus) {
   border-color: #e58c43;
   color: #e58c43;
 }
@@ -702,40 +702,40 @@ function success() {
   color: #3f3f3f;
 }
 
-#cfc >>> .el-form-item__label-wrap {
+#cfc :deep(.el-form-item__label-wrap) {
   margin-right: 20px;
 }
 
-#cfc >>> .el-input__wrapper.is-focus {
+#cfc :deep(.el-input__wrapper.is-focus) {
   box-shadow: 0 0 0 1px #e58c43 inset;
 }
 
-#cfc >>> .el-select__wrapper.is-focused {
+#cfc :deep(.el-select__wrapper.is-focused) {
   box-shadow: 0 0 0 1px #e58c43 inset;
 }
 
-#cfc >>> .el-textarea__inner:focus {
+#cfc :deep(.el-textarea__inner:focus) {
   box-shadow: 0 0 0 1px #e58c43 inset;
 }
 
 /*名称输入框*/
-#cfc >>> .el-input {
+#cfc :deep(.el-input ) {
   width: 400px;
 }
 
 /*选项框*/
-#cfc >>> .el-select {
+#cfc :deep(.el-select ) {
   width: 400px;
 }
 
 /*简介输入框*/
-#cfc >>> .el-textarea__inner {
+#cfc :deep(.el-textarea__inner) {
   width: 400px;
   height: 100px;
   max-height: 150px;
 }
 
-#cfc >>> .el-textarea .el-input__count {
+#cfc :deep(.el-textarea .el-input__count ) {
   position: absolute;
   font-size: 12px;
   line-height: 14px;
@@ -756,7 +756,7 @@ function success() {
   width: 100%;
 }
 
-#alm >>> .el-scrollbar__view {
+#alm :deep() .el-scrollbar__view {
   display: flex;
   flex-wrap: wrap;
 }
@@ -786,15 +786,15 @@ function success() {
 }
 
 /*专辑选项框*/
-#al >>> .el-radio__inner:hover {
+#al :deep(.el-radio__inner:hover) {
   border-color: #e58c43;
 }
 
-#al >>> .el-radio__input.is-checked + .el-radio__label {
+#al :deep(.el-radio__input.is-checked + .el-radio__label) {
   color: #e58c43;
 }
 
-#al >>> .el-radio__input.is-checked .el-radio__inner {
+#al :deep(.el-radio__input.is-checked .el-radio__inner) {
   background-color: #e58c43;
   border-color: #e58c43;
 }
@@ -830,20 +830,20 @@ function success() {
 
 /*同意选项模块*/
 
-#aCL >>> .el-checkbox.is-bordered.is-checked {
+#aCL :deep(.el-checkbox.is-bordered.is-checked) {
   border-color: #e58c43;
 }
 
-#aCL >>> .el-checkbox__inner:hover {
+#aCL :deep(.el-checkbox__inner:hover) {
   border-color: #e58c43;
 }
 
-#aCL >>> .el-checkbox__input.is-checked .el-checkbox__inner {
+#aCL :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
   background-color: #e58c43;
   border-color: #e58c43;
 }
 
-#aCL >>> .el-checkbox__input.is-checked + .el-checkbox__label {
+#aCL :deep(.el-checkbox__input.is-checked + .el-checkbox__label) {
   color: #e58c43;
 }
 

@@ -66,7 +66,7 @@ function toArtists() {
       if (resp.data.code === 200) {
         console.log(resp.data.data)
         store.set("access_singer_token", resp.data.data, Date.now() + 1000 * 60 * 60 * 24 * 7)
-        router.push({
+        router.go({
           path: '/artHome',
         })
       } else {

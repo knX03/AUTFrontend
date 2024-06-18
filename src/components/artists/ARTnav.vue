@@ -14,7 +14,7 @@ const toUserInfo = () => {
 }
 
 //用户详情
-function userInfo(){
+function userInfo() {
 
 }
 
@@ -153,12 +153,17 @@ function signIn() {
   min-width: 150px;
 }
 
-#SA_mod >>> .el-button:focus, .el-button:hover {
+#SA_mod :deep(.el-button:focus, .el-button:hover ) {
   border-color: #e58c43;
   background-color: #e58c43;
   outline: 0;
   transition: all 0.5s ease-in-out;
 }
 
+/*下拉菜单的样式修改*/
+:deep(.el-dropdown-menu__item:not(.is-disabled):focus) {
+  background-color: #fff4ec;
+  color: #e58c43;
+}
 
 </style>

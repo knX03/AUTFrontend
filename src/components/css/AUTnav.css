@@ -45,8 +45,9 @@ a {
     margin-bottom: 10px;
 }
 
-/*todo 覆写elementPlus的样式：在外面套一层div并赋于id值，使用#id >>> .class **深度作用选择器** */
-#mess >>> .el-drawer__body {
+/*todo 覆写elementPlus的样式：在外面套一层div并赋于id值，使用#id >>> .class **深度作用选择器** ,
+   深度选择器(:deep()): 通过改变属性选择器的位置实现样式穿透  用法： .父元素class :deep(.class)  */
+#mess :deep(.el-drawer__body ) {
     padding: 0;
 }
 

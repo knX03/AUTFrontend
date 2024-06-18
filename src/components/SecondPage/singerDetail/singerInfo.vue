@@ -225,12 +225,12 @@ function unFollowSinger(ID) {
   cursor: pointer;
 }
 
-#PAL_mod >>> .el-button {
+#PAL_mod :deep(.el-button) {
   border-radius: 12px;
 }
 
 
-#PAL_mod >>> .el-button span {
+#PAL_mod :deep(.el-button span) {
   display: flex;
   align-items: center;
   justify-content: center;

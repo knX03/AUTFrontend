@@ -111,15 +111,21 @@ function selectSinger() {
 }
 
 /*选择器样式覆写*/
+/*
 #selector_mod >>> .el-tabs--card > .el-tabs__header {
+*/
+#selector_mod :deep(.el-tabs__header) {
   border: 0;
 }
 
+/*
 #selector_mod >>> .el-tabs--card > .el-tabs__header .el-tabs__nav {
+*/
+#selector_mod :deep(.el-tabs__header .el-tabs__nav) {
   border: 0;
 }
 
-#selector_mod >>> .el-tabs__item {
+#selector_mod :deep(.el-tabs__item) {
   width: 80px;
   height: 40px;
   border-radius: 34px;
@@ -129,23 +135,23 @@ function selectSinger() {
   transition: 0.5s all ease-in-out;
 }
 
-#selector_mod >>> .el-tabs__item:hover {
+#selector_mod :deep(.el-tabs__item:hover) {
   color: #e58c43;
   background-color: rgba(227, 149, 91, 0.34);
   transition: 0.5s all ease-in-out;
 }
 
-#selector_mod >>> .el-tabs__item.is-active {
+#selector_mod :deep(.el-tabs__item.is-active) {
   color: #e58c43;
   background-color: rgba(227, 149, 91, 0.34);
 }
 
 /*字母表筛选样式*/
-#alphabet_mod >>> .el-tabs {
+#alphabet_mod :deep(.el-tabs) {
   max-width: 100%;
 }
 
-#alphabet_mod >>> .el-tabs__item {
+#alphabet_mod :deep(.el-tabs__item) {
   width: 30px;
   height: 30px;
   border-radius: 0;
@@ -155,21 +161,21 @@ function selectSinger() {
   transition: 0.5s all ease-in-out;
 }
 
-#alphabet_mod >>> .el-tabs__item.is-active {
+#alphabet_mod :deep(.el-tabs__item.is-active) {
   background-color: transparent;
 }
 
-#alphabet_mod >>> .el-tabs__item:hover {
+#alphabet_mod :deep(.el-tabs__item:hover) {
   color: #e58c43;
   background-color: transparent;
   transition: 0.5s all ease-in-out;
 }
 
-#alphabet_mod >>> .el-tabs__nav-wrap.is-scrollable {
+#alphabet_mod :deep(.el-tabs__nav-wrap.is-scrollable) {
   padding: 0 30px;
 }
 
-#alphabet_mod >>> .el-tabs__nav-next {
+#alphabet_mod :deep(.el-tabs__nav-next) {
   color: #e58c43;
 }
 

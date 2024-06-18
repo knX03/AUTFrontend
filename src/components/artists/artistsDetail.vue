@@ -170,7 +170,7 @@ body {
   min-width: 150px;
 }
 
-#SA_mod >>> .el-button:focus, .el-button:hover {
+#SA_mod :deep(.el-button:focus, .el-button:hover) {
   border-color: #e58c43;
   background-color: #e58c43;
   outline: 0;

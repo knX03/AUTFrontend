@@ -97,13 +97,13 @@ function messUser(user_ID) {
 </template>
 
 <style scoped>
-#followFM >>> .el-dialog {
+#followFM :deep(.el-dialog ) {
   border-radius: 20px;
   min-height: 700px;
   background-color: #ffffff;
 }
 
-#followFM >>> .el-dialog__body {
+#followFM :deep(.el-dialog__body) {
   padding: 20px 0;
   max-height: 650px;
   display: flex;
@@ -113,7 +113,7 @@ function messUser(user_ID) {
 }
 
 /*标题*/
-#followFM >>> .el-dialog__title {
+#followFM :deep(.el-dialog__title) {
   font-size: 25px;
   font-family: STXihei, serif;
   font-weight: 900;

@@ -1,3 +1,4 @@
+/*
 
 .box_mod {
     width: 100%;
@@ -15,7 +16,7 @@
 }
 
 
-/*文件上传模块*/
+!*文件上传模块*!
 .upload_mod_song {
     display: flex;
     align-items: center;
@@ -31,7 +32,7 @@
 }
 
 
-/*上传的歌曲列表*/
+!*上传的歌曲列表*!
 .song_list_upload {
     margin-bottom: 30px;
     width: 85%;
@@ -81,7 +82,7 @@
     margin-left: 20px
 }
 
-/*设置专辑模块*/
+!*设置专辑模块*!
 .title_set_album {
     display: block;
     margin-bottom: 20px;
@@ -116,7 +117,7 @@
     color: #e58c43;
 }
 
-/*创建专辑表单*/
+!*创建专辑表单*!
 .creat_album_form {
     background-color: #f8f9fc;
     width: 85%;
@@ -147,7 +148,7 @@
     padding: 20px 30px 20px 80px;
 }
 
-/*封面上传*/
+!*封面上传*!
 .upload_album_cover {
     width: 400px;
     height: 130px;
@@ -204,17 +205,17 @@
     margin-right: 20px;
 }
 
-/*名称输入框*/
+!*名称输入框*!
 #cfc >>> .el-input {
     width: 400px;
 }
 
-/*选项框*/
+!*选项框*!
 #cfc >>> .el-select {
     width: 400px;
 }
 
-/*简介输入框*/
+!*简介输入框*!
 #cfc >>> .el-textarea__inner {
     width: 400px;
     height: 100px;
@@ -271,7 +272,7 @@
     align-items: center;
 }
 
-/*专辑选项框*/
+!*专辑选项框*!
 #al >>> .el-radio__inner:hover {
     border-color: #e58c43;
 }
@@ -291,7 +292,7 @@
     border-radius: 12px;
 }
 
-/*承诺书模块*/
+!*承诺书模块*!
 .commitment_letter {
     background-color: #f5f6fa;
     width: 100%;
@@ -314,7 +315,7 @@
     margin-bottom: 20px;
 }
 
-/*同意选项模块*/
+!*同意选项模块*!
 
 #aCL >>> .el-checkbox.is-bordered.is-checked {
     border-color: #e58c43;
@@ -344,10 +345,11 @@
     color: #575757;
 }
 
-/*按钮模块*/
+!*按钮模块*!
 .option_next_cancel {
     width: 100%;
     text-align: center;
     margin-top: 30px;
     margin-bottom: 30px;
 }
+*/

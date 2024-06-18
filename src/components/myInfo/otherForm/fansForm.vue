@@ -118,13 +118,13 @@ function unFollowUser(fan_id) {
 </template>
 
 <style scoped>
-#fansFM >>> .el-dialog {
+#fansFM :deep(.el-dialog) {
   border-radius: 20px;
   min-height: 700px;
   background-color: #ffffff;
 }
 
-#fansFM >>> .el-dialog__body {
+#fansFM :deep(.el-dialog__body) {
   padding: 20px 0;
   max-height: 650px;
   display: flex;
@@ -134,7 +134,7 @@ function unFollowUser(fan_id) {
 }
 
 /*标题*/
-#fansFM >>> .el-dialog__title {
+#fansFM :deep(.el-dialog__title) {
   font-size: 25px;
   font-family: STXihei, serif;
   font-weight: 900;
@@ -191,7 +191,7 @@ function unFollowUser(fan_id) {
   margin-left: 20px;
 }
 
-#followBT >>> .el-button--danger.is-link, .el-button--danger.is-plain, .el-button--danger.is-text {
+#followBT :deep(.el-button--danger.is-link, .el-button--danger.is-plain, .el-button--danger.is-text) {
   min-width: 87px;
 }
 
