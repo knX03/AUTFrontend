@@ -18,6 +18,7 @@ import forgetPass from '../views/LRF/fogerPass.vue'
 import userDetail from '../views/SecondPage/userDetail.vue'
 import artists from '../views/Artists/artists.vue'
 import artHome from '../views/Artists/artDetail/artHome.vue'
+import MusicPlay from "@/components/utils/musicPlay.vue";
 import {ElNotification} from "element-plus";
 import {store} from "xijs";
 
@@ -27,7 +28,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: Home
+            component: Home,
         },
         {
             path: '/test',
@@ -45,7 +46,7 @@ const router = createRouter({
         {
             path: '/singer',
             name: 'singer',
-            component: singer
+            component: singer,
         },
         {
             path: '/songList',
@@ -104,15 +105,20 @@ const router = createRouter({
             path: '/artists',
             name: 'artists',
             component: artists,
-            meta: {
-                requireSingerAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
-            },
+
         }, {
             path: '/artHome',
             name: 'artHome',
             component: artHome,
+        }, {
+            path: '/MusicPlay',
+            name: 'MusicPlay',
+            component: MusicPlay,
+            meta: {
+                keepAlive: true
+            }
+        },
 
-        }
     ]
 })
 router.beforeEach((to, from, next) => {
@@ -128,12 +134,6 @@ router.beforeEach((to, from, next) => {
                 position: 'top-left',
             })
             next('/signIn') //如果token不存在，就跳到首页
-        }
-    } else if (to.meta.requireSingerAuth) {
-        if (store.get('access_singer_token').value) {
-            next('/artHome')
-        } else {
-            next()
         }
     } else {
         //token存在时候，进去登录页面就自动跳转到首页
@@ -151,4 +151,5 @@ router.beforeEach((to, from, next) => {
     }
 
 });
+
 export default router

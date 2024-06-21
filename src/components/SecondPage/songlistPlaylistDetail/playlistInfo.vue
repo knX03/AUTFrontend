@@ -8,10 +8,13 @@ import {
   aCheckPlaylistName,
   aCollectPlaylist, aDeletePlaylist,
   aDetailByID, aGetAllPLTag,
-  aIfCollectPlaylist, aIfMy, aIfMyPlaylist, aSelectPlaylistTags,
+  aIfCollectPlaylist, aIfMy, aIfMyPlaylist, aSelectPlaylistTags, aSelectSongByPlaylist,
   aSelectUserInfoByID, aUploadPlaylistCover
 } from "@/api/api.js";
 
+import useMusicPlayStore from "@/store/musicPlayStore.js";
+
+const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
 let dialogVisible = ref(false)
 let showEdit = ref(true)
@@ -46,10 +49,14 @@ let playlistForm = ref({
 })
 
 let songList = ref([{
+  song_ID: '',
   song_Name: '',
   singer_ID: '',
+  singer_name: '',
   album_ID: '',
-  song_cover: '',
+  album_name: '',
+  song_Cover: '',
+  song_Directory: '',
 }])
 
 //歌单的标签列表
@@ -90,6 +97,7 @@ const toPLbyTag = (tag_ID) => {
 onMounted(() => {
   let FPlaylist_ID = route.query.playlist_ID
   selectDetail(FPlaylist_ID)
+  selectSong(FPlaylist_ID)
   selectPlaylistTags(FPlaylist_ID)
   getAllPLTag()
   editInfo(FPlaylist_ID)
@@ -105,6 +113,18 @@ function selectDetail(data) {
       selectCreatorDetail(resp.data.data.create_By)
       ifCollectPlaylist(songPlaylists.value.playlist_ID)
     } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  })
+}
+
+/*根据跳转的歌单名字查询歌单内容*/
+function selectSong(data) {
+  aSelectSongByPlaylist(data).then(resp => {
+    if (resp.data.code === 200) {
+      songList.value = resp.data.data;
+    } else if (resp.data.code === 500) {
+      ElMessage.error("error！")
       console.log(resp.data.msg)
     }
   })
@@ -289,14 +309,22 @@ function delColPlaylist(row) {
       type: 'error'
     })
   })
+}
 
+//播放全部歌曲
+function playAll() {
+  musicPlayStore.play = false
+  musicPlayStore.play = true
+  musicPlayStore.index = -2
+  musicPlayStore.index = 0
+  musicPlayStore.songList = songList.value
 }
 
 //todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
 watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   let tags = toRaw(newValue)
-  console.log("new" + newValue);
-  console.log("raw" + tags);
+  /*  console.log("new" + newValue);
+    console.log("raw" + tags);*/
 });
 
 </script>
@@ -336,7 +364,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
       </div>
       <!--todo 播放和下载功能待实现-->
       <div class="playAndLoad_mod">
-        <el-button type="warning">
+        <el-button type="warning" @click="playAll()">
           <img src="/src/photos/logo/playWhite.png">
           <span>播放全部</span>
         </el-button>

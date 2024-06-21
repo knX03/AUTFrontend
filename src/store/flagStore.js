@@ -8,7 +8,7 @@ const useFlagStore = defineStore("flagData", {
         enabled: true,
         strategies: [
             {
-                key: 'login_store',
+                key: 'flag_store',
                 storage: localStorage,
             },
         ],

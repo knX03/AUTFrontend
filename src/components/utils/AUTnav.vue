@@ -4,6 +4,8 @@ import bus from "@/eventbus.js";
 import axios from "axios";
 import {useRoute} from "vue-router";
 import useUserStore from '@/store/userStore.js'
+import useMusicPlayStore from "@/store/musicPlayStore.js";
+
 import {
   aDelMess,
   aGetSingerByUser,
@@ -19,6 +21,7 @@ import {Message} from "@element-plus/icons-vue";
 
 //使用pinia获得用户数据
 const userStore = useUserStore()
+const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
 const isDot = ref(true)
 const drawer = ref(false)
@@ -40,6 +43,7 @@ onMounted(() => {
   //store:js工具库所封装的localStorage（可实现过期时间）
   let token = store.get('access_token').value
   let stoken = store.get('access_singer_token').value
+
   selectUserDetail()
   getUserMessage()
 })
@@ -60,12 +64,13 @@ const toUserInfo = (user_ID) => {
 }
 
 function toArtists() {
+  musicPlayStore.play = false
   let singerToken = store.get('access_singer_token').value
   if (singerToken === null) {
     aGetSingerByUser().then(resp => {
       if (resp.data.code === 200) {
-        console.log(resp.data.data)
         store.set("access_singer_token", resp.data.data, Date.now() + 1000 * 60 * 60 * 24 * 7)
+        //todo 无法成功跳转
         router.go({
           path: '/artHome',
         })
@@ -74,10 +79,14 @@ function toArtists() {
           path: '/artists',
         })
       }
+    }).catch(resp => {
+      router.push({
+        path: '/artists',
+      })
     })
   } else {
     router.push({
-      path: '/artists',
+      path: '/artHome',
     })
   }
 }
@@ -123,7 +132,6 @@ function getUserMessage() {
 
 function logOff() {
   let token = store.get('access_token').value
-
   let singerToken = store.get('access_singer_token').value
   if (singerToken != null) {
     aSinLogOff(singerToken).then(resp => {

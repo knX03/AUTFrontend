@@ -4,7 +4,9 @@ import router from "@/router/index.js";
 import {ElMessage, ElNotification} from "element-plus";
 import {aDeleteLikeSong, aLikeSong, aSelectLikeSong, aSelectSongByPlaylist} from "@/api/api.js";
 
+import useMusicPlayStore from "@/store/musicPlayStore.js";
 
+const musicPlayStore = useMusicPlayStore();
 let songList = ref([{
   song_ID: '',
   song_Name: '',
@@ -12,8 +14,7 @@ let songList = ref([{
   singer_name: '',
   album_ID: '',
   album_name: '',
-  song_cover: '',
-  song_directory: '',
+  song_Cover: '',
   song_Directory: '',
 }])
 let playlistSongExist = ref(false)
@@ -107,6 +108,15 @@ function dislikeSong(row) {
     })
   })
 }
+
+//播放音乐
+function playMusic(index) {
+  musicPlayStore.play = false
+  musicPlayStore.play = true
+  musicPlayStore.index = -2
+  musicPlayStore.index = index
+  musicPlayStore.songList = songList.value
+}
 </script>
 
 <template>
@@ -120,7 +130,7 @@ function dislikeSong(row) {
     </div>
     <div class="ListBody_mod" v-for="(item,index) in songList ">
       <!--todo 播放功能待实现-->
-      <div class="playButton_mod">
+      <div class="playButton_mod" @click="playMusic(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>
       <div class="SN_mod">{{ index + 1 }}

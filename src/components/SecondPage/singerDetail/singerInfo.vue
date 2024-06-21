@@ -3,10 +3,13 @@
 
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
-import {aFollowUser, aIfFollowUser, aSelectSingerDetail, aUserUnfollowFan} from "@/api/api.js";
+import {aFollowUser, aIfFollowUser, aSelectSingerDetail, aSongBySinger, aUserUnfollowFan} from "@/api/api.js";
 import router from "@/router/index.js";
-import {ElMessageBox, ElNotification} from "element-plus";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
+import useMusicPlayStore from "@/store/musicPlayStore.js";
+
+const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
 let user = ref(
     {user_Name: '', user_ID: ''}
@@ -19,6 +22,16 @@ let singer = ref({
   singer_Age: '',
   singer_Introduction: '',
 })
+let songList = ref([{
+  song_ID: '',
+  song_Name: '',
+  singer_ID: '',
+  singer_name: '',
+  album_ID: '',
+  album_name: '',
+  song_cover: '',
+  song_Directory: '',
+}])
 let ifFolSinger = ref(false)
 
 const toUserInfo = (user_ID) => {
@@ -31,6 +44,7 @@ const toUserInfo = (user_ID) => {
 onMounted(() => {
   let FSinger_ID = route.query.singer_ID
   selectSingerDetail(FSinger_ID)
+  selectSongBySinger(FSinger_ID)
 })
 
 
@@ -42,6 +56,18 @@ function selectSingerDetail(singer_ID) {
       ifFollowSinger(singer.value.user_ID)
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
+    }
+  })
+}
+
+/*根据跳转的歌手名字查询歌曲*/
+function selectSongBySinger(data) {
+  aSongBySinger(data).then(resp => {
+    if (resp.data.code === 200) {
+      songList.value = resp.data.data;
+    } else if (resp.data.code === 500) {
+      ElMessage.error("error")
+      console.log(resp.data.msg)
     }
   })
 }
@@ -86,6 +112,15 @@ function unFollowSinger(ID) {
   }).catch(_ => {
   });
 }
+
+//播放全部歌曲
+function playAll() {
+  musicPlayStore.play = false
+  musicPlayStore.play = true
+  musicPlayStore.index = -2
+  musicPlayStore.index = 0
+  musicPlayStore.songList = songList.value
+}
 </script>
 
 <template>
@@ -103,7 +138,7 @@ function unFollowSinger(ID) {
       </div>
       <!--todo 播放和下载功能待实现-->
       <div class="playAndLoad_mod" id="PAL_mod">
-        <el-button type="warning">
+        <el-button type="warning" @click="playAll()">
           <img src="/src/photos/logo/playWhite.png">
           <span>播放全部</span>
         </el-button>

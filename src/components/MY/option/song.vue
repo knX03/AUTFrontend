@@ -4,12 +4,11 @@ import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
 import router from "@/router/index.js";
 import {aCollectSongToPlaylist, aDeleteLikeSong, aIfExistSong, aSelectCreateDetail, aSongByUser} from "@/api/api.js";
+import useMusicPlayStore from "@/store/musicPlayStore.js";
 
-
+const musicPlayStore = useMusicPlayStore();
 const {ctx} = getCurrentInstance()
 let dialogVisible = ref(false)
-let playMusic = ref(false)
-let filepath = ref('')
 //分页数据
 let total = ref(0)
 // searchData-向后端分页查询的对象，即当前页和每页总数
@@ -152,14 +151,27 @@ function downloadFile(filepath) {
   })
 }
 
-/!*todo 音乐播放*!/
+/*播放全部音乐*/
+function playAll() {
+  musicPlayStore.play = false
+  musicPlayStore.play = true
+  musicPlayStore.index = -2
+  musicPlayStore.index = 0
+  musicPlayStore.songList = songList.value
+}
 
-function play(song_Directory) {
-  let player_mod = ref()
-  let audio = ref()
-  playMusic.value = true;
-  filepath.value = song_Directory;
-  console.log(filepath.value)
+/*音乐播放*/
+function play(index) {
+  musicPlayStore.play = false
+  musicPlayStore.play = true
+  musicPlayStore.index = -2
+  musicPlayStore.index = index
+  musicPlayStore.songList = songList.value
+}
+
+//下载全部歌曲
+function downloadAllSong() {
+
 }
 
 function handleCurrentChange(val) {
@@ -169,6 +181,15 @@ function handleCurrentChange(val) {
 </script>
 
 <template>
+  <!--todo 播放和下载功能待实现-->
+  <div class="buttonList_mod">
+    <el-button type="warning" plain round @click="playAll()">
+      播放全部
+    </el-button>
+    <el-button type="info" round @click="downloadAllSong()">下载全部</el-button>
+    <!--todo 批量操作待实现-->
+    <!--<el-button type="info" round>批量操作</el-button>-->
+  </div>
   <div class="songList_mod" v-if="userLikeSongExist">
     <div class="listTitle_mod">
       <label class="songTitle">歌曲</label>
@@ -182,7 +203,7 @@ function handleCurrentChange(val) {
         <img :src="item.song_Cover">
         <label>{{ item.song_Name }}</label>
         <div class="playAndAdd">
-          <div class="playMusic_button" @click="play(item.song_Directory)">
+          <div class="playMusic_button" @click="play(index)">
             <img src="/src/photos/logo/playGray.png">
           </div>
           <!--todo 重写收藏歌单的表单，将歌单的封面，歌曲数量展示-->
@@ -295,6 +316,23 @@ function handleCurrentChange(val) {
 </template>
 
 <style scoped>
+/*按钮列表*/
+.buttonList_mod {
+  width: 430px;
+  height: 60px;
+  margin-left: 200px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+
+.el-button--warning img {
+  width: 20px;
+  height: 20px;
+}
+
 /*歌曲列表*/
 .songList_mod {
   width: 75%;

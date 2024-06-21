@@ -20,6 +20,7 @@ const dailyRe = ref(
 
 
 const toPlaylist = (playlist_ID) => {
+  console.log(playlist_ID)
   router.push({
     path: '/playlistDetails',
     query: {playlist_ID}

@@ -7,6 +7,9 @@ import router from "@/router/index.js";
 import song from "@/components/MY/option/song.vue";
 import album from "@/components/MY/option/album.vue";
 import playlist from "@/components/MY/option/playlist.vue";
+import useMusicPlayStore from "@/store/musicPlayStore.js";
+
+const musicPlayStore = useMusicPlayStore();
 
 const {ctx} = getCurrentInstance()
 const topBtn = ref([
@@ -58,15 +61,15 @@ function downloadFile(filepath) {
         </div>
       </div>
     </div>
-    <!--todo 播放和下载功能待实现-->
+<!--    &lt;!&ndash;todo 播放和下载功能待实现&ndash;&gt;
     <div class="buttonList_mod">
       <el-button type="warning" plain round>
         播放全部
       </el-button>
       <el-button type="info" round @click="downloadSong()">下载全部</el-button>
-      <!--todo 批量操作待实现-->
-      <!--<el-button type="info" round>批量操作</el-button>-->
-    </div>
+      &lt;!&ndash;todo 批量操作待实现&ndash;&gt;
+      &lt;!&ndash;<el-button type="info" round>批量操作</el-button>&ndash;&gt;
+    </div>-->
     <div>
       <transition name="fade">
         <div>

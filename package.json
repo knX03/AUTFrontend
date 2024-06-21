@@ -11,7 +11,6 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@vue/cli-service": "^5.0.8",
-    "alice-player": "^0.0.4",
     "ant-design-vue": "^4.2.1",
     "axios": "^1.6.5",
     "bootstrap": "^5.3.0-alpha1",

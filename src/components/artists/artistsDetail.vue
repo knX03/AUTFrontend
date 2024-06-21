@@ -1,6 +1,7 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import router from "@/router/index.js";
+import {store} from "xijs";
 
 let userInfoEx = ref(true)
 

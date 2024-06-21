@@ -6,6 +6,7 @@ import dataMenu from "@/components/artists/menuDetail/dataMenu.vue";
 import publishWorks from "@/components/artists/menuDetail/publishWorks.vue";
 import {store} from "xijs";
 import {aGetArtists} from "@/api/api.js";
+import router from "@/router/index.js";
 
 
 let singer = ref({singer_ID: '', singer_Name: '', singer_Avatar: ''})
@@ -20,6 +21,10 @@ const menuRouteList = ref([
 const selectedComponent = ref(homeMenu);
 
 onMounted(() => {
+  let singerToken = store.get('access_singer_token').value
+  if (singerToken !== null) {
+
+  }
   singerInfo()
 })
 
