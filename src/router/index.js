@@ -18,7 +18,8 @@ import forgetPass from '../views/LRF/fogerPass.vue'
 import userDetail from '../views/SecondPage/userDetail.vue'
 import artists from '../views/Artists/artists.vue'
 import artHome from '../views/Artists/artDetail/artHome.vue'
-import MusicPlay from "@/components/utils/musicPlay.vue";
+import MusicPlayer from "@/components/utils/musicPlayer.vue";
+import musicPlay from '../views/musicPlay.vue'
 import {ElNotification} from "element-plus";
 import {store} from "xijs";
 
@@ -110,14 +111,21 @@ const router = createRouter({
             path: '/artHome',
             name: 'artHome',
             component: artHome,
-        }, {
+        }/*, {
             path: '/MusicPlay',
             name: 'MusicPlay',
             component: MusicPlay,
             meta: {
                 keepAlive: true
             }
-        },
+        }*//*, {
+            path: '/musicPlay',
+            name: 'musicPlay',
+            component: musicPlay,
+            meta: {
+                keepAlive: true
+            }
+        },*/
 
     ]
 })

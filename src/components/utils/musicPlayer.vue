@@ -1,6 +1,7 @@
 <script setup>
 import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import useMusicPlayStore from "@/store/musicPlayStore.js";
+import router from "@/router/index.js";
 
 
 const musicPlayStore = useMusicPlayStore();
@@ -8,6 +9,9 @@ const music = ref()//播放器
 const cover = ref()//歌曲封面
 const progress = ref()//进度条
 const circle = ref()//进度条按钮
+const volumeM = ref()//音量条
+const volumeMn = ref()//音量条父元素
+const volumeCir = ref()//音量条按钮
 
 //监听音乐路径
 watch(() => musicPlayStore.musicUrl, (newValue, OldValue) => {
@@ -26,10 +30,15 @@ watch(() => musicPlayStore.play, (newValue, OldValue) => {
 
 //监听音乐播放
 watch(() => musicPlayStore.index, (newValue, OldValue) => {
-  musicU.value = musicPlayStore.songList[newValue].song_Directory
-  songList.value = musicPlayStore.songList[newValue]
-  loadMusic()
-  play.value = true
+  if (musicPlayStore.songList.length === 0) {
+    songListLen.value = musicPlayStore.songList.length
+  } else {
+    musicU.value = musicPlayStore.songList[newValue].song_Directory
+    songList.value = musicPlayStore.songList[newValue]
+    activeItem.value = newValue
+    loadMusic()
+    play.value = true
+  }
 }, {deep: true});
 
 let player = ref(false)//播放器显示
@@ -37,12 +46,17 @@ let play = ref(true)//播放按钮
 let playType = ref(3) //播放模式 1：列表循环，2：单曲循环，3：随机播放
 let loop = ref(false)//是否循环播放
 let musicU = ref('')//播放器音乐路径
-let volume = ref(100)//播放器音量
+let volume = ref(1)//播放器音量
 let duration = ref()//歌曲的总时长
 let currentDuration = ref()//歌曲的当前进度
 let paused = ref(true)//是否暂停
 let isMoveIn = ref(false) //是否在移动中
 let currentProgress = ref(0)//进度条位置
+let showList = ref(false)//是否展开歌曲列表
+let songListLen = ref() //歌曲列表长度
+let activeItem = ref(musicPlayStore.index) //歌曲列表active的item
+
+let playerDetail = ref(false)
 //进度条的颜色
 const customColors = [
   {color: '#789262', percentage: 25},
@@ -58,7 +72,7 @@ let songList = ref({
   singer_name: '',
   album_ID: '',
   album_name: '',
-  song_Cover: '',
+  song_Cover: '/src/photos/logo/唱片.png',
   song_Directory: '',
 })
 
@@ -71,6 +85,14 @@ onBeforeUnmount(() => {
 
 })
 
+function toSinger() {
+  let index = musicPlayStore.index
+  let singer_ID = musicPlayStore.songList[index].singer_ID
+  router.push({
+    path: '/singerDetail',
+    query: {singer_ID}
+  })
+}
 
 //播放歌曲
 function playMusic() {
@@ -145,6 +167,7 @@ function changeType() {
 
 //歌曲加载完毕后执行的方法
 function afterEnd() {
+  songListLen.value = musicPlayStore.songList.length
   duration.value = timeFormat(music.value.duration)
   // music.value.volume = volume.value //默认百分百音量
   if (playType.value === 1) {
@@ -264,11 +287,95 @@ function handleMousedown() {
     document.removeEventListener('mousemove', moveX)
   })
 }
+
+//静音
+function mute() {
+  music.value.volume = 0
+  volume.value = 0
+  volumeM.value.style.width = 0 + 'px'
+  volumeCir.value.style.left = 0 + 'px'
+}
+
+//取消静音
+function cancelMute() {
+  music.value.volume = 1
+  volume.value = 1
+  volumeM.value.style.width = 80 + 'px'
+  volumeCir.value.style.left = 80 + 'px'
+}
+
+//点击音量条
+function clickVolume(e) {
+  updateVolumeProgress(e.offsetX)
+}
+
+//点击音量条
+function clickVolumeM(e) {
+  updateVolumeProgress(e.offsetX)
+}
+
+//更新音量进度
+function updateVolumeProgress(MoveX) {
+  //得到音量  【0 - 1】 区间
+  const volumeT = (MoveX / 100).toFixed(1)
+  music.value.volume = volumeT
+  volume.value = volumeT
+  //移动音量条
+  let MX = MoveX * 80 / 100
+  volumeM.value.style.width = MX + 'px'
+  //移动小圆圈
+  volumeCir.value.style.left = MX + 'px'
+}
+
+//调整音量
+function handleMousedownVolume() {
+  //音量的最小值
+  let moveMin = volumeMn.value.offsetLeft
+  //音量的最大值
+  let moveMax = volumeMn.value.offsetLeft + volumeMn.value.clientWidth
+  //小圆圈的高度
+  let circleHeight = (volumeCir.value.clientWidth / 2)
+  let moveY = (e) => {
+    //禁止移动时复制内容
+    e.preventDefault()
+    if (e.pageX >= moveMax) {
+      return
+    } else if (e.pageX <= moveMin) {
+      return
+    }
+    volumeM.value.style.width = (e.pageX - moveMin) * 80 / 100 + 'px'
+    volumeCir.value.style.left = (e.pageX - moveMin) * 80 / 100 + 'px'
+    updateVolumeProgress(e.pageX - moveMin)
+  }
+  //获取当前鼠标的位置 X
+  document.addEventListener('mousemove', moveY)
+  //鼠标弹起来
+  document.addEventListener('mouseup', () => {
+    document.removeEventListener('mousemove', moveY)
+  })
+}
+
+//展开歌曲列表
+function showSList() {
+  showList.value = !showList.value
+}
+
+//清空歌曲列表
+function deleteSongList() {
+  musicPlayStore.songList = []
+  musicPlayStore.index = -1;
+}
+
+//点击歌曲列表播放
+function playSongList(index) {
+  activeItem.value = index
+  musicPlayStore.index = -1;
+  musicPlayStore.index = index;
+}
 </script>
 
 <template>
-  <div v-show="player"
-       class="musicPlayer_mod">
+  <div v-show="player" class="musicPlayer_mod">
     <audio ref="music"
            id="audioM"
            :loop="loop"
@@ -278,12 +385,12 @@ function handleMousedown() {
     </audio>
     <div class="songInfo_mod_player">
       <div ref="cover" class="songCover_mod_player">
-        <img :src=songList.song_Cover>
+        <img :src=songList.song_Cover @click.stop="playerDetail=!playerDetail">
       </div>
       <div class="songName_mod_player">
-        <span style="color: #000000;font-size: 16px;font-weight: bolder">{{ songList.song_Name }}</span>
+        <span style="color: #000000;font-size: 17px;font-weight: bolder">{{ songList.song_Name }}</span>
         -
-        <span>{{ songList.singer_name }}</span>
+        <span @click="toSinger()">{{ songList.singer_name }}</span>
       </div>
     </div>
 
@@ -316,21 +423,53 @@ function handleMousedown() {
         <span>{{ duration }}</span>
       </div>
     </div>
-
     <div class="other_option_player">
       <div class="volume_player_mod">
-        <el-dropdown trigger="click">
-          <img src="/src/photos/logo/声音_实体.png">
-          <template #dropdown>
-            <div class="volume_mod">
+        <img v-if="volume !== 0" src="/src/photos/logo/声音_实体.png" alt="" @click="mute()">
+        <img v-if="volume === 0" src="/src/photos/logo/静音.png" alt="" @click="cancelMute()">
+        <div class="volume_mod" ref="volumeMn" @click="clickVolume">
+          <div ref="volumeM" @click.stop="clickVolumeM" class="volume_progress">
+            <div ref="volumeCir" class="volume_circle" @mousedown="handleMousedownVolume"></div>
+          </div>
+        </div>
+      </div>
+      <el-icon>
+        <Plus/>
+      </el-icon>
+      <el-icon>
+        <Plus/>
+      </el-icon>
+      <el-icon>
+        <Plus/>
+      </el-icon>
+      <div class="songList_perform">
+        <img src="/src/photos/logo/list.png" @click="showSList()">
+        <div v-if="showList" class="showSongList">
+          <div class="song_title_item">
+            <span style="font-weight: bolder;font-size: 18px;color: black">播放列表<span
+                class="list_len">{{ songListLen }}</span></span>
+            <span style="cursor: pointer" @click="deleteSongList()"><el-icon><Delete/></el-icon>清空</span>
+          </div>
+          <el-scrollbar height="450px">
+            <div class="song_item" :class="{activeI:activeItem===index}" v-for="(item,index) in musicPlayStore.songList"
+                 @click="playSongList(index)">
+              <img :src=item.song_Cover>
+              <div class="item_info">
+                <span style="color:#000;font-size: 16px;font-weight: bolder">{{ item.song_Name }}</span>
+                <span>{{ item.singer_name }}</span>
+              </div>
             </div>
-          </template>
-        </el-dropdown>
+          </el-scrollbar>
+        </div>
       </div>
     </div>
   </div>
+  <!--todo 详情-->
+  <div v-if="playerDetail" class="playerDetail">
+    aaa
+  </div>
 </template>
-
+<style src="../css/musicPlayerDetail.css"></style>
 <style scoped>
 /* 音乐播放器模块*/
 .musicPlayer_mod {
@@ -338,6 +477,7 @@ function handleMousedown() {
   z-index: 2;
   bottom: 0;
   width: 100%;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -367,6 +507,7 @@ function handleMousedown() {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  cursor: pointer;
   z-index: 3;
 }
 
@@ -389,6 +530,11 @@ function handleMousedown() {
 .songName_mod_player span {
   font-size: 14px;
   font-family: STXihei, serif;
+}
+
+.songName_mod_player span:hover {
+  color: black;
+  cursor: pointer;
 }
 
 /*播放器的操作模块*/
@@ -460,7 +606,7 @@ function handleMousedown() {
 .circle {
   position: absolute;
   display: none;
-  bottom: 8px;
+  bottom: 12px;
   left: 685px;;
   width: 14px;
   height: 14px;
@@ -477,21 +623,168 @@ function handleMousedown() {
   margin-right: 50px;
   width: 300px;
   height: 50px;
-  background-color: #e58c43;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/*.other_option_player img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}*/
+
+/*音量模块*/
+.volume_player_mod {
   display: flex;
   align-items: center;
 }
 
-.other_option_player img {
+.volume_player_mod img {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 
 
+.volume_player_mod:hover .volume_mod {
+  width: 100px;
+  transform: scale(1, 1);
+  opacity: 1;
+}
+
+/*音量条模块*/
 .volume_mod {
-  height: 100px;
-  width: 20px;
+  height: 20px;
+  width: 0px;
   border-radius: 30px;
+  background-color: #ffffff;
+  translate: 2px 0;
+  transform: scale(0, 0);
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+/*音量条进度*/
+.volume_progress {
+  display: block;
+  height: 5px;
+  width: 80px;
+  margin-left: 10px;
+  background-color: #e58c43;
+}
+
+.volume_mod:hover .volume_circle {
+  transform: scale(1, 1);
+}
+
+/*音量条按钮*/
+.volume_circle {
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+  background-color: #b2bbbe;
+  position: absolute;
+  left: 80px;
+  bottom: 3px;
+  transform: scale(0, 0);
+}
+
+/*歌曲列表展示模块*/
+.songList_perform {
+
+}
+
+.songList_perform img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+.songList_perform img:hover {
+  transform: scale(1.1, 1.1);
+}
+
+.showSongList {
+  width: 400px;
+  height: 500px;
+  overflow: hidden;
+  background-color: #ffffff;
+  position: absolute;
+  bottom: 80px;
+  right: 0px;
+  border-top-left-radius: 12px;
+}
+
+.song_title_item {
+  width: 100%;
+  height: 50px;
+  background-color: #ffffff;
+  border-top-left-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.list_len {
+  color: #707070;
+  font-size: 11px;
+  position: relative;
+  bottom: 10px;
+}
+
+.song_title_item span {
+  font-family: STXihei, serif;
+  color: #494949;
+  font-size: 13px;
+}
+
+
+.song_item {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.song_item:hover {
+  background-color: rgba(241, 241, 241, 0.78);
+}
+
+.song_item.activeI {
+  background-color: rgba(241, 241, 241, 0.78);
+}
+
+.song_item.activeI span {
+  color: #e58c43 !important;
+}
+
+.song_item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+}
+
+.item_info {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.item_info span {
+  color: #494949;
+  font-size: 14px;
+  font-family: STXihei, serif;
+  margin-bottom: 10px;
 }
 </style>
