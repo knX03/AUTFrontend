@@ -2,19 +2,37 @@
 import {computed, onMounted, ref} from "vue";
 import router from "@/router/index.js";
 import {store} from "xijs";
+import {aUserDetail} from "@/api/api.js";
+import bus from "@/eventbus.js";
 
 let userInfoEx = ref(true)
 
 let user = ref({
-  user_ID: '46540',
-  user_name: '我看到',
-  user_avatar: '/src/photos/userAvatar/0b4168ff7e2c6ef2.jpg',
+  user_ID: '',
+  user_Name: 'User',
+  user_Avatar: '/src/photos/logo/avatarWhite.png',
 })
 let isTop = ref(false)
+
+
+onMounted(() => {
+  getUserInfo()
+})
 
 const toUserInfo = () => {
   router.push({
     path: '/myInfo',
+  })
+}
+
+
+//用户详情
+function getUserInfo() {
+  aUserDetail().then(resp => {
+    if (resp.data.code === 200) {
+      user.value = resp.data.data
+      bus.emit('userInfo', user.value)
+    }
   })
 }
 
@@ -34,9 +52,9 @@ function changeTitleA(value) {
   }
 }
 
-function toArtHome() {
+function toApply() {
   router.push({
-    path: '/artHome',
+    path: '/applyArtist',
   })
 }
 </script>
@@ -55,8 +73,8 @@ function toArtHome() {
           </div>
           <div class="infoA" :class="{top:isTop}" v-if="userInfoEx">
             <div class="avatarAName_mod" @click="toUserInfo()">
-              <img :src=user.user_avatar>
-              <span>{{ user.user_name }}</span>
+              <img :src=user.user_Avatar>
+              <span>{{ user.user_Name }}</span>
             </div>
             <el-divider direction="vertical"/>
             <div style="cursor: pointer;" @click="logOff(user.user_ID)">
@@ -74,7 +92,7 @@ function toArtHome() {
       <div class="textA_mod">
         <img src="/src/photos/logo/dream.png">
       </div>
-      <div class="applyBt_mod" @click="toArtHome()">
+      <div class="applyBt_mod" @click="toApply()">
         立即入驻
       </div>
       <div class="textA_mod">

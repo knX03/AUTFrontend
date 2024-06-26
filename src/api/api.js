@@ -506,6 +506,14 @@ export const aGetArtists = data => {
         method: 'GET',
     })
 }
+
+export const aApplySinger = data => {
+    return Service({
+        url: '/singer/applySinger',
+        method: 'POST',
+        data
+    })
+}
 /*comment--------------------------------------------------------------*/
 
 export const aGetComments = (ID, type) => {
@@ -556,6 +564,14 @@ export const aUploadAlCover = data => {
     })
 }
 
+
+export const aUploadSGAvatar = data => {
+    return Service({
+        url: '/file/uploadSGAvatar',
+        method: 'POST',
+        data
+    })
+}
 /*message---------------------------------------------------------*/
 export const aGetUserMessages = data => {
     return Service({

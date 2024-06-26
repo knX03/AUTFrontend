@@ -221,7 +221,11 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
       <div class="creatForm" id="creatform">
         <el-form :model="playlist" label-width="80px">
           <el-form-item size="large" label="名称：" id="playlist_Name">
-            <el-input v-model="playlist.playlist_Name" @blur="checkPlaylistName(playlist.playlist_Name)"></el-input>
+            <el-input
+                maxlength="15"
+                show-word-limit
+                v-model="playlist.playlist_Name"
+                @blur="checkPlaylistName(playlist.playlist_Name)"></el-input>
           </el-form-item>
           <el-form-item size="large" label="简介：" id="playlist_Introduction">
             <el-input type="textarea"

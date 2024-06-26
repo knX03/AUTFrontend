@@ -17,6 +17,7 @@ import signUp from '../views/LRF/signUp.vue'
 import forgetPass from '../views/LRF/fogerPass.vue'
 import userDetail from '../views/SecondPage/userDetail.vue'
 import artists from '../views/Artists/artists.vue'
+import applyArtist from '../views/Artists/applyArtist.vue'
 import artHome from '../views/Artists/artDetail/artHome.vue'
 import MusicPlayer from "@/components/utils/musicPlayer.vue";
 import musicPlay from '../views/musicPlay.vue'
@@ -111,7 +112,12 @@ const router = createRouter({
             path: '/artHome',
             name: 'artHome',
             component: artHome,
-        }/*, {
+        }, {
+            path: '/applyArtist',
+            name: 'applyArtist',
+            component: applyArtist,
+        }
+        /*, {
             path: '/MusicPlay',
             name: 'MusicPlay',
             component: MusicPlay,
@@ -126,7 +132,6 @@ const router = createRouter({
                 keepAlive: true
             }
         },*/
-
     ]
 })
 router.beforeEach((to, from, next) => {

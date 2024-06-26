@@ -80,6 +80,10 @@
     width: 300px;
 }
 
+#playlist_Name .el-input__wrapper.is-focus {
+    box-shadow: 0 0 0 1px #e58c43 inset;
+}
+
 /*表单输入框*/
 .creatForm .el-input {
     width: 200px;
@@ -109,6 +113,10 @@
     bottom: 5px;
     left: 230px;
     right: inherit;
+}
+
+#playlist_Introduction .el-textarea__inner:focus {
+    box-shadow: 0 0 0 1px #e58c43 inset;
 }
 
 #spLabel .el-select__wrapper.is-focused {

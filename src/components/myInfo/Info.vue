@@ -243,7 +243,7 @@ function changeSexLogo() {
       </div>
       <div class="userIN_mod">
         <div class="usernameLogo_mod">
-          <span class="username_mod">{{ user.user_Name }}</span>
+          <span style="margin-right: 30px" class="username_mod">{{ user.user_Name }}</span>
           <img src="/src/photos/logo/editGray.png" class="changeINFOButton_mod" @click=beChangeInfo() alt="">
         </div>
         <!--修改性别时切换性别logo-->
@@ -278,7 +278,11 @@ function changeSexLogo() {
       <div class="editForm" id="editform">
         <el-form :model="form" label-width="80px">
           <el-form-item label="昵称：" id="username">
-            <el-input size="large" v-model="form.user_Name" @blur="checkName(form.user_Name)"></el-input>
+            <el-input size="large"
+                      maxlength="15"
+                      show-word-limit
+                      v-model="form.user_Name"
+                      @blur="checkName(form.user_Name)"></el-input>
           </el-form-item>
           <el-form-item label="生日：" id="user_Birthday">
             <el-col :span="11">
@@ -386,11 +390,9 @@ function changeSexLogo() {
 
 /*用户信息展示模块*/
 .usernameLogo_mod {
-  width: 125px;
   height: 25px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 15px;
 }
 

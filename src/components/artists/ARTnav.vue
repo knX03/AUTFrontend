@@ -1,11 +1,13 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import router from "@/router/index.js";
+import {aUserDetail} from "@/api/api.js";
+import bus from "@/eventbus.js";
 
 let userInfoEx = ref(true)
 let user = ref({
-  user_name: '我奥斯陆冬季ask看到',
-  user_avatar: '/src/photos/userAvatar/0b4168ff7e2c6ef2.jpg',
+  user_Name: '',
+  user_Avatar: '/src/photos/logo/avatarWhite.png',
 })
 const toUserInfo = () => {
   /* router.push({
@@ -13,9 +15,18 @@ const toUserInfo = () => {
    })*/
 }
 
-//用户详情
-function userInfo() {
+onMounted(() => {
+  getUserInfo()
+})
 
+//用户详情
+function getUserInfo() {
+  aUserDetail().then(resp => {
+    if (resp.data.code === 200) {
+      user.value = resp.data.data
+      bus.emit('userInfo', user.value)
+    }
+  })
 }
 
 function logOff() {
@@ -48,8 +59,8 @@ function signIn() {
     <div class="infoNav_mod" v-if="userInfoEx">
       <el-dropdown>
         <div class="avatarAName_mod" @click="toUserInfo()">
-          <img :src=user.user_avatar>
-          <span>{{ user.user_name }}</span>
+          <img :src=user.user_Avatar>
+          <span>{{ user.user_Name }}</span>
           <div class="dropdown_mod_user">
           </div>
           <el-icon style="color:#FFFFFF;" class="el-icon--right">

@@ -181,15 +181,6 @@ function selectAlbum(item) {
 }
 
 function uploadAlCover() {
-  /*  if (!agreeComitLet.value) {
-      ElNotification({
-        title: '请同意授权!',
-        type: 'error',
-        duration: 1000,
-        position: 'top-left',
-      })
-      return;
-    }*/
   if (album.value.album_ID.length === 0) {
     let aFormData = new FormData()
     aFormData.append("alCover", albumCover.value)
@@ -202,7 +193,6 @@ function uploadAlCover() {
   } else {
     success()
   }
-
 }
 
 function success() {
