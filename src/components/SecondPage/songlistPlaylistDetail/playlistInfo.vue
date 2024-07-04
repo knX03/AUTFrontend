@@ -320,6 +320,16 @@ function playAll() {
   musicPlayStore.songList = songList.value
 }
 
+//todo 下载全部歌曲
+function downloadAll() {
+  let formData = new FormData()
+  for (let i = 0; i < songList.value.length; i++) {
+    formData.append('songFile', songList.value[i].song_Directory)
+  }
+  console.log(formData.get('songFile'))
+  window.open(formData.get('songFile'))
+}
+
 //todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
 watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   let tags = toRaw(newValue)
@@ -368,9 +378,9 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
           <img src="/src/photos/logo/playWhite.png">
           <span>播放全部</span>
         </el-button>
-        <el-button type="info">
+        <el-button type="info" @click="downloadAll()">
           <img src="/src/photos/logo/downLoadWhite.png">
-          <span>下载</span>
+          <span>下载全部</span>
         </el-button>
         <!-- 收藏歌单功能-->
         <div class="collect_mod" v-if="collectBT">

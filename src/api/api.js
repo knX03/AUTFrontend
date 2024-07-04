@@ -457,6 +457,14 @@ export const aSongBySinger = data => {
         method: 'GET',
     })
 }
+
+//搜索歌曲
+export const aSearch = data => {
+    return Service({
+        url: '/song/searchSong?searchValue=' + data,
+        method: 'GET',
+    })
+}
 /*Singer--------------------------------------------------------------*/
 
 export const aSingerSelector = data => {

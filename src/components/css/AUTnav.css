@@ -152,3 +152,50 @@ a {
     font-family: STXihei, serif;
     font-size: large;
 }
+
+.search_mod {
+    background-color: #fbfbfb;
+    color: #FFFFFF;
+    position: absolute;
+    top: 75px;
+    min-width: 350px;
+    min-height: 200px;
+    max-height: 500px;
+    z-index: 3;
+    border-radius: 12px;
+    box-shadow: 0 0 7px 3px #a6a6a6;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+
+
+.search_mod_title {
+    font-size: 17px;
+    color: #646464cc;
+    padding-left: 20px;
+}
+
+.search_mod_show {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.search_mod_show span {
+    padding-left: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    font-family: STXihei, serif;
+    color: #000000;
+}
+
+.search_mod_show span:hover {
+    background-color: #1b80e4;
+}
+
+.search_mod:deep(.el-scrollbar__wrap) {
+    max-height: 460px;
+}

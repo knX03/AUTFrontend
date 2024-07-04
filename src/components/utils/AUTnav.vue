@@ -11,7 +11,7 @@ import {
   aGetSingerByUser,
   aGetUserMessages,
   aIfMy,
-  aLogOff, aSinLogOff,
+  aLogOff, aSearch, aSinLogOff,
   aUserDetail
 } from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
@@ -26,6 +26,8 @@ const route = useRoute()
 const isDot = ref(true)
 const drawer = ref(false)
 let messExist = ref(true)
+let searchText = ref()
+let searchRes = ref()
 let user = ref(
     {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
 )
@@ -216,6 +218,17 @@ function delMess(mess_id) {
   }).catch(_ => {
   });
 }
+
+function search() {
+// && searchText.value.length > 0
+  if (searchText.value != null) {
+    aSearch(searchText.value).then(resp => {
+      console.log(resp.data.data)
+      searchRes.value = resp.data.data
+    })
+  }
+
+}
 </script>
 
 <template>
@@ -228,9 +241,22 @@ function delMess(mess_id) {
         <i class="navbar-toggler-icon"></i>
       </button>
       <div class="navbar-collapse collapse " id="navbar_collapse">
-        <form id="searchBox" class="d-flex me-auto " role="search">
-          <input class="form-control me-2" type="search" placeholder="搜索你想听的音乐" aria-label="Search">
-        </form>
+        <div id="searchBox" class="d-flex me-auto " role="search">
+          <input v-model="searchText"
+                 @input="search()"
+                 class="form-control me-2" type="search" placeholder="搜索你想听的音乐"
+                 aria-label="Search">
+          <div class="search_mod">
+            <el-scrollbar>
+              <span class="search_mod_title">猜你想搜</span>
+              <div class="search_mod_show">
+            <span v-for="item in searchRes">
+              {{ item }}
+            </span>
+              </div>
+            </el-scrollbar>
+          </div>
+        </div>
         <div class="navbar-nav me-auto">
           <a href="#" class="nav-link" @click="toArtists">
             我是歌手
