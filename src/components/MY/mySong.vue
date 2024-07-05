@@ -61,22 +61,20 @@ function downloadFile(filepath) {
         </div>
       </div>
     </div>
-<!--    &lt;!&ndash;todo 播放和下载功能待实现&ndash;&gt;
-    <div class="buttonList_mod">
-      <el-button type="warning" plain round>
-        播放全部
-      </el-button>
-      <el-button type="info" round @click="downloadSong()">下载全部</el-button>
-      &lt;!&ndash;todo 批量操作待实现&ndash;&gt;
-      &lt;!&ndash;<el-button type="info" round>批量操作</el-button>&ndash;&gt;
-    </div>-->
+    <!--    &lt;!&ndash;todo 播放和下载功能待实现&ndash;&gt;
+        <div class="buttonList_mod">
+          <el-button type="warning" plain round>
+            播放全部
+          </el-button>
+          <el-button type="info" round @click="downloadSong()">下载全部</el-button>
+          &lt;!&ndash;todo 批量操作待实现&ndash;&gt;
+          &lt;!&ndash;<el-button type="info" round>批量操作</el-button>&ndash;&gt;
+        </div>-->
     <div>
-      <transition name="fade">
-        <div>
-          <KeepAlive>
-            <component :is="selectedComponent"></component>
-          </KeepAlive>
-        </div>
+      <transition name="fade" mode="out-in">
+        <KeepAlive>
+          <component :is="selectedComponent"></component>
+        </KeepAlive>
       </transition>
     </div>
   </div>
@@ -147,15 +145,29 @@ function downloadFile(filepath) {
   height: 20px;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
+/* 路由切换动画 */
+/* fade-transform */
+.fade-leave-active,
+.fade-enter-active {
+  transition: all 0.4s;
 }
 
-.fade-enter,
+/*新页面的进入时*/
+.fade-enter-from {
+  opacity: 0.5;
+  transform: translateX(-30px);
+}
+
+/*新页面的进入成功时*/
+.fade-enter-to {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+/*原页面的离开时*/
 .fade-leave-to {
   opacity: 0;
+  transform: translateX(30px);
 }
-
 </style>
 

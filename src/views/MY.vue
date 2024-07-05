@@ -8,12 +8,14 @@ import MySong from "@/components/MY/mySong.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <secondNav></secondNav>
-  <my-avatar></my-avatar>
-  <my-song></my-song>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <secondNav></secondNav>
+    <my-avatar></my-avatar>
+    <my-song></my-song>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

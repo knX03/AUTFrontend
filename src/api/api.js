@@ -368,7 +368,7 @@ export const aSelectLikeAlbum = data => {
 export const aDeleteAlbum = (album_ID) => {
     return Service({
         url: '/album/deleteLikeAlbum?album_ID=' + album_ID,
-        method: 'GET',
+        method: 'PUT',
     })
 }
 
@@ -391,7 +391,7 @@ export const aIfCollectAlbum = (album_ID) => {
 export const aCollectAlbum = (album_ID) => {
     return Service({
         url: '/album/collectAlbum?album_ID=' + album_ID,
-        method: 'GET',
+        method: 'PUT',
     })
 }
 
@@ -458,13 +458,6 @@ export const aSongBySinger = data => {
     })
 }
 
-//搜索歌曲
-export const aSearch = data => {
-    return Service({
-        url: '/song/searchSong?searchValue=' + data,
-        method: 'GET',
-    })
-}
 /*Singer--------------------------------------------------------------*/
 
 export const aSingerSelector = data => {
@@ -600,6 +593,44 @@ export const aDelMess = (mess_ID) => {
         method: 'GET',
     })
 }
+/*Search----------------------------------------------------------------------------*/
+
+//搜索
+export const aSearch = data => {
+    return Service({
+        url: '/search/' + data,
+        method: 'GET',
+    })
+}
+
+//搜索历史
+export const aSearchHistory = (data) => {
+    return Service({
+        url: '/search/searchHistory',
+        method: 'GET',
+    })
+}
+
+//搜索热榜
+export const aHotSearch = (data) => {
+    return Service({
+        url: '/search/hotSearch',
+        method: 'GET',
+    })
+}
+
+//保存搜索历史
+export const aSearchDetail = (data) => {
+    return Service({
+        url: '/search/searchDetail?searchValue=' + data,
+        method: 'GET',
+    })
+}
 
 
-
+export const aDelHistory = (data) => {
+    return Service({
+        url: '/search/delSearchHistory',
+        method: 'PUT',
+    })
+}

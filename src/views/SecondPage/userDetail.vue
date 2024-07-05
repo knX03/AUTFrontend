@@ -9,12 +9,14 @@ import LikeList from "@/components/SecondPage/userDetail/LikeList.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <Info></Info>
-  <CreateList></CreateList>
-  <LikeList></LikeList>
-  <bottom-logo></bottom-logo>
-  <Backtop></Backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <Info></Info>
+    <CreateList></CreateList>
+    <LikeList></LikeList>
+    <bottom-logo></bottom-logo>
+    <Backtop></Backtop>
+  </div>
 </template>
 
 <style scoped>

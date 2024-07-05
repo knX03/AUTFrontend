@@ -8,11 +8,13 @@ import Backtop from "@/components/utils/backtop.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <album-info></album-info>
-  <AlbumSongList></AlbumSongList>
-  <bottom-logo></bottom-logo>
-  <Backtop></Backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <album-info></album-info>
+    <AlbumSongList></AlbumSongList>
+    <bottom-logo></bottom-logo>
+    <Backtop></Backtop>
+  </div>
 </template>
 
 <style scoped>

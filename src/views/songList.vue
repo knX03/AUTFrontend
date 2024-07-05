@@ -8,11 +8,13 @@ import Playlist from "@/components/songList/playlist.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <secondNav></secondNav>
-  <playlist></playlist>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <secondNav></secondNav>
+    <playlist></playlist>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

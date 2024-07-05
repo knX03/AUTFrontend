@@ -10,13 +10,15 @@ import BottomLogo from "@/components/utils/bottomLogo.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <secondNav></secondNav>
-  <swiper></swiper>
-  <song-list-recomm></song-list-recomm>
-  <album-recomm></album-recomm>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <secondNav></secondNav>
+    <swiper></swiper>
+    <song-list-recomm></song-list-recomm>
+    <album-recomm></album-recomm>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

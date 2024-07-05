@@ -8,11 +8,13 @@ import AlbumList from "@/components/album/albumList.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <secondNav></secondNav>
-  <album-list></album-list>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <secondNav></secondNav>
+    <album-list></album-list>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref, watch} from 'vue';
+import {onBeforeMount, onMounted, reactive, ref, watch} from 'vue';
 import bus from "@/eventbus.js";
 import axios from "axios";
 import {useRoute} from "vue-router";
@@ -7,11 +7,12 @@ import useUserStore from '@/store/userStore.js'
 import useMusicPlayStore from "@/store/musicPlayStore.js";
 
 import {
+  aDelHistory,
   aDelMess,
   aGetSingerByUser,
-  aGetUserMessages,
+  aGetUserMessages, aHotSearch,
   aIfMy,
-  aLogOff, aSearch, aSinLogOff,
+  aLogOff, aSearch, aSearchDetail, aSearchHistory, aSinLogOff,
   aUserDetail
 } from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
@@ -22,12 +23,17 @@ import {Message} from "@element-plus/icons-vue";
 //使用pinia获得用户数据
 const userStore = useUserStore()
 const musicPlayStore = useMusicPlayStore();
+
 const route = useRoute()
 const isDot = ref(true)
 const drawer = ref(false)
 let messExist = ref(true)
-let searchText = ref()
-let searchRes = ref()
+let showSearchF = ref(false) //展示搜索模块
+const searchS = ref(); // 搜索栏
+let searchHistory = ref([]) // 搜索历史
+let searchHot = ref(['大利空', '阿', '按规划规范', '按规范', '公司法的', '放到', '发到付']) // 搜索推荐 由Redis得到
+let searchText = ref('') // 搜索词
+let searchRes = ref() //搜索结果
 let user = ref(
     {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
 )
@@ -45,9 +51,10 @@ onMounted(() => {
   //store:js工具库所封装的localStorage（可实现过期时间）
   let token = store.get('access_token').value
   let stoken = store.get('access_singer_token').value
-
   selectUserDetail()
   getUserMessage()
+  gSearchHistory()
+  hotSearch()
 })
 
 const toUserInfo = (user_ID) => {
@@ -219,16 +226,96 @@ function delMess(mess_id) {
   });
 }
 
+
 function search() {
 // && searchText.value.length > 0
-  if (searchText.value != null) {
+//   searchText.value.length为0时，搜索为推荐搜索
+  if (searchText.value != null && searchText.value.length > 0) {
     aSearch(searchText.value).then(resp => {
-      console.log(resp.data.data)
       searchRes.value = resp.data.data
     })
   }
-
 }
+
+function gSearchHistory() {
+  aSearchHistory().then(resp => {
+    if (resp.data.code === 200) {
+      searchHistory.value = resp.data.data
+    } else {
+      searchHistory.value = []
+    }
+  })
+}
+
+function hotSearch() {
+  aHotSearch().then(resp => {
+    if (resp.data.code === 200) {
+      searchHot.value = resp.data.data
+    } else {
+      searchHot.value = []
+    }
+  })
+}
+
+//清空搜索历史
+function delSeaHistory() {
+  ElMessageBox.alert('确定清空全部历史记录吗？', {
+    confirmButtonText: '确定',
+  }).then(resp => {
+    searchHistory.value = []
+    aDelHistory().then(resp => {
+      if (resp.data.code === 200) {
+        console.log("SUCCESS")
+      }
+    })
+  })
+}
+
+function showSearchS() {
+  return searchText.value.length > 0;
+}
+
+// 定义局部自定义指令，这里是在 setup 标签下编写，指令名称以 v 开头，无需额外注册逻辑
+const vClickOutside = {
+  mounted(el, binding) {
+    function eventHandler(e) {
+
+
+      if (el.contains(e.target) || e.target === searchS.value) {
+        return false
+      }
+
+      // 如果绑定的参数是函数，正常情况也应该是函数，执行
+      if (binding.value && typeof binding.value === 'function') {
+        binding.value(e)
+      }
+    }
+
+    // 用于销毁前注销事件监听
+    el.__click_outside__ = eventHandler
+    // 添加事件监听
+    document.addEventListener('click', eventHandler)
+  },
+  beforeUnmount(el) {
+    // 移除事件监听
+    document.removeEventListener('click', el.__click_outside__)
+    // 删除无用属性
+    delete el.__click_outside__
+  }
+}
+
+function onClickOutside() {
+  // 外部点击时的回调函数
+  showSearchF.value = false
+}
+
+function searchDetail(data) {
+  aSearchDetail(data).then(resp => {
+    gSearchHistory()
+    console.log(resp.data.code)
+  })
+}
+
 </script>
 
 <template>
@@ -244,15 +331,49 @@ function search() {
         <div id="searchBox" class="d-flex me-auto " role="search">
           <input v-model="searchText"
                  @input="search()"
+                 ref="searchS"
+                 @focus="showSearchF = true"
                  class="form-control me-2" type="search" placeholder="搜索你想听的音乐"
                  aria-label="Search">
-          <div class="search_mod">
+          <div class="search_mod"
+               :class={activeS:showSearchF}
+               v-click-outside="onClickOutside"
+          >
             <el-scrollbar>
-              <span class="search_mod_title">猜你想搜</span>
-              <div class="search_mod_show">
-            <span v-for="item in searchRes">
-              {{ item }}
-            </span>
+              <div v-show="searchText.length > 0">
+                <span class="search_mod_title">猜你想搜</span>
+                <div class="search_mod_show">
+                <span v-for="item in searchRes" @click="searchDetail(item)">
+                  {{ item }}
+                </span>
+                </div>
+              </div>
+              <div class="search_mod_show_home" v-show="searchText.length === 0">
+                <div class="search_mod_show_history" v-show="searchHistory.length> 0">
+                  <div class="search_mod_show_history_title">
+                    <span>搜索历史</span>
+                    <el-icon class="search_mod_show_history_delBT" @click="delSeaHistory()">
+                      <Delete/>
+                    </el-icon>
+                  </div>
+                  <div class="search_history_bt_mod">
+                    <div class="search_history_bt" v-for="item in searchHistory">
+                      <span class="search_history_bt_text" @click="searchDetail(item)">{{ item }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="search_mod_show_recom">
+                  <span class="search_mod_show_recom_title">
+                    热搜榜</span>
+                  <div class="search_mod_show_recom_form">
+                    <div class="search_mod_show_recom_form_item"
+                         v-for="(item,index) in searchHot"
+                         @click="searchDetail(item)">
+                      <span class="item_index" :class="{red:index<3}">{{ index + 1 }}</span>
+                      <span style="max-width:250px">{{ item }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </el-scrollbar>
           </div>

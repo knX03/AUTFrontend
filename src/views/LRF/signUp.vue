@@ -4,7 +4,9 @@ import SignUpCP from "@/components/LRF/signUpCP.vue";
 </script>
 
 <template>
-  <SignUpCP></SignUpCP>
+  <div>
+    <SignUpCP></SignUpCP>
+  </div>
 </template>
 
 <style scoped>

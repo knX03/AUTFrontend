@@ -4,7 +4,9 @@ import ForgetPassCP from "@/components/LRF/forgetPassCP.vue";
 </script>
 
 <template>
-  <ForgetPassCP></ForgetPassCP>
+  <div>
+    <ForgetPassCP></ForgetPassCP>
+  </div>
 </template>
 
 <style scoped>

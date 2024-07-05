@@ -159,16 +159,24 @@ a {
     position: absolute;
     top: 75px;
     min-width: 350px;
+    max-width: 350px;
     min-height: 200px;
     max-height: 500px;
     z-index: 3;
     border-radius: 12px;
-    box-shadow: 0 0 7px 3px #a6a6a6;
+    box-shadow: 0 0 6px 1px #dbdbdb;
     padding-top: 20px;
     padding-bottom: 20px;
     overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    transform: scale(0, 0);
 }
 
+.search_mod.activeS {
+    opacity: 1;
+    transform: scale(1, 1);
+}
 
 .search_mod_title {
     font-size: 17px;
@@ -190,12 +198,130 @@ a {
     align-items: center;
     font-family: STXihei, serif;
     color: #000000;
+    cursor: pointer;
 }
 
 .search_mod_show span:hover {
-    background-color: #1b80e4;
+    background-color: rgba(238, 238, 238, 0.78);
 }
 
 .search_mod:deep(.el-scrollbar__wrap) {
     max-height: 460px;
+}
+
+.search_mod_show_home {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.search_mod_show_home span {
+    color: #2f2f2f;
+}
+
+.search_mod_show_history {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.search_mod_show_history_title {
+    display: flex;
+    justify-content: space-between;
+    font-family: STXihei, serif;
+    font-size: 17px
+}
+
+.search_mod_show_history_delBT {
+    color: #646464;
+    cursor: pointer;
+}
+
+.search_mod_show_history_delBT:hover {
+    color: #000000;
+    cursor: pointer;
+}
+
+.search_history_bt_mod {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.search_history_bt {
+    max-width: 110px;
+    height: 25px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    border: #cacaca solid 1px;
+    background-color: rgb(228 228 228 / 89%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.search_history_bt_text {
+    height: 20px;
+    font-size: 14px;
+    font-family: STXihei, serif;
+    color: #333333;
+    white-space: nowrap; /*强制单行显示*/
+    text-overflow: ellipsis; /*超出部分省略号表示*/
+    overflow: hidden; /*超出部分隐藏*/
+}
+
+.search_history_bt:hover {
+    background-color: #ffffff;
+}
+
+.search_history_bt:hover .search_history_bt_text {
+    color: #000000;
+}
+
+.search_mod_show_recom {
+
+}
+
+.search_mod_show_recom_title {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: STXihei, serif;
+    font-size: 17px
+}
+
+.search_mod_show_recom_form {
+    margin-top: 5px;
+    width: 100%;
+}
+
+.search_mod_show_recom_form_item {
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.item_index {
+    width: 30px;
+}
+
+.item_index.red {
+    color: #e02424;
+}
+
+.search_mod_show_recom_form_item:hover {
+    background-color: rgba(238, 238, 238, 0.87);
+}
+
+.search_mod_show_recom_form_item span {
+    font-family: STXihei, serif;
 }

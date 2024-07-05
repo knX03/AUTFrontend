@@ -8,11 +8,13 @@ import SongList from "@/components/SecondPage/songlistPlaylistDetail/songList.vu
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <daily-recomm-info></daily-recomm-info>
-  <song-list></song-list>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <daily-recomm-info></daily-recomm-info>
+    <song-list></song-list>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

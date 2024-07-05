@@ -9,12 +9,14 @@ import LikeList from "@/components/myInfo/likeList.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <Info></Info>
-  <create-list></create-list>
-  <like-list></like-list>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <Info></Info>
+    <create-list></create-list>
+    <like-list></like-list>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

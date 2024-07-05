@@ -4,7 +4,9 @@ import ArtistsDetail from "@/components/artists/artistsDetail.vue";
 </script>
 
 <template>
-  <artists-detail></artists-detail>
+  <div>
+    <artists-detail></artists-detail>
+  </div>
 </template>
 
 <style scoped>

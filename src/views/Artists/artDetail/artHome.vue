@@ -5,8 +5,10 @@ import ArtContent from "@/components/artists/artContent.vue";
 </script>
 
 <template>
-  <ARTnav></ARTnav>
-  <art-content></art-content>
+  <div>
+    <ARTnav></ARTnav>
+    <art-content></art-content>
+  </div>
 </template>
 
 <style scoped>

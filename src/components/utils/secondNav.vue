@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute} from 'vue-router'
-import {ref} from "vue";
+import {ref, watch} from "vue";
 //当前路由
 const route = useRoute()
 const itemList = ref([
@@ -16,8 +16,12 @@ const activeIndex = ref(
     route.fullPath
 )
 
-function handleSelect() {
-
+function handleSelect(indexPath) {
+  console.log(indexPath)
+  activeIndex.value = indexPath
+  setTimeout(() => {
+    // console.log(activeIndex.value)
+  }, 10000)
 }
 </script>
 
@@ -32,7 +36,7 @@ function handleSelect() {
         router
     >
       <el-menu-item id="seNav_item" v-for="(item, index) in itemList" :index="item.path" :key="index">
-        <span  slot="title">{{ item.title }}</span>
+        <span slot="title">{{ item.title }}</span>
       </el-menu-item>
     </el-menu>
   </div>

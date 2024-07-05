@@ -4,7 +4,9 @@ import ApplyArtists from "@/components/artists/applyArtists.vue";
 </script>
 
 <template>
-  <apply-artists></apply-artists>
+  <div>
+    <apply-artists></apply-artists>
+  </div>
 </template>
 
 <style scoped>

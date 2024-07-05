@@ -10,12 +10,14 @@ import SingerSelector from "@/components/singer/singerSelector.vue";
 </script>
 
 <template>
-  <AUTnav></AUTnav>
-  <secondNav></secondNav>
-  <singer-selector></singer-selector>
-  <singer-list></singer-list>
-  <bottom-logo></bottom-logo>
-  <backtop></backtop>
+  <div>
+    <AUTnav></AUTnav>
+    <secondNav></secondNav>
+    <singer-selector></singer-selector>
+    <singer-list></singer-list>
+    <bottom-logo></bottom-logo>
+    <backtop></backtop>
+  </div>
 </template>
 
 <style scoped>

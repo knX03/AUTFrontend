@@ -4,7 +4,9 @@ import MusicPlay from "@/App.vue";
 </script>
 
 <template>
-  <music-play></music-play>
+  <div>
+    <music-play></music-play>
+  </div>
 </template>
 
 <style scoped>
