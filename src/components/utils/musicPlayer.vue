@@ -2,6 +2,15 @@
 import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import useMusicPlayStore from "@/store/musicPlayStore.js";
 import router from "@/router/index.js";
+import {
+  aCollectSongToPlaylist,
+  aDeleteLikeSong,
+  aIfExistSong,
+  aLikeSong,
+  aSelectCreateDetail,
+  aSelectLikeSong
+} from "@/api/api.js";
+import {ElMessage, ElNotification} from "element-plus";
 
 
 const musicPlayStore = useMusicPlayStore();
@@ -12,6 +21,7 @@ const circle = ref()//进度条按钮
 const volumeM = ref()//音量条
 const volumeMn = ref()//音量条父元素
 const volumeCir = ref()//音量条按钮
+const sSongList = ref()//播放列表
 
 //监听音乐路径
 watch(() => musicPlayStore.musicUrl, (newValue, OldValue) => {
@@ -372,6 +382,149 @@ function playSongList(index) {
   musicPlayStore.index = -1;
   musicPlayStore.index = index;
 }
+
+// 定义局部自定义指令，这里是在 setup 标签下编写，指令名称以 v 开头，无需额外注册逻辑
+const vClickOutside = {
+  mounted(el, binding) {
+    function eventHandler(e) {
+
+      if (el.contains(e.target) || e.target === sSongList.value) {
+        return false
+      }
+
+      // 如果绑定的参数是函数，正常情况也应该是函数，执行
+      if (binding.value && typeof binding.value === 'function') {
+        binding.value(e)
+      }
+    }
+
+    // 用于销毁前注销事件监听
+    el.__click_outside__ = eventHandler
+    // 添加事件监听
+    document.addEventListener('click', eventHandler)
+  },
+  beforeUnmount(el) {
+    // 移除事件监听
+    document.removeEventListener('click', el.__click_outside__)
+    // 删除无用属性
+    delete el.__click_outside__
+  }
+}
+
+function onClickOutside() {
+  // 外部点击时的回调函数
+  showList.value = false
+}
+
+
+//收藏------------------------------------------------------------
+let myLikeSong = ref([])
+let dialogVisible = ref(false)
+let CLSong = ref({playlist_ID: '', song_ID: '',})
+const user_ID = '';
+let creatList = ref([{
+  playlist_ID: '',
+  playlist_Name: '',
+  playlist_Cover: '',
+}])
+onMounted(() => {
+  selectLikeSong()
+  selectCreateDetail()
+})
+
+/*查询喜欢的歌曲*/
+function selectLikeSong() {
+  aSelectLikeSong().then(resp => {
+    if (resp.data.code === 200) {
+      myLikeSong.value = resp.data.data;
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  }).catch(resp => {
+    console.error(resp)
+  })
+}
+
+
+function likeSong(row) {
+  aLikeSong(row).then(resp => {
+    if (resp.data.code === 200) {
+      myLikeSong.value = resp.data.data
+      selectLikeSong()
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
+  })
+}
+
+function dislikeSong(row) {
+  aDeleteLikeSong(row).then(resp => {
+    if (resp.data.code === 200) {
+      selectLikeSong()
+    } else if (resp.data.code === 500) {
+      console.log(resp.data.msg)
+    }
+  }).catch(resp => {
+    ElNotification({
+      title: '请先登录!',
+      type: 'error'
+    })
+  })
+}
+
+/*查询用户所创建的歌单*/
+function selectCreateDetail() {
+  aSelectCreateDetail(user_ID).then(resp => {
+    if (resp.data.code === 200) {
+      creatList.value = resp.data.data
+    } else if (resp.data.code === 500) {
+      console.error(resp.data.msg)
+    }
+  })
+}
+
+//收藏歌曲开关
+function beforeCL(row) {
+  dialogVisible.value = true;
+  CLSong.value.song_ID = row;
+}
+
+/*检查歌曲是否已收藏*/
+function ifExistSong() {
+  if (CLSong.value.playlist_ID === "") {
+    ElMessage.error("请选择收藏的歌单！")
+    return;
+  }
+  aIfExistSong(CLSong.value.playlist_ID, CLSong.value.song_ID).then(resp => {
+    if (resp.data.code === 302) {
+      ElMessage.error(resp.data.msg)
+      CLSong.value.playlist_ID = '';
+      dialogVisible.value = false;
+    } else if (resp.data.code === 200) {
+      collectSongToPlaylist()
+    }
+  })
+}
+
+function selectSP(playlist_ID) {
+  CLSong.value.playlist_ID = playlist_ID;
+}
+
+/*收藏歌曲至指定歌单*/
+function collectSongToPlaylist() {
+  aCollectSongToPlaylist(CLSong.value.playlist_ID, CLSong.value.song_ID).then(resp => {
+    if (resp.data.code === 200) {
+      dialogVisible.value = false;
+      CLSong.value.playlist_ID = '';
+      ElMessage.success('收藏成功！')
+    }
+  })
+}
 </script>
 
 <template>
@@ -436,15 +589,20 @@ function playSongList(index) {
       <el-icon>
         <Plus/>
       </el-icon>
-      <el-icon>
-        <Plus/>
-      </el-icon>
+      <div class="collect_song_mod">
+        <el-icon class="folderAdd" size="20px" @click="beforeCL(songList.song_ID)">
+          <FolderAdd/>
+        </el-icon>
+      </div>
       <el-icon>
         <Plus/>
       </el-icon>
       <div class="songList_perform">
-        <img src="/src/photos/logo/list.png" @click="showSList()">
-        <div v-if="showList" class="showSongList">
+        <img src="/src/photos/logo/list.png" ref="sSongList" @click="showSList()">
+        <div class="showSongList"
+             :class="{activeM:showList}"
+             v-click-outside="onClickOutside"
+        >
           <div class="song_title_item">
             <span style="font-weight: bolder;font-size: 18px;color: black">播放列表<span
                 class="list_len">{{ songListLen }}</span></span>
@@ -467,6 +625,31 @@ function playSongList(index) {
   <!--todo 详情-->
   <div v-if="playerDetail" class="playerDetail">
     aaa
+  </div>
+  <!--收藏歌曲至歌单-->
+  <div class="collectToPL">
+    <el-dialog
+        title="收藏"
+        v-model="dialogVisible"
+        width="50%"
+    >
+      <el-form :model="CLSong" label-width="120px">
+        <el-form-item label="选择歌单：">
+          <div class="sp_list"
+               :class="{activeS:item.playlist_ID === CLSong.playlist_ID}"
+               v-for="(item , index) in creatList"
+               @click="selectSP(item.playlist_ID)">
+            <img :src=item.playlist_Cover>
+            <span class="sp_list_text"
+                  :class="{activeS:item.playlist_ID === CLSong.playlist_ID}"> {{ item.playlist_Name }}</span>
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogVisible=false">取消</el-button>
+          <el-button type="primary" @click="ifExistSong()">收藏</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <style src="../css/musicPlayerDetail.css"></style>
@@ -693,6 +876,19 @@ function playSongList(index) {
   transform: scale(0, 0);
 }
 
+.collect_song_mod {
+  cursor: pointer
+}
+
+.folderAdd {
+  transition: 0.5s all ease-in-out;
+}
+
+.folderAdd:hover {
+  transition: 0.2s all ease-in-out;
+  transform: scale(1.1, 1.1);
+}
+
 /*歌曲列表展示模块*/
 .songList_perform {
 
@@ -718,6 +914,14 @@ function playSongList(index) {
   bottom: 80px;
   right: 0px;
   border-top-left-radius: 12px;
+  opacity: 0;
+  transform: scale(0, 0);
+  transition: all 0.3s ease-in-out;
+}
+
+.showSongList.activeM {
+  opacity: 1;
+  transform: scale(1, 1);
 }
 
 .song_title_item {
@@ -786,5 +990,71 @@ function playSongList(index) {
   font-size: 14px;
   font-family: STXihei, serif;
   margin-bottom: 10px;
+}
+
+/*收藏音乐模块*/
+.collectToPL {
+
+}
+
+/*按钮样式*/
+.collectToPL .el-button--primary {
+  margin-left: 30px;
+  background-color: #e58c43;
+  border-color: #e58c43;
+}
+
+.collectToPL .el-button--primary:hover {
+  background-color: #fff4ea;
+  border-color: #fff4ea;
+  color: #e58c43;
+}
+
+.collectToPL .el-button:hover {
+  background-color: #fff4ea;
+  border-color: #fff4ea;
+  color: #e58c43;
+}
+
+.sp_list {
+  width: 150px;
+  border-radius: 12px;
+  margin-right: 25px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.sp_list:hover {
+  background-color: #efefefdb;
+}
+
+.sp_list.activeS {
+  background-color: #efefefdb;
+}
+
+
+.sp_list img {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+}
+
+.sp_list_text {
+  color: #1e1e1e;
+  font-size: 16px;
+  font-weight: bolder;
+  font-family: STXihei, serif;
+}
+
+.sp_list_text.activeS {
+  color: #e58c43;
+}
+
+.collectToPL:deep(.el-dialog) {
+  border-radius: 12px;
 }
 </style>

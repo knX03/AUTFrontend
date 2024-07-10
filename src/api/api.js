@@ -634,3 +634,10 @@ export const aDelHistory = (data) => {
         method: 'PUT',
     })
 }
+
+export const aSearchALL = (data) => {
+    return Service({
+        url: '/search/searchALL?searchValue=' + data,
+        method: 'GET',
+    })
+}

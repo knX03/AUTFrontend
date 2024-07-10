@@ -190,7 +190,7 @@ function playAll() {
 
 /*歌单基础信息*/
 .basicInfo_mod {
-  width: 185px;
+  max-width: 450px;
   height: 40px;
   display: flex;
   position: relative;

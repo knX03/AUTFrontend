@@ -20,6 +20,7 @@ let CLSong = ref({playlist_ID: '', song_ID: '',})
 let creatList = ref([{
   playlist_ID: '',
   playlist_Name: '',
+  playlist_Cover: '',
 }])
 let songList = ref([{
   song_ID: '',
@@ -31,6 +32,7 @@ let songList = ref([{
   song_Cover: '',
   song_Directory: '',
 }])
+const user_ID = '';
 let userLikeSongExist = ref(false)
 const toAlbum = (album_ID) => {
   router.push({
@@ -69,7 +71,7 @@ function selectSongByUser() {
 
 /*查询用户所创建的歌单*/
 function selectCreateDetail() {
-  aSelectCreateDetail().then(resp => {
+  aSelectCreateDetail(user_ID).then(resp => {
     if (resp.data.code === 200) {
       creatList.value = resp.data.data
     } else if (resp.data.code === 500) {
@@ -99,6 +101,10 @@ function ifExistSong() {
       collectSongToPlaylist()
     }
   })
+}
+
+function selectSP(playlist_ID) {
+  CLSong.value.playlist_ID = playlist_ID;
 }
 
 /*收藏歌曲至指定歌单*/
@@ -133,7 +139,6 @@ function deleteSong(row) {
 
 //todo 下载歌曲
 function downloadFile(filepath) {
-  console.log(filepath)
   axios({
     method: 'POST',
     url: 'http://localhost/file/download',
@@ -297,15 +302,18 @@ function handleCurrentChange(val) {
       <el-dialog
           title="收藏"
           v-model="dialogVisible"
-          width="30%"
+          width="50%"
       >
         <el-form :model="CLSong" label-width="120px">
           <el-form-item label="选择歌单：">
-            <el-radio-group v-model="CLSong.playlist_ID">
-              <div id="collectToPL_OP" v-for="item in creatList">
-                <el-radio :label=item.playlist_ID>{{ item.playlist_Name }}</el-radio>
-              </div>
-            </el-radio-group>
+            <div class="sp_list"
+                 :class="{activeS:item.playlist_ID === CLSong.playlist_ID}"
+                 v-for="(item , index) in creatList"
+                 @click="selectSP(item.playlist_ID)">
+              <img :src=item.playlist_Cover>
+              <span class="sp_list_text"
+                    :class="{activeS:item.playlist_ID === CLSong.playlist_ID}"> {{ item.playlist_Name }}</span>
+            </div>
           </el-form-item>
           <el-form-item>
             <el-button @click="dialogVisible=false">取消</el-button>
@@ -622,43 +630,6 @@ function handleCurrentChange(val) {
 
 }
 
-.el-radio-group {
-  display: inline-flex;
-  align-items: start;
-  flex-wrap: wrap;
-  font-size: 0;
-}
-
-/*!*标题栏*!
-.collectToPL .el-dialog__title {
-  font-family: STXihei, serif;
-  font-size: 20px;
-  font-weight: 800;
-  margin-left: 10px;
-}*/
-
-/*.collectToPL .el-form-item__label {
-  width: 100px !important;
-  font-family: STXihei, serif;
-  font-weight: 800;
-  font-size: 16px;
-  position: relative;
-  top: -13px;
-}*/
-
-/*选项样式*/
-.collectToPL .el-radio {
-  margin-right: 30px;
-}
-
-/*#collectToPL_OP .el-radio__input.is-checked .el-radio__inner {
-  border-color: #e58c43;
-  background: #e58c43;
-}
-
-#collectToPL_OP .el-radio__input.is-checked + .el-radio__label {
-  color: #e58c43;
-}*/
 
 /*按钮样式*/
 .collectToPL .el-button--primary {
@@ -697,5 +668,47 @@ function handleCurrentChange(val) {
   font-family: STXihei, serif;
   font-size: 15px;
   font-weight: 900;
+}
+
+.sp_list {
+  width: 150px;
+  border-radius: 12px;
+  margin-right: 25px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.sp_list:hover {
+  background-color: #efefefdb;
+}
+
+.sp_list.activeS {
+  background-color: #efefefdb;
+}
+
+
+.sp_list img {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+}
+
+.sp_list_text {
+  color: #1e1e1e;
+  font-size: 16px;
+  font-weight: bolder;
+  font-family: STXihei, serif;
+}
+
+.sp_list_text.activeS {
+  color: #e58c43;
+}
+
+.collectToPL:deep(.el-dialog) {
+  border-radius: 12px;
 }
 </style>

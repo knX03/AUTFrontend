@@ -401,7 +401,6 @@ function playMusic(index) {
   width: 30px;
   cursor: pointer;
   transition: 0.5s all ease-in-out;
-
 }
 
 .like_mod img:hover {

@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {store} from "xijs";
 
-const musicPlayStore = defineStore("flagData", {
+const musicPlayStore = defineStore("muPlayData", {
     state: () => ({
         index: -1,
         play: false,

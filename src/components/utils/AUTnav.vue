@@ -2,9 +2,10 @@
 import {onBeforeMount, onMounted, reactive, ref, watch} from 'vue';
 import bus from "@/eventbus.js";
 import axios from "axios";
-import {useRoute} from "vue-router";
+import {useRouter} from "vue-router";
 import useUserStore from '@/store/userStore.js'
 import useMusicPlayStore from "@/store/musicPlayStore.js";
+import useSearchStore from "@/store/searchStore.js";
 
 import {
   aDelHistory,
@@ -16,15 +17,16 @@ import {
   aUserDetail
 } from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
-import router from "@/router/index.js";
+/*import router from "@/router/index.js";*/
 import {store} from "xijs";
 import {Message} from "@element-plus/icons-vue";
 
 //使用pinia获得用户数据
 const userStore = useUserStore()
 const musicPlayStore = useMusicPlayStore();
+const searchStore = useSearchStore();
 
-const route = useRoute()
+const router = useRouter()
 const isDot = ref(true)
 const drawer = ref(false)
 let messExist = ref(true)
@@ -32,7 +34,7 @@ let showSearchF = ref(false) //展示搜索模块
 const searchS = ref(); // 搜索栏
 let searchHistory = ref([]) // 搜索历史
 let searchHot = ref(['大利空', '阿', '按规划规范', '按规范', '公司法的', '放到', '发到付']) // 搜索推荐 由Redis得到
-let searchText = ref('') // 搜索词
+let searchText = ref(searchStore.searchValue) // 搜索词
 let searchRes = ref() //搜索结果
 let user = ref(
     {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
@@ -45,7 +47,6 @@ let messageList = ref([{
   message_content: '',
   post_time: ''
 }])
-
 
 onMounted(() => {
   //store:js工具库所封装的localStorage（可实现过期时间）
@@ -228,13 +229,23 @@ function delMess(mess_id) {
 
 
 function search() {
-// && searchText.value.length > 0
-//   searchText.value.length为0时，搜索为推荐搜索
   if (searchText.value != null && searchText.value.length > 0) {
     aSearch(searchText.value).then(resp => {
       searchRes.value = resp.data.data
     })
   }
+}
+
+function enterSearch(e) {
+  if (e.keyCode === 13 || e.keyCode === 100) {
+    searchDetail(searchText.value)
+  }
+
+}
+
+function focusSearch() {
+  search()
+  showSearchF.value = true
 }
 
 function gSearchHistory() {
@@ -310,9 +321,16 @@ function onClickOutside() {
 }
 
 function searchDetail(data) {
+  searchText.value = data
+  search()
+  showSearchF.value = false
   aSearchDetail(data).then(resp => {
     gSearchHistory()
-    console.log(resp.data.code)
+    searchStore.searchValue = data
+    router.push({
+      path: '/searchDetail',
+      query: {data}
+    })
   })
 }
 
@@ -332,9 +350,11 @@ function searchDetail(data) {
           <input v-model="searchText"
                  @input="search()"
                  ref="searchS"
-                 @focus="showSearchF = true"
+                 @focus="focusSearch"
+                 @keydown="enterSearch"
                  class="form-control me-2" type="search" placeholder="搜索你想听的音乐"
                  aria-label="Search">
+
           <div class="search_mod"
                :class={activeS:showSearchF}
                v-click-outside="onClickOutside"

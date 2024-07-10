@@ -84,6 +84,7 @@ function selectSingerDetail(singer_ID) {
     }
   })
 }
+
 /*根据跳转的专辑名字查询歌曲*/
 function selectSongByAlbum(data) {
   aSongByAlbum(data).then(resp => {
@@ -221,7 +222,7 @@ function playAll() {
 
 /*歌单基础信息*/
 .basicInfo_mod {
-  width: 185px;
+  max-width: 450px;
   height: 40px;
   display: flex;
   position: relative;

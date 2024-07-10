@@ -494,7 +494,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 
 /*歌单基础信息*/
 .basicInfo_mod {
-  width: 300px;
+  max-width: 450px;
   height: 40px;
   display: flex;
   align-items: center;

@@ -40,7 +40,6 @@ function publishing() {
 function singerInfo() {
   aGetArtists().then(resp => {
     singer.value = resp.data.data
-    console.log(singer.value)
   })
 }
 </script>
@@ -105,7 +104,7 @@ function singerInfo() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0px 0px 6px 1px #ececec;
+  box-shadow: 0 0 6px 1px #ececec;
 }
 
 

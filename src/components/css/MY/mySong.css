@@ -346,13 +346,6 @@
     justify-content: center;
 }
 
-/*播放器*/
-.player_mod {
-    position: absolute;
-    top: 50%;
-    right: -5%;
-    transform: translate(-50%, -50%);
-}
 
 /*收藏音乐模块*/
 .collectToPL {

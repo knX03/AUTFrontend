@@ -17,11 +17,7 @@ const activeIndex = ref(
 )
 
 function handleSelect(indexPath) {
-  console.log(indexPath)
   activeIndex.value = indexPath
-  setTimeout(() => {
-    // console.log(activeIndex.value)
-  }, 10000)
 }
 </script>
 

@@ -19,6 +19,7 @@ import userDetail from '../views/SecondPage/userDetail.vue'
 import artists from '../views/Artists/artists.vue'
 import applyArtist from '../views/Artists/applyArtist.vue'
 import artHome from '../views/Artists/artDetail/artHome.vue'
+import searchDetail from "../views/search.vue";
 import MusicPlayer from "@/components/utils/musicPlayer.vue";
 import musicPlay from '../views/musicPlay.vue'
 import {ElNotification} from "element-plus";
@@ -116,7 +117,11 @@ const router = createRouter({
             path: '/applyArtist',
             name: 'applyArtist',
             component: applyArtist,
-        }
+        }, {
+            path: '/searchDetail',
+            name: 'searchDetail',
+            component: searchDetail,
+        },
         /*, {
             path: '/MusicPlay',
             name: 'MusicPlay',

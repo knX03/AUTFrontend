@@ -17,20 +17,7 @@ let albumCover = ref()
 let album = ref({album_ID: '', album_Name: '', album_Cover: '', album_Introduction: ''})
 //当前用户创建的专辑列表
 let albumList = ref([
-  {album_ID: '1', album_Name: 'aaa', album_Cover: 'a'},
-  {album_ID: '2', album_Name: 'ff', album_Cover: 'gg'},
-  {album_ID: '3', album_Name: 'yhh', album_Cover: 'asf'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-  {album_ID: '4', album_Name: 'sdfg', album_Cover: '22d'},
-])
-//选定专辑
-let ifSelect = ref()
-
+  {album_ID: '', album_Name: '', album_Cover: ''},])
 //同意授权书
 let agreeComitLet = ref(false)
 //是否下一步
@@ -175,9 +162,16 @@ function uploadCover(item) {
   albumCover.value = item.file
 }
 
+function creatAlbumBf() {
+  creatAlbum.value = true
+  album.value.album_ID = ''
+  album.value.album_Name = ''
+}
+
 //选择专辑
-function selectAlbum(item) {
-  album.value = item
+function selectAlbum(data) {
+  album.value.album_ID = data.album_ID
+  album.value.album_Name = data.album_ID
 }
 
 function uploadAlCover() {
@@ -335,7 +329,6 @@ function success() {
         </svg>
         <label>创建新专辑</label>
       </div>
-
       <div class="creat_album_form" v-if="creatAlbum">
         <div class="create_form_title" title="取消新建" @click="creatAlbum=false">
           <svg t="1717742866710" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -404,26 +397,28 @@ function success() {
           </el-form>
         </div>
       </div>
-
       <div class="album_list_mod" id="alm" v-if="ifAlbumExist && !creatAlbum">
         <el-scrollbar height="180px">
-          <el-radio-group v-model="ifSelect">
-            <div class="creat_album_BT" @click="creatAlbum=true">
-              <svg t="1717770542712" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                   xmlns="http://www.w3.org/2000/svg"
-                   p-id="16810" width="128" height="128">
-                <path
-                    d="M809.857 392.857H512c-65.803 0-119.143 53.34-119.143 119.143v297.857C392.857 875.66 446.197 929 512 929h297.857C875.66 929 929 875.66 929 809.857V512c0-65.803-53.34-119.143-119.143-119.143zM273.714 95H154.571C121.67 95 95 121.67 95 154.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571C333.286 121.67 306.616 95 273.714 95z m178.715 238.286h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571c0-32.901-26.67-59.571-59.571-59.571H452.429c-32.901 0-59.571 26.67-59.571 59.571v119.143c-0.001 32.902 26.669 59.572 59.571 59.572zM869.429 95H750.286c-32.901 0-59.571 26.67-59.571 59.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571C929 121.67 902.33 95 869.429 95zM273.714 392.857H154.571c-32.901 0-59.571 26.67-59.571 59.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V452.429c0.001-32.902-26.669-59.572-59.571-59.572z m0 297.857H154.571c-32.901 0-59.571 26.67-59.571 59.571v119.143C95 902.33 121.67 929 154.571 929h119.143c32.901 0 59.571-26.67 59.571-59.571V750.286c0.001-32.902-26.669-59.572-59.571-59.572z"
-                    fill="#8a8a8a" p-id="16811"></path>
-              </svg>
-              <el-radio label="新建专辑" size="large"></el-radio>
-            </div>
-            <div class="album_list" id="al" v-for="(item , index) in albumList"
-                 @click="selectAlbum(item)">
-              <img :src=item.album_Cover>
-              <el-radio :label="item.album_Name" size="large"></el-radio>
-            </div>
-          </el-radio-group>
+          <div class="creat_album_BT" @click="creatAlbumBf()">
+            <svg t="1717770542712" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 p-id="16810" width="128" height="128">
+              <path
+                  d="M809.857 392.857H512c-65.803 0-119.143 53.34-119.143 119.143v297.857C392.857 875.66 446.197 929 512 929h297.857C875.66 929 929 875.66 929 809.857V512c0-65.803-53.34-119.143-119.143-119.143zM273.714 95H154.571C121.67 95 95 121.67 95 154.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571C333.286 121.67 306.616 95 273.714 95z m178.715 238.286h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571c0-32.901-26.67-59.571-59.571-59.571H452.429c-32.901 0-59.571 26.67-59.571 59.571v119.143c-0.001 32.902 26.669 59.572 59.571 59.572zM869.429 95H750.286c-32.901 0-59.571 26.67-59.571 59.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V154.571C929 121.67 902.33 95 869.429 95zM273.714 392.857H154.571c-32.901 0-59.571 26.67-59.571 59.571v119.143c0 32.901 26.67 59.571 59.571 59.571h119.143c32.901 0 59.571-26.67 59.571-59.571V452.429c0.001-32.902-26.669-59.572-59.571-59.572z m0 297.857H154.571c-32.901 0-59.571 26.67-59.571 59.571v119.143C95 902.33 121.67 929 154.571 929h119.143c32.901 0 59.571-26.67 59.571-59.571V750.286c0.001-32.902-26.669-59.572-59.571-59.572z"
+                  fill="#8a8a8a" p-id="16811"></path>
+            </svg>
+            <span>新建专辑</span>
+          </div>
+          <div class="album_list"
+               :class="{activeS:item.album_ID === album.album_ID}"
+               v-for="(item , index) in albumList"
+               @click="selectAlbum(item)">
+            <img :src=item.album_Cover>
+            <span class="al_list_text"
+                  :class="{activeS:item.album_ID === album.album_ID}">
+                {{ item.album_Name }}
+              </span>
+          </div>
         </el-scrollbar>
       </div>
     </div>
@@ -746,14 +741,14 @@ function success() {
   width: 100%;
 }
 
-#alm :deep() .el-scrollbar__view {
+#alm :deep(.el-scrollbar__view) {
   display: flex;
   flex-wrap: wrap;
 }
 
 .creat_album_BT {
   width: 150px;
-  height: 180px;
+  height: 160px;
   border-radius: 12px;
   margin-right: 25px;
   display: flex;
@@ -767,32 +762,38 @@ function success() {
 
 .album_list {
   width: 150px;
-  height: 180px;
+  height: 160px;
   border-radius: 12px;
   margin-right: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 }
 
-/*专辑选项框*/
-#al :deep(.el-radio__inner:hover) {
-  border-color: #e58c43;
+.album_list:hover {
+  background-color: #efefefdb;
 }
 
-#al :deep(.el-radio__input.is-checked + .el-radio__label) {
-  color: #e58c43;
-}
-
-#al :deep(.el-radio__input.is-checked .el-radio__inner) {
-  background-color: #e58c43;
-  border-color: #e58c43;
+.album_list.activeS {
+  background-color: #efefefdb;
 }
 
 .album_list img {
   width: 120px;
   height: 120px;
   border-radius: 12px;
+}
+
+.al_list_text {
+  color: #1e1e1e;
+  font-size: 16px;
+  font-weight: bolder;
+  font-family: STXihei, serif;
+}
+
+.al_list_text.activeS {
+  color: #e58c43;
 }
 
 /*承诺书模块*/
