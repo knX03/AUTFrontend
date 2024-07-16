@@ -6,12 +6,12 @@ const useFlagStore = defineStore("flagData", {
     }),
     persist: {
         enabled: true,
-        strategies: [
+        strategies:
             {
                 key: 'flag_store',
-                storage: localStorage,
+                storage: sessionStorage,
             },
-        ],
+
     },
 })
 

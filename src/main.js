@@ -2,7 +2,6 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
-//import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/scss/bootstrap.scss'
 import './assets/bootstrap.custom.scss'
 import 'bootstrap/dist/js/bootstrap.bundle.js'
@@ -11,7 +10,7 @@ import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import mitt from 'mitt'
 import {createPinia} from "pinia";
-import piniaPluginPersist from 'pinia-plugin-persist'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const pinia = createPinia();
 
@@ -26,5 +25,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 app.config.globalProperties.$EventBus = new mitt()
 app.use(pinia);
-pinia.use(piniaPluginPersist)
+pinia.use(piniaPluginPersistedstate)
 app.mount('#app')

@@ -1,5 +1,5 @@
 <script setup>
-import {markRaw, onMounted, ref, watch} from "vue";
+import {markRaw, onMounted, reactive, ref, watch} from "vue";
 import {ElMessageBox, ElNotification} from "element-plus";
 import {
   aFollowUser, aGetSumFollowAndFan,
@@ -7,12 +7,15 @@ import {
   aSelectUserInfoByID,
   aUserUnfollowFan
 } from "@/api/api.js";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {ChatLineRound, CloseBold, WarnTriangleFilled} from "@element-plus/icons-vue";
 import followForm from "@/components/SecondPage/userDetail/otherForm/followForm.vue";
 import fansForm from "@/components/SecondPage/userDetail/otherForm/fansForm.vue";
 import useFlagStore from "@/store/flagStore.js";
+import useMessageStore from "@/store/messageStore.js";
 
+const router = useRouter()
+const messageStore = useMessageStore();
 const route = useRoute()
 const flagStore = useFlagStore();
 const user_ID = route.query.user_ID
@@ -28,13 +31,17 @@ let user = ref({
   user_Introduction: '',
 })
 
-let messageForm = ref({
-  message_content: ''
+let messageForm = reactive({
+  poster_ID: '',
+  recipient_ID: '',
+  message: '',
+  post_time: '',
 })
 let sumFollowAndFan = ref({
   followSum: 0,
   fanSum: 0
 })
+
 
 const detailForm = ref([
   {id: 1, name: '关注', component: markRaw(followForm)},
@@ -156,14 +163,15 @@ function unFollowUser(ID) {
   });
 }
 
-//todo 打开发送消息
-function openMess() {
-
-}
 
 //todo 发送消息
-function postMess(user_ID) {
-
+function postMess() {
+  messageStore.recipient.user_ID = user.value.user_ID
+  messageStore.recipient.user_Name = user.value.user_Name
+  messageStore.recipient.user_Avatar = user.value.user_Avatar
+  router.push({
+    path: '/message',
+  })
 }
 
 

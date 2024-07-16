@@ -586,6 +586,13 @@ export const aPostMess = data => {
         method: 'GET',
     })
 }
+export const aMess = data => {
+    return Service({
+        url: '/msg/send',
+        method: 'POST',
+        data: data,
+    })
+}
 
 export const aDelMess = (mess_ID) => {
     return Service({
