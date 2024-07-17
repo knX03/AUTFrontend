@@ -18,24 +18,6 @@ a {
     border-radius: 0.975rem
 }
 
-/*分割线*/
-#split {
-    width: 1px;
-    height: 30px;
-    background-color: white;
-    opacity: 0.7;
-    position: relative;
-    left: -90px;
-}
-
-/*导航栏头像*/
-.nav_avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 30%;
-    overflow: hidden;
-    cursor: pointer;
-}
 
 .search_mod {
     background-color: #fbfbfb;
@@ -207,6 +189,129 @@ a {
 
 .search_mod_show_recom_form_item span {
     font-family: STXihei, serif;
+}
+
+/*分割线*/
+#split {
+    width: 1px;
+    height: 30px;
+    background-color: white;
+    opacity: 0.7;
+    position: relative;
+    left: -90px;
+}
+
+.userInfo {
+
+}
+
+/*导航栏头像*/
+.nav_avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 30%;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+    z-index: 4;
+}
+
+.nav_avatar.aActive {
+    transform: scale(2, 2) translate(0, 10px);
+    border-radius: 50%
+}
+
+.userInfoOP_mod {
+    width: 300px;
+    height: 400px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 15px 2px rgb(226 226 226);
+    position: absolute;
+    right: 167px;
+    opacity: 0;
+    transform: scale(0, 0) translateY(-20px);
+    transition: all 0.5s ease-in-out;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding-top: 50px;
+    padding-bottom: 10px;
+}
+
+.userInfoOP_mod span {
+    color: #575757;
+    font-family: SimHei, serif;
+}
+
+.userInfoOP_mod.oActive {
+    opacity: 1;
+    transform: scale(1, 1);
+}
+
+.userInfoOP_mod_fans {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.userInfoOP_mod_fans_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: STXihei, serif;
+    font-size: 14px;
+}
+
+.borderText {
+    color: #050505 !important;
+    font-size: 17px;
+    font-weight: bolder;
+}
+
+.userInfoOP_mod_DE {
+    width: 85%;
+    height: 30px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+.userInfoOP_mod_DE:hover {
+    border-radius: 12px;
+    background-color: #eeeeee;
+    color: #e58c43;
+}
+
+.userInfoOP_mod_split {
+    height: 1px;
+    width: 80%;
+    background-color: rgb(234, 234, 234);
+    margin-bottom: 15px;
+}
+
+.userInfoOP_mod_EX {
+    width: 85%;
+    height: 30px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.userInfoOP_mod_EX:hover {
+    border-radius: 12px;
+    background-color: #eeeeee;
+    color: #e58c43;
 }
 
 .message_mod {

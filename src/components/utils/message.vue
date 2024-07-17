@@ -1,6 +1,6 @@
 <script setup>
 import {ref, watch} from "vue";
-import {aDelMess, aIfMy} from "@/api/api.js";
+import { aIfMy} from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
 import router from "@/router/index.js";
 import useMessageStore from "@/store/messageStore.js";
@@ -40,30 +40,6 @@ const toUserInfo = (user_ID) => {
   })
 }
 
-function delMess(mess_id) {
-  ElMessageBox.confirm('确认删除吗？', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(_ => {
-    aDelMess(mess_id).then(resp => {
-      if (resp.status === 401) {
-        ElNotification({
-          title: '请先登录!',
-          type: 'error'
-        })
-      } else if (resp.data.code === 200) {
-        ElNotification({
-          title: '删除成功!',
-          type: 'success',
-          position: 'top-left',
-          duration: 1000
-        })
-      }
-    })
-  }).catch(_ => {
-  });
-}
 </script>
 
 <template>

@@ -19,10 +19,7 @@ const userStore = useUserStore()
 const flagStore = useFlagStore();
 
 let dialogVisible = ref(false)
-let fileList = ref([])
 let fileType = ref(["png", "jpg", "jpeg"])
-let fileSize = ref(50)
-let fileName = ref('')
 let new_user_avatar = ref('')
 let sex_logo = ref("")
 const userID = ""
@@ -204,7 +201,6 @@ function uploadAvatar(item) {
 function followDetail() {
   flagStore.flag = true
   selComponent.value = detailForm.value[0].component;
-
 }
 
 function fansDetail() {

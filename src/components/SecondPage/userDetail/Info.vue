@@ -164,7 +164,7 @@ function unFollowUser(ID) {
 }
 
 
-//todo 发送消息
+//私信
 function postMess() {
   messageStore.recipient.user_ID = user.value.user_ID
   messageStore.recipient.user_Name = user.value.user_Name

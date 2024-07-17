@@ -1,13 +1,13 @@
 <script setup>
 
 import EmojiPicker from "vue3-emoji-picker";
-import {onMounted, reactive, ref, toRaw, watch} from "vue";
+import {nextTick, onMounted, reactive, ref, toRaw, watch} from "vue";
 import useMessageStore from "@/store/messageStore.js";
-import {aSelectUserInfoByID} from "@/api/api.js";
+import {aGetUserMessages, aSelectUserInfoByID, aUserMess} from "@/api/api.js";
 import {store} from "xijs";
 import useUserStore from "@/store/userStore.js";
 
-// let ws = new WebSocket('ws://localhost/message/111')
+
 let token = store.get('access_token').value
 let url = "ws://127.0.0.1:80/ws/server"
 let ws = new WebSocket(url, [token]);
@@ -20,6 +20,8 @@ let clickEmo = ref(false)
 let textCount = ref(0)
 let disabledPost = ref(true)
 let opList = ref(["我的消息", "回复我的", "我收到的赞", "系统消息",])
+let chatShade = ref(true)
+const chatScrollbar = ref()
 //禁用的emoji组
 const emojiGroup = ref([
   "animals_nature",
@@ -33,70 +35,88 @@ const emojiGroup = ref([
 let messageForm = reactive({
   poster_ID: '',
   recipient_ID: '',
-  post_time: '',
+  post_time: '2024',
   message: '',
 })
 let recipient = ref({
-  user_ID: '46540',
+  user_ID: '',
   user_Name: '',
   user_Avatar: ''
 })
 
 let recipientList = ref([{
   user_ID: '',
-  user_Name: '阿松大',
+  user_Name: '',
   user_Avatar: ''
 },])
-let mess = ref('')
+
+let messList = ref([{
+  poster_ID: '',
+  poster_Name: '',
+  poster_Avatar: '',
+  messageText: '',
+  post_Time: '',
+}])
 watch(() => messageForm.message, (textarea) => {
       textCount.value = textarea.length;
       disabledPost = textCount.value > 500 || textCount.value <= 0;
     }
 );
-// watch(() => messageStore.recipientList, (newValue, oldValue) => {
-//       recipientList.value = newValue;
-//       console.log(recipientList.value)
-//     }
-// );
-
-//消息初始化
-if (messageStore.recipient.user_ID.length > 0) {
-  recipientList.value.unshift(messageStore.recipient)
-  recipient.value = messageStore.recipient
-}
 
 //接收到消息
 ws.onmessage = function (event) {
   console.log(event.data)
   const obj = JSON.parse(event.data);
-  mess.value = obj.message
-  selectUserDetailByID(obj.poster_ID)
+  console.log(obj)
+  formatMess(obj)
 };
 
 
 onMounted(() => {
-  let re = toRaw(recipientList.value[0]);
-  recipient.value.user_ID = re.user_ID;
-  recipient.value.user_Name = re.user_Name;
-  recipient.value.user_Avatar = re.user_Avatar;
+  getUserMessages()
+  // 注意：需要通过 nextTick 以等待 DOM 更新完成
+  setTimeout(() => {
+    //消息初始化
+    if (messageStore.recipient.user_ID.length > 0) {
+      recipientList.value.unshift(messageStore.recipient)
+    }
+    let re = toRaw(recipientList.value[0]);
+    recipient.value.user_ID = re.user_ID;
+    recipient.value.user_Name = re.user_Name;
+    recipient.value.user_Avatar = re.user_Avatar;
+    nextTick()
+    getMess(recipient.value.user_ID)
+  }, 100)
+  chatShade.value = false
 })
 
-//todo 新消息无法在消息列表新增
-function selectUserDetailByID(user_ID) {
-  aSelectUserInfoByID(user_ID).then(resp => {
+function getUserMessages() {
+  aGetUserMessages().then(resp => {
     if (resp.data.code === 200) {
-      recipient.value.user_ID = user_ID
+      recipientList.value = resp.data.data;
+    } else {
+      recipientList.value = []
+    }
+  })
+}
+
+//todo 新消息无法在消息列表新增
+function formatMess(data) {
+  let userID = data.poster_ID;
+  aSelectUserInfoByID(userID).then(resp => {
+    if (resp.data.code === 200) {
+      recipient.value.user_ID = userID
       recipient.value.user_Name = resp.data.data.user_Name
       recipient.value.user_Avatar = resp.data.data.user_Avatar
       if (recipientList.value.some(item => {
-        return item.user_ID === user_ID;
+        return item.user_ID === userID;
       })) {
       } else {
         recipientList.value.unshift(recipient.value)
       }
-      console.log(recipientList.value)
     }
   })
+  getMess(recipient.value.user_ID)
 }
 
 // 定义局部自定义指令，这里是在 setup 标签下编写，指令名称以 v 开头，无需额外注册逻辑
@@ -142,10 +162,25 @@ function selectEmoji(emoji) {
   postComment_text.selectionStart = startPos + emoji.i.length
   postComment_text.selectionEnd = startPos + emoji.i.length
   messageForm.message = resultText
+
+}
+
+function getMess(user_ID) {
+  console.log(user_ID)
+  aUserMess(user_ID).then(resp => {
+    if (resp.data.code === 200) {
+      messList.value = resp.data.data
+    } else {
+      messList.value = []
+    }
+  })
+  nextTick()
+  scrollDown()
 }
 
 function chooseItem(item) {
   recipient.value = item
+  getMess(item.user_ID)
 }
 
 function deleteMessItem(index) {
@@ -155,10 +190,17 @@ function deleteMessItem(index) {
 function postMess() {
   messageForm.recipient_ID = recipient.value.user_ID
   messageForm.poster_ID = userStore.user_ID
-  console.log(messageForm)
   ws.send(JSON.stringify(messageForm))
   messageForm.message = '';
+  getMess(recipient.value.user_ID)
 }
+
+function scrollDown() {
+  console.log(chatScrollbar.value)
+  chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(9000)
+  // this.$refs['myScrollbar'].wrap.scrollTop = this.$refs['myScrollbar'].wrap.scrollHeight
+}
+
 </script>
 
 <template>
@@ -211,9 +253,23 @@ function postMess() {
         </div>
         <div class="message_mod_de_content_chat_mod" v-if="recipientList.length>0">
           <div class="de_content_chat_mod_title">{{ recipient.user_Name }}</div>
-          <div class="de_content_chat_mod_content">
-            <el-scrollbar>
-              {{ mess }}
+          <div v-loading="chatShade" class="de_content_chat_mod_content">
+            <el-scrollbar ref="chatScrollbar">
+              <div v-for="item in messList">
+                <div class="chat_mod_content_item" v-if="item.poster_ID === recipient.user_ID">
+                  <img :src="item.poster_Avatar">
+                  <div class="item_Mess">
+                    <div class="item_Mess_triangle"></div>
+                    <span>{{ item.messageText }}</span>
+                  </div>
+                </div>
+                <div class="chat_mod_content_item_me" v-else>
+                  <div class="item_Mess_me">
+                    <span>{{ item.messageText }}</span>
+                  </div>
+                  <img :src="item.poster_Avatar">
+                </div>
+              </div>
             </el-scrollbar>
           </div>
           <div class="de_content_chat_mod_write">
@@ -248,6 +304,7 @@ function postMess() {
             </div>
           </div>
         </div>
+
         <div class="message_mod_de_content_chat_mod_null" v-if="!recipientList.length>0">
           <img src="/src/photos/logo/聊天.png">
           <span>快找小伙伴聊天吧 ( ゜- ゜)つロ</span>
@@ -457,6 +514,102 @@ function postMess() {
   height: 500px;
   border-bottom: 1px solid #d4d4d7;
   padding: 20px 20px;
+}
+
+.chat_mod_content_item {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  height: 50px;
+}
+
+.chat_mod_content_item img {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.item_Mess {
+  min-width: 30px;
+  max-width: 280px;
+  min-height: 35px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: #e58c43;
+  font-family: STXihei, serif;
+  color: #FFFFFF;
+  font-size: 16px;
+  padding: 0 10px;
+}
+
+/**
+todo 有bug
+聊天气泡的箭头
+ */
+.item_Mess_triangle {
+  display: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform: translateX(-25px);
+  border: 8px solid #e58c43;
+  border-color: transparent #e58c43 transparent transparent;
+}
+
+.chat_mod_content_item_me {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  height: 50px;
+}
+
+.chat_mod_content_item_me img {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+
+.item_Mess_me {
+  min-width: 30px;
+  max-width: 280px;
+  min-height: 35px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: #6ce543;
+  font-family: STXihei, serif;
+  color: #FFFFFF;
+  font-size: 16px;
+  padding: 0 10px;
+}
+/**
+todo 有bug
+聊天气泡的箭头
+ */
+.item_Mess_me::before {
+/*  content: "";*/
+  width: 10px;
+  height: 10px;
+  background-color: #e58c43;
+}
+
+/**
+todo 有bug
+聊天气泡的箭头
+ */
+.item_Mess_me_triangle {
+  display: none;
+  position: relative;
+  width: 0;
+  height: 0;
+  transform: translateX(30px);
+  border: 8px solid #6ce543;
+  border-color: transparent transparent transparent #6ce543;
 }
 
 .de_content_chat_mod_write {

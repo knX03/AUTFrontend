@@ -574,6 +574,12 @@ export const aUploadSGAvatar = data => {
     })
 }
 /*message---------------------------------------------------------*/
+
+/**
+ * 获取当前用户的消息列表
+ * @param data
+ * @returns {*}
+ */
 export const aGetUserMessages = data => {
     return Service({
         url: '/message/getUserMessages',
@@ -594,9 +600,14 @@ export const aMess = data => {
     })
 }
 
-export const aDelMess = (mess_ID) => {
+/**
+ * 获取两个用户间的聊天记录
+ * @param userID
+ * @returns {*}
+ */
+export const aUserMess = (userID) => {
     return Service({
-        url: '/message/delMess?mess_ID=' + mess_ID,
+        url: '/message/UserMess?userID=' + userID,
         method: 'GET',
     })
 }

@@ -9,9 +9,7 @@ import useSearchStore from "@/store/searchStore.js";
 import useMessageStore from "@/store/messageStore.js";
 import {
   aDelHistory,
-  aDelMess,
-  aGetSingerByUser,
-  aGetUserMessages, aHotSearch,
+  aGetSingerByUser, aGetSumFollowAndFan, aHotSearch,
   aIfMy,
   aLogOff, aSearch, aSearchDetail, aSearchHistory, aSinLogOff,
   aUserDetail
@@ -28,6 +26,7 @@ const searchStore = useSearchStore();
 const messageStore = useMessageStore();
 
 const router = useRouter()
+const userID = ""
 let opList = ref(["我的消息", "回复我的", "我收到的赞", "系统消息",])
 let isDot = ref(true)
 let showSearchF = ref(false) //展示搜索模块
@@ -36,9 +35,14 @@ let searchHistory = ref([]) // 搜索历史
 let searchHot = ref(['大利空', '阿', '按规划规范', '按规范', '公司法的', '放到', '发到付']) // 搜索推荐 由Redis得到
 let searchText = ref(searchStore.searchValue) // 搜索词
 let searchRes = ref() //搜索结果
+let avatarFlag = ref(false)
 let user = ref(
     {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
 )
+let sumFollowAndFan = ref({
+  followSum: 0,
+  fanSum: 0
+})
 
 
 onMounted(() => {
@@ -48,6 +52,7 @@ onMounted(() => {
   selectUserDetail()
   gSearchHistory()
   hotSearch()
+  getSumFollowAndFan(userID)
 })
 
 const toUserInfo = (user_ID) => {
@@ -62,6 +67,12 @@ const toUserInfo = (user_ID) => {
         query: {user_ID}
       })
     }
+  })
+}
+
+const toUser = () => {
+  router.push({
+    path: '/myInfo',
   })
 }
 
@@ -286,6 +297,17 @@ function searchDetail(data) {
   })
 }
 
+function avatarOver() {
+  avatarFlag.value = true
+}
+
+function getSumFollowAndFan(userID) {
+  aGetSumFollowAndFan(userID).then(resp => {
+    if (resp.data.code === 200) {
+      sumFollowAndFan.value = resp.data.data
+    }
+  })
+}
 </script>
 
 <template>
@@ -359,26 +381,45 @@ function searchDetail(data) {
         </div>
         <ul class="navbar-nav align-items-center">
           <li class="nav-item me-5">
-            <el-dropdown trigger="contextmenu">
-              <div title="点击右键设置">
-                <router-link to="/myInfo">
-                  <img style="margin-right: 15px" class="nav_avatar" :src=user.user_Avatar alt="avatar">
-                </router-link>
-                <router-link to="/myInfo">
-                  <span style="color: black;font-family: SimHei, serif;cursor: pointer">{{ user.user_Name }}</span>
-                </router-link>
+            <div class="userInfo">
+              <img class="nav_avatar"
+                   @mouseover="avatarOver"
+                   @mouseout="avatarFlag=false"
+                   :src=user.user_Avatar
+                   :class="{aActive:avatarFlag}"
+                   alt="avatar">
+              <div class="userInfoOP_mod"
+                   @mouseover="avatarOver"
+                   @mouseout="avatarFlag=false"
+                   :class="{oActive:avatarFlag}">
+                <span class="borderText" style="margin-bottom: 15px">{{ user.user_Name }}</span>
+                <div class="userInfoOP_mod_fans">
+                  <div class="userInfoOP_mod_fans_item"><span class="borderText">关注</span>
+                    {{ sumFollowAndFan.followSum }}<span></span></div>
+                  <div class="userInfoOP_mod_fans_item"><span class="borderText">粉丝</span>
+                    {{ sumFollowAndFan.fanSum }}<span></span></div>
+                </div>
+                <div class="userInfoOP_mod_DE" @click="toUser">
+                  <div style="display: flex;align-items: center">
+                    <el-icon style="margin-right: 10px">
+                      <UserFilled/>
+                    </el-icon>
+                    <span>个人中心</span>
+                  </div>
+                  <span> > </span>
+                </div>
+                <div class="userInfoOP_mod_split"></div>
+                <div class="userInfoOP_mod_EX" @click="logOff()">
+                  <el-icon style="margin-right: 10px">
+                    <Promotion/>
+                  </el-icon>
+                  <span>退出登录</span>
+                </div>
               </div>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="toSignIn()">登录</el-dropdown-item>
-                  <el-dropdown-item divided @click="logOff()">退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            </div>
           </li>
           <li class="nav-item  me-2">
             <div class="message_mod">
-              <!--todo 消息模块待完善-->
               <el-badge :is-dot="isDot" class="item" style="width: 1.4em;">
                 <Message style="width: 1.3em; height: 1.3em; margin-right: 8px;" @click="checkMessage(0)"/>
               </el-badge>
@@ -397,11 +438,11 @@ function searchDetail(data) {
       </div>
     </nav>
   </div>
-<!--  <div id="mess">
-    <keep-alive>
-      <component :is="message"></component>
-    </keep-alive>
-  </div>-->
+  <!--  <div id="mess">
+      <keep-alive>
+        <component :is="message"></component>
+      </keep-alive>
+    </div>-->
 </template>
 
 <style scoped src="../css/AUTnav.css"></style>
