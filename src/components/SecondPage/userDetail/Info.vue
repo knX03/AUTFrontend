@@ -1,5 +1,5 @@
 <script setup>
-import {markRaw, onMounted, reactive, ref, watch} from "vue";
+import {markRaw, onBeforeUpdate, onMounted, reactive, ref, watch} from "vue";
 import {ElMessageBox, ElNotification} from "element-plus";
 import {
   aFollowUser, aGetSumFollowAndFan,
@@ -13,7 +13,10 @@ import followForm from "@/components/SecondPage/userDetail/otherForm/followForm.
 import fansForm from "@/components/SecondPage/userDetail/otherForm/fansForm.vue";
 import useFlagStore from "@/store/flagStore.js";
 import useMessageStore from "@/store/messageStore.js";
+import CreateList from "@/components/SecondPage/userDetail/CreateList.vue";
+import LikeList from "@/components/SecondPage/userDetail/LikeList.vue";
 
+const bg_info = ref()
 const router = useRouter()
 const messageStore = useMessageStore();
 const route = useRoute()
@@ -61,6 +64,10 @@ onMounted(() => {
   selectUserDetail(user_ID)
   ifFollowUser(user_ID)
   getSumFollowAndFan(user_ID)
+})
+
+onBeforeUpdate(() => {
+  bg_info.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
 })
 
 
@@ -178,91 +185,94 @@ function postMess() {
 </script>
 
 <template>
-  <div class="INFO_mode">
-    <!--用户资料-->
-    <div class="userInfo_mod">
-      <div class="userAvatar_mod">
-        <img :src="user.user_Avatar">
-      </div>
-      <div class="nameAndOther_mod">
-        <label class="username_mod">{{ user.user_Name }}</label>
-        <!--修改性别时切换性别logo-->
-        <div class="InfoLogo">
-          <img id="sexLogo" :src=sex_logo alt="">
+  <div ref="bg_info" class="bg_mod">
+    <div class="bg_shade">
+      <!--用户资料-->
+      <div class="userInfo_mod">
+        <div class="userAvatar_mod">
+          <img :src="user.user_Avatar">
         </div>
-        <!--todo 关注与粉丝模块（暂无bug）-->
-        <div class="followAndFans_mod">
-          <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
-          <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
-        </div>
-        <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
-          <el-tooltip
-              class="box-item"
-              :content="user.user_Introduction"
-              placement="right"
-              effect="light"
-          >
-            <span>简介：{{ user.user_Introduction }}</span>
-          </el-tooltip>
-        </div>
-        <div class="dOption_mod">
-          <el-button type="danger" round v-if="!ifFollow" @click="followUser(user.user_ID)"> + 关注</el-button>
-          <el-button type="danger" round v-if="ifFollow" @click="unFollowUser(user.user_ID)">
-            <el-icon>
-              <Switch/>
-            </el-icon>
-            已关注
-          </el-button>
-          <el-button type="info">
-            <el-icon>
-              <ChatLineRound @click="postMess()"/>
-            </el-icon>
-          </el-button>
-          <el-dropdown trigger="click">
-            <el-button type="info">+</el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item :icon="CloseBold">加入黑名单</el-dropdown-item>
-                <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
-                <!--                <el-dropdown trigger="click">
-                                  <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
-                                  <template #dropdown>
-                                    <el-dropdown-menu>
-                                      <el-dropdown-item >低俗</el-dropdown-item>
-                                      <el-dropdown-item >恶意</el-dropdown-item>
-                                      <el-dropdown-item >敏感</el-dropdown-item>
-                                      <el-dropdown-item >色情</el-dropdown-item>
-                                      <el-dropdown-item >其他原因</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                  </template>
-                                </el-dropdown>-->
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+        <div class="nameAndOther_mod">
+          <label class="username_mod">{{ user.user_Name }}</label>
+          <!--修改性别时切换性别logo-->
+          <div class="InfoLogo">
+            <img id="sexLogo" :src=sex_logo alt="">
+          </div>
+          <!--todo 关注与粉丝模块（暂无bug）-->
+          <div class="followAndFans_mod">
+            <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
+            <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
+          </div>
+          <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
+            <el-tooltip
+                class="box-item"
+                :content="user.user_Introduction"
+                placement="right"
+                effect="light"
+            >
+              <span>简介：{{ user.user_Introduction }}</span>
+            </el-tooltip>
+          </div>
+          <div class="dOption_mod">
+            <el-button type="danger" round v-if="!ifFollow" @click="followUser(user.user_ID)"> + 关注</el-button>
+            <el-button type="danger" round v-if="ifFollow" @click="unFollowUser(user.user_ID)">
+              <el-icon>
+                <Switch/>
+              </el-icon>
+              已关注
+            </el-button>
+            <el-button type="info">
+              <el-icon>
+                <ChatLineRound @click="postMess()"/>
+              </el-icon>
+            </el-button>
+            <el-dropdown trigger="click">
+              <el-button type="info">+</el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item :icon="CloseBold">加入黑名单</el-dropdown-item>
+                  <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </div>
       </div>
+      <div v-if="flagStore.flag">
+        <KeepAlive>
+          <component :is="selComponent" :user_ID=user_ID></component>
+        </KeepAlive>
+      </div>
+      <CreateList></CreateList>
+      <LikeList></LikeList>
     </div>
-  </div>
-  <div v-if="flagStore.flag">
-    <KeepAlive>
-      <component :is="selComponent" :user_ID=user_ID></component>
-    </KeepAlive>
   </div>
 </template>
 
 <style scoped>
+.bg_mod {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg_shade {
+  width: 100%;
+  background: rgb(208 208 208 / 76%);
+  backdrop-filter: blur(50px);
+}
+
 /**
 个人资料模块
  */
-.INFO_mode {
-  width: 100%;
-}
 
 /*用户资料*/
 .userInfo_mod {
   width: 100%;
   height: 240px;
-  background-image: linear-gradient(#333333, #ffffff);
+  display: flex;
+  align-items: center;
+  padding-left: 90px;
 }
 
 /*用户头像模块*/
@@ -271,10 +281,6 @@ function postMess() {
   height: 150px;
   overflow: hidden;
   border-radius: 50%;
-  position: relative;
-  top: 50%;
-  left: 10%;
-  transform: translate(-50%, -50%);
 }
 
 .userAvatar_mod img {
@@ -290,29 +296,19 @@ function postMess() {
 }
 
 .nameAndOther_mod {
-  position: relative;
-  top: -101px;
-  left: 298px;
-  width: 50%;
-  height: 75%;
+  min-width: 300px;
+  /* height: 224px; */
+  padding-top: 10px;
+  padding-left: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
 }
 
 .nameAndOther_mod span {
   font-family: STXihei, serif;
   color: white;
   font-size: small;
-}
-
-/*用户信息展示模块*/
-.usernameLogo_mod {
-  width: 125px;
-  height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
 }
 
 .username_mod {
@@ -370,22 +366,17 @@ function postMess() {
 }
 
 .userIntroduction_mod {
-
+  font-family: STXihei, serif;
+  color: #ffffff;
+  font-size: 15px;
+  white-space: nowrap; /*强制单行显示*/
+  text-overflow: ellipsis; /*超出部分省略号表示*/
+  overflow: hidden; /*超出部分隐藏*/
+  max-width: 1000px; /*设置显示的最大宽度*/
+  display: inline-block;
+  margin-bottom: 15px;
 }
 
-.locationAndOther {
-  cursor: default;
-  user-select: none;
-  display: flex;
-  width: 50%;
-  align-items: center;
-}
-
-.moreThan {
-  margin-left: 20px;
-  display: flex;
-  align-items: center
-}
 
 .dOption_mod {
   width: 200px;

@@ -67,7 +67,6 @@ function selectCreateDetail(userID) {
 .createSongPlaylistsInfo_mod {
   width: 100%;
   height: 600px;
-  background-image: linear-gradient(#ffffff, #c7c7c7, #8DB799, #c7c7c7, #FFFFFF);
   margin-bottom: 50px;
   padding-top: 20px;
   padding-left: 70px;
@@ -85,7 +84,6 @@ function selectCreateDetail(userID) {
 /*歌单列表模块*/
 .songListInfo_mod {
   width: 100%;
-  height: 100%;
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;

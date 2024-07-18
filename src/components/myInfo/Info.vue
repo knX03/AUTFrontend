@@ -1,5 +1,5 @@
 <script setup>
-import {markRaw, onMounted, reactive, ref, watch} from "vue";
+import {markRaw, onBeforeUpdate, onMounted, reactive, ref, watch} from "vue";
 import {ElMessage} from "element-plus";
 import bus from "@/eventbus.js";
 import useUserStore from '@/store/userStore.js'
@@ -13,11 +13,14 @@ import {
 } from "@/api/api.js";
 import followForm from "@/components/myInfo/otherForm/followForm.vue";
 import fansForm from "@/components/myInfo/otherForm/fansForm.vue";
+import CreateList from "@/components/myInfo/createList.vue";
+import LikeList from "@/components/myInfo/likeList.vue";
 
 
 const userStore = useUserStore()
 const flagStore = useFlagStore();
 
+const bg_info = ref()
 let dialogVisible = ref(false)
 let fileType = ref(["png", "jpg", "jpeg"])
 let new_user_avatar = ref('')
@@ -52,12 +55,12 @@ const detailForm = ref([
 
 // 默认显示的组件页面
 const selComponent = ref();
-
 bus.on('userInfo', (data) => {
   user.value = data
   form = user.value
   new_user_avatar.value = data.user_Avatar;
   changeSexLogo()
+
 })
 
 //监听关注与粉丝的变化
@@ -69,6 +72,10 @@ watch(() => flagStore.flag, (newValue, oldValue) => {
 
 onMounted(() => {
   getSumFollowAndFan(userID)
+})
+
+onBeforeUpdate(() => {
+  bg_info.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
 })
 
 /* 用户详情查询*/
@@ -210,6 +217,7 @@ function fansDetail() {
 
 /*不同的性别对应不同的logo*/
 function changeSexLogo() {
+
   switch (user.value.user_Sex) {
     case '男':
       sex_logo.value = "src/photos/logo/boy.png"
@@ -231,119 +239,135 @@ function changeSexLogo() {
 </script>
 
 <template>
-  <div class="INFO_mode">
-    <!--用户资料-->
-    <div class="userInfo_mod">
-      <div class="userAvatar_mod">
-        <img :src="user.user_Avatar">
+  <div ref="bg_info" class="bg_mod">
+    <div class="bg_shade">
+      <!--用户资料-->
+      <div class="userInfo_mod">
+        <div class="userAvatar_mod">
+          <img :src="user.user_Avatar">
+        </div>
+        <div class="userIN_mod">
+          <div class="usernameLogo_mod">
+            <span style="margin-right: 30px" class="username_mod">{{ user.user_Name }}</span>
+            <img src="/src/photos/logo/editGray.png" class="changeINFOButton_mod" @click=beChangeInfo() alt="">
+          </div>
+          <!--修改性别时切换性别logo-->
+          <div class="InfoLogo">
+            <img id="sexLogo" :src=sex_logo alt="">
+          </div>
+          <div class="followAndFans">
+            <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
+            <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
+          </div>
+          <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
+            <el-tooltip
+                class="box-item"
+                :content="user.user_Introduction"
+                placement="bottom"
+                effect="light"
+            >
+              <span>{{ user.user_Introduction }}</span>
+            </el-tooltip>
+          </div>
+        </div>
       </div>
-      <div class="userIN_mod">
-        <div class="usernameLogo_mod">
-          <span style="margin-right: 30px" class="username_mod">{{ user.user_Name }}</span>
-          <img src="/src/photos/logo/editGray.png" class="changeINFOButton_mod" @click=beChangeInfo() alt="">
-        </div>
-        <!--修改性别时切换性别logo-->
-        <div class="InfoLogo">
-          <img id="sexLogo" :src=sex_logo alt="">
-        </div>
-        <div class="followAndFans">
-          <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
-          <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
-        </div>
-        <div class="userIntroduction_mod" v-if="![null,''].includes(user.user_Introduction)">
-          <el-tooltip
-              class="box-item"
-              :content="user.user_Introduction"
-              placement="bottom"
-              effect="light"
-          >
-            <span>{{ user.user_Introduction }}</span>
-          </el-tooltip>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!--编辑资料模块-->
-  <div class="editUserInfo" id="edituserinfo">
-    <el-dialog
-        title="编辑个人信息"
-        v-model="dialogVisible"
-        width="50%"
-    >
-      <div class="editForm" id="editform">
-        <el-form :model="form" label-width="80px">
-          <el-form-item label="昵称：" id="username">
-            <el-input size="large"
-                      maxlength="15"
-                      show-word-limit
-                      v-model="form.user_Name"
-                      @blur="checkName(form.user_Name)"></el-input>
-          </el-form-item>
-          <el-form-item label="生日：" id="user_Birthday">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="选择日期" v-model="form.user_Birthday"
-                              value-format="YYYY-MM-DD"
-                              size="large"></el-date-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="性别：" id="user_Sex">
-            <el-radio-group v-model="form.user_Sex">
-              <el-radio label="男" value="男"></el-radio>
-              <el-radio label="女" value="女"></el-radio>
-              <el-radio label="外星人" value="外星人"></el-radio>
-              <el-radio label="沃尔玛" value="沃尔玛"></el-radio>
-              <el-radio label="不被定义的" value="不被定义的"></el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item size="large" label="简介：" id="eidtuserIntroduction">
-            <el-input type="textarea"
-                      v-model="form.user_Introduction"
-                      placeholder="200"
-                      maxlength="200"
-                      show-word-limit></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="large" @click="catchSubmit()">取消</el-button>
-            <el-button size="large" type="primary" @click="onSubmit()">保存</el-button>
-          </el-form-item>
-        </el-form>
-        <!--更换头像-->
-        <div class="editAvatar">
-          <label class="changeAvatar"><i class="el-icon-picture-outline-round"></i>切换头像</label>
-          <el-upload
-              class="avatar-uploader"
-              action="#"
-              :show-file-list="false"
-              :before-upload="beforeUpload"
-              :http-request="uploadAvatar"
-          >
-            <img :src="new_user_avatar" class="avatar" alt="">
-          </el-upload>
-        </div>
+      <!--编辑资料模块-->
+      <div class="editUserInfo" id="edituserinfo">
+        <el-dialog
+            title="编辑个人信息"
+            v-model="dialogVisible"
+            width="50%"
+        >
+          <div class="editForm" id="editform">
+            <el-form :model="form" label-width="80px">
+              <el-form-item label="昵称：" id="username">
+                <el-input size="large"
+                          maxlength="15"
+                          show-word-limit
+                          v-model="form.user_Name"
+                          @blur="checkName(form.user_Name)"></el-input>
+              </el-form-item>
+              <el-form-item label="生日：" id="user_Birthday">
+                <el-col :span="11">
+                  <el-date-picker type="date" placeholder="选择日期" v-model="form.user_Birthday"
+                                  value-format="YYYY-MM-DD"
+                                  size="large"></el-date-picker>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="性别：" id="user_Sex">
+                <el-radio-group v-model="form.user_Sex">
+                  <el-radio label="男" value="男"></el-radio>
+                  <el-radio label="女" value="女"></el-radio>
+                  <el-radio label="外星人" value="外星人"></el-radio>
+                  <el-radio label="沃尔玛" value="沃尔玛"></el-radio>
+                  <el-radio label="不被定义的" value="不被定义的"></el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item size="large" label="简介：" id="eidtuserIntroduction">
+                <el-input type="textarea"
+                          v-model="form.user_Introduction"
+                          placeholder="200"
+                          maxlength="200"
+                          show-word-limit></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button size="large" @click="catchSubmit()">取消</el-button>
+                <el-button size="large" type="primary" @click="onSubmit()">保存</el-button>
+              </el-form-item>
+            </el-form>
+            <!--更换头像-->
+            <div class="editAvatar">
+              <label class="changeAvatar"><i class="el-icon-picture-outline-round"></i>切换头像</label>
+              <el-upload
+                  class="avatar-uploader"
+                  action="#"
+                  :show-file-list="false"
+                  :before-upload="beforeUpload"
+                  :http-request="uploadAvatar"
+              >
+                <img :src="new_user_avatar" class="avatar" alt="">
+              </el-upload>
+            </div>
+          </div>
+        </el-dialog>
       </div>
-    </el-dialog>
-  </div>
-  <div v-if="flagStore.flag">
-    <KeepAlive>
-      <component :is="selComponent"></component>
-    </KeepAlive>
+      <div v-if="flagStore.flag">
+        <KeepAlive>
+          <component :is="selComponent"></component>
+        </KeepAlive>
+      </div>
+      <create-list></create-list>
+      <like-list></like-list>
+    </div>
   </div>
 </template>
 
 <style scoped>
+
+.bg_mod {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg_shade {
+  width: 100%;
+  background: rgb(208 208 208 / 76%);
+  backdrop-filter: blur(50px);
+}
+
 /**
 个人资料模块
  */
-.INFO_mode {
-  width: 100%;
-}
 
 /*用户资料*/
 .userInfo_mod {
   width: 100%;
   height: 240px;
-  background-image: linear-gradient(#414141, #ababab, #ffffff);
+  display: flex;
+  align-items: center;
+  padding-left: 90px;
 }
 
 /*用户头像模块*/
@@ -352,10 +376,7 @@ function changeSexLogo() {
   height: 150px;
   overflow: hidden;
   border-radius: 50%;
-  position: relative;
-  top: 50%;
-  left: 10%;
-  transform: translate(-50%, -50%);
+
 }
 
 .userAvatar_mod img {
@@ -373,11 +394,9 @@ function changeSexLogo() {
 .userIN_mod {
   /*选项模块*/
   min-width: 300px;
-  height: 224px;
-  /* padding-top: 23px; */
-  position: relative;
-  top: -104px;
-  left: 298px;
+  /* height: 224px; */
+  padding-top: 10px;
+  padding-left: 20px;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -451,7 +470,7 @@ function changeSexLogo() {
   white-space: nowrap; /*强制单行显示*/
   text-overflow: ellipsis; /*超出部分省略号表示*/
   overflow: hidden; /*超出部分隐藏*/
-  width: 1000px; /*设置显示的最大宽度*/
+  max-width: 1000px; /*设置显示的最大宽度*/
   display: inline-block;
   margin-bottom: 15px;
 }

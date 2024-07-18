@@ -1,19 +1,24 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onBeforeUpdate, onMounted, ref} from "vue";
 import axios from "axios";
 import bus from "@/eventbus.js";
 
 let sex_logo = ref("")
+const avatarCON = ref()
 
-onMounted(() => {
-  let FUser_ID = 46540
-})
 let user = ref(
     {user_Name: '', user_ID: '', user_Avatar: 'src/photos/logo/avatarWhite.png', user_Sex: ''}
 )
 bus.on('userInfo', (data) => {
   user.value = data
   changeSexLogo()
+})
+
+onMounted(() => {
+})
+
+onBeforeUpdate(() => {
+  avatarCON.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
 })
 
 /*不同的性别对应不同的logo*/
@@ -39,7 +44,7 @@ function changeSexLogo() {
 </script>
 
 <template>
-  <div class="avatar_container">
+  <div ref="avatarCON" class="avatar_container">
     <div class="backgroundPage_mod">
       <div class="myAvatar_mod">
         <img :src="user.user_Avatar">
@@ -54,11 +59,11 @@ function changeSexLogo() {
 
 <style scoped>
 .avatar_container {
-  /*  width: 1684px;*/
   width: 100%;
   height: 350px;
-  background-image: url("../../photos/background/sky1.jpg");
   background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
 }
 
 .backgroundPage_mod {
@@ -68,7 +73,7 @@ function changeSexLogo() {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
 }
 
 /*头像*/

@@ -37,6 +37,7 @@ let messageForm = reactive({
   recipient_ID: '',
   post_time: '2024',
   message: '',
+  messageType: '',
 })
 let recipient = ref({
   user_ID: '',
@@ -56,6 +57,7 @@ let messList = ref([{
   poster_Avatar: '',
   messageText: '',
   post_Time: '',
+  messageType: '', // 消息类型：0是文本，1是图片
 }])
 watch(() => messageForm.message, (textarea) => {
       textCount.value = textarea.length;
@@ -65,7 +67,6 @@ watch(() => messageForm.message, (textarea) => {
 
 //接收到消息
 ws.onmessage = function (event) {
-  console.log(event.data)
   const obj = JSON.parse(event.data);
   console.log(obj)
   formatMess(obj)
@@ -74,26 +75,27 @@ ws.onmessage = function (event) {
 
 onMounted(() => {
   getUserMessages()
-  // 注意：需要通过 nextTick 以等待 DOM 更新完成
-  setTimeout(() => {
-    //消息初始化
-    if (messageStore.recipient.user_ID.length > 0) {
-      recipientList.value.unshift(messageStore.recipient)
-    }
-    let re = toRaw(recipientList.value[0]);
-    recipient.value.user_ID = re.user_ID;
-    recipient.value.user_Name = re.user_Name;
-    recipient.value.user_Avatar = re.user_Avatar;
-    nextTick()
-    getMess(recipient.value.user_ID)
-  }, 100)
   chatShade.value = false
 })
+
+function initMess() {
+  if (messageStore.recipient.user_ID.length > 0) {
+    recipientList.value.unshift(messageStore.recipient)
+  }
+  let re = toRaw(recipientList.value[0]);
+  recipient.value.user_ID = re.user_ID;
+  recipient.value.user_Name = re.user_Name;
+  recipient.value.user_Avatar = re.user_Avatar;
+  nextTick()
+  getMess(recipientList.value[0].user_ID)
+}
 
 function getUserMessages() {
   aGetUserMessages().then(resp => {
     if (resp.data.code === 200) {
       recipientList.value = resp.data.data;
+      nextTick()
+      initMess()
     } else {
       recipientList.value = []
     }
@@ -116,6 +118,7 @@ function formatMess(data) {
       }
     }
   })
+  nextTick()
   getMess(recipient.value.user_ID)
 }
 
@@ -166,16 +169,17 @@ function selectEmoji(emoji) {
 }
 
 function getMess(user_ID) {
-  console.log(user_ID)
   aUserMess(user_ID).then(resp => {
     if (resp.data.code === 200) {
       messList.value = resp.data.data
+      console.log(messList.value)
     } else {
       messList.value = []
     }
   })
-  nextTick()
-  scrollDown()
+  setTimeout(() => {
+    scrollDown()
+  }, 100)
 }
 
 function chooseItem(item) {
@@ -190,15 +194,16 @@ function deleteMessItem(index) {
 function postMess() {
   messageForm.recipient_ID = recipient.value.user_ID
   messageForm.poster_ID = userStore.user_ID
+  messageForm.messageType = "0"
   ws.send(JSON.stringify(messageForm))
   messageForm.message = '';
+  nextTick()
   getMess(recipient.value.user_ID)
 }
 
 function scrollDown() {
-  console.log(chatScrollbar.value)
-  chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(9000)
-  // this.$refs['myScrollbar'].wrap.scrollTop = this.$refs['myScrollbar'].wrap.scrollHeight
+  let moveTop = (messList.value.length) * 60
+  chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(moveTop)
 }
 
 </script>
@@ -255,18 +260,20 @@ function scrollDown() {
           <div class="de_content_chat_mod_title">{{ recipient.user_Name }}</div>
           <div v-loading="chatShade" class="de_content_chat_mod_content">
             <el-scrollbar ref="chatScrollbar">
-              <div v-for="item in messList">
+              <div v-for="item in messList" style="margin-bottom: 10px">
                 <div class="chat_mod_content_item" v-if="item.poster_ID === recipient.user_ID">
                   <img :src="item.poster_Avatar">
-                  <div class="item_Mess">
+                  <div class="item_Mess" v-if="item.messageType==='0'">
                     <div class="item_Mess_triangle"></div>
                     <span>{{ item.messageText }}</span>
                   </div>
+                  <img v-if="item.messageType==='1'" class="msg_img" :src="item.messageText">
                 </div>
                 <div class="chat_mod_content_item_me" v-else>
-                  <div class="item_Mess_me">
+                  <div class="item_Mess_me" v-if="item.messageType==='0'">
                     <span>{{ item.messageText }}</span>
                   </div>
+                  <img v-if="item.messageType==='1'" class="msg_img" :src="item.messageText">
                   <img :src="item.poster_Avatar">
                 </div>
               </div>
@@ -513,14 +520,15 @@ function scrollDown() {
 .de_content_chat_mod_content {
   height: 500px;
   border-bottom: 1px solid #d4d4d7;
-  padding: 20px 20px;
+  padding: 20px 0 20px 20px;
 }
+
 
 .chat_mod_content_item {
   display: flex;
   align-items: center;
   justify-content: start;
-  height: 50px;
+  min-height: 40px;
 }
 
 .chat_mod_content_item img {
@@ -538,11 +546,11 @@ function scrollDown() {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  background-color: #e58c43;
+  background-color: #ffffff;
   font-family: STXihei, serif;
-  color: #FFFFFF;
-  font-size: 16px;
-  padding: 0 10px;
+  color: #262626;
+  font-size: 15px;
+  padding: 5px 10px;
 }
 
 /**
@@ -560,10 +568,11 @@ todo 有bug
 }
 
 .chat_mod_content_item_me {
+  margin-right: 20px;
   display: flex;
   align-items: center;
   justify-content: end;
-  height: 50px;
+  min-height: 40px;
 }
 
 .chat_mod_content_item_me img {
@@ -581,18 +590,19 @@ todo 有bug
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  background-color: #6ce543;
+  background-color: #e58c43;
   font-family: STXihei, serif;
-  color: #FFFFFF;
-  font-size: 16px;
-  padding: 0 10px;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 5px 10px;
 }
+
 /**
 todo 有bug
 聊天气泡的箭头
  */
 .item_Mess_me::before {
-/*  content: "";*/
+  /*  content: "";*/
   width: 10px;
   height: 10px;
   background-color: #e58c43;
@@ -608,8 +618,14 @@ todo 有bug
   width: 0;
   height: 0;
   transform: translateX(30px);
-  border: 8px solid #6ce543;
-  border-color: transparent transparent transparent #6ce543;
+  border: 8px solid #95ec69;
+  border-color: transparent transparent transparent #95ec69;
+}
+
+.msg_img {
+  width: 170px !important;
+  height: 170px !important;
+  border-radius: 12px !important;
 }
 
 .de_content_chat_mod_write {

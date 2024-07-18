@@ -11,7 +11,6 @@ import PlaylistInfo from "@/components/SecondPage/songlistPlaylistDetail/playlis
   <div>
     <AUTnav></AUTnav>
     <playlist-info></playlist-info>
-    <song-list></song-list>
     <bottom-logo></bottom-logo>
     <backtop></backtop>
   </div>

@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onActivated, onMounted, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
 import useUserStore from '@/store/userStore.js'
@@ -32,6 +32,8 @@ const toPlaylist = (playlist_ID) => {
 onMounted(() => {
   selectLikeDetail(user_ID)
 })
+
+
 
 /*用户收藏的歌单详情*/
 function selectLikeDetail(user_ID) {
@@ -70,9 +72,14 @@ function selectLikeDetail(user_ID) {
 .likeInfo_mod {
   width: 100%;
   height: 600px;
+  /*
   margin-bottom: 50px;
+  */
+  padding-bottom:20px;
   padding-top: 20px;
+  /* 使用用户的头像作为背景
   background-image: linear-gradient(#ffffff, #c7c7c7, #dea582, #c7c7c7, #FFFFFF);
+  */
   padding-left: 70px;
 }
 
@@ -88,7 +95,7 @@ function selectLikeDetail(user_ID) {
 /*歌单收藏列表*/
 .likeListInfo_mod {
   width: 100%;
-  height: 100%;
+ /* height: 100%;*/
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;
@@ -156,9 +163,9 @@ function selectLikeDetail(user_ID) {
 
 .songPlaylistsName_mod {
   font-family: STXihei, serif;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
-  color: white;
+  color: #000000;
   position: relative;
   left: 30px;
 }

@@ -11,7 +11,6 @@ import Backtop from "@/components/utils/backtop.vue";
   <div>
     <AUTnav></AUTnav>
     <singer-info></singer-info>
-    <singer-song-list></singer-song-list>
     <bottom-logo></bottom-logo>
     <Backtop></Backtop>
   </div>

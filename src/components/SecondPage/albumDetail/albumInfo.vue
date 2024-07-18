@@ -1,6 +1,6 @@
 <script setup>
 
-import {onMounted, ref} from "vue";
+import {onBeforeUpdate, onMounted, ref} from "vue";
 import axios from "axios";
 import {ElMessage, ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
@@ -15,9 +15,11 @@ import {
 import router from "@/router/index.js";
 
 import useMusicPlayStore from "@/store/musicPlayStore.js";
+import AlbumSongList from "@/components/SecondPage/albumDetail/albumSongList.vue";
 
 const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
+const bg_info = ref()
 let ifCollect = ref(false)
 let colletBUTX = ref("收藏")
 let user = ref({user_ID: '', user_name: ''})
@@ -59,7 +61,9 @@ onMounted(() => {
   selectDetailAlbum(FAlbum_ID)
   selectSongByAlbum(FAlbum_ID)
 })
-
+onBeforeUpdate(() => {
+  bg_info.value.style.backgroundImage = "url(" + "/" + album.value.album_Cover + ")";
+})
 
 /*专辑详情查询*/
 function selectDetailAlbum(FAlbum_ID) {
@@ -160,45 +164,64 @@ function playAll() {
 </script>
 
 <template>
-  <div class="first_mod">
-    <img :src="album.album_Cover" class="Cover_mod">
-    <div class="albumInfo_mod">
-      <div class="basicInfo_mod">
-        <span>{{ album.album_Name }}</span>
+  <div ref="bg_info" class="bg_mod">
+    <div class="bg_shade">
+      <div class="first_mod">
+        <img :src="album.album_Cover" class="Cover_mod">
+        <div class="albumInfo_mod">
+          <div class="basicInfo_mod">
+            <span>{{ album.album_Name }}</span>
+          </div>
+          <div class="ALSingerInfo_mod">
+            <img :src="singer.singer_Avatar" style="cursor: pointer" @click="toSinger(singer.singer_ID)">
+            <span style="cursor: pointer" @click="toSinger(singer.singer_ID)">{{ singer.singer_Name }}</span>
+            <span style="color: #e7e7e7">{{ album.create_Time }} 发布</span>
+          </div>
+          <!--todo 播放、下载功能待实现-->
+          <div class="playAndLoad_mod">
+            <el-button type="warning" @click="playAll()">
+              <img src="/src/photos/logo/playWhite.png">
+              <span>播放全部</span>
+            </el-button>
+            <el-button type="info" v-if="!ifCollect" @click="collectAlbum(album.album_ID)">
+              <img src="/src/photos/logo/collect.png">
+              {{ colletBUTX }}
+            </el-button>
+            <el-button type="warning" v-if="ifCollect" @click="delColAlbum(album.album_ID)">
+              <img src="/src/photos/logo/collect.png">
+              {{ colletBUTX }}
+            </el-button>
+            <el-button type="info">
+              <img src="/src/photos/logo/downLoadWhite.png">
+              <span>下载</span>
+            </el-button>
+          </div>
+        </div>
       </div>
-      <div class="ALSingerInfo_mod">
-        <img :src="singer.singer_Avatar" style="cursor: pointer" @click="toSinger(singer.singer_ID)">
-        <span style="cursor: pointer" @click="toSinger(singer.singer_ID)">{{ singer.singer_Name }}</span>
-        <span style="color: #e7e7e7">{{ album.create_Time }} 发布</span>
-      </div>
-      <!--todo 播放、下载功能待实现-->
-      <div class="playAndLoad_mod">
-        <el-button type="warning" @click="playAll()">
-          <img src="/src/photos/logo/playWhite.png">
-          <span>播放全部</span>
-        </el-button>
-        <el-button type="info" v-if="!ifCollect" @click="collectAlbum(album.album_ID)">
-          <img src="/src/photos/logo/collect.png">
-          {{ colletBUTX }}
-        </el-button>
-        <el-button type="warning" v-if="ifCollect" @click="delColAlbum(album.album_ID)">
-          <img src="/src/photos/logo/collect.png">
-          {{ colletBUTX }}
-        </el-button>
-        <el-button type="info">
-          <img src="/src/photos/logo/downLoadWhite.png">
-          <span>下载</span>
-        </el-button>
-      </div>
+      <AlbumSongList></AlbumSongList>
     </div>
   </div>
 </template>
 
 <style scoped>
+.bg_mod {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg_shade {
+  width: 100%;
+  background: rgb(208 208 208 / 76%);
+  backdrop-filter: blur(50px);
+}
+
 .first_mod {
   width: 100%;
   height: 240px;
-  background-image: linear-gradient(#333333, #ffffff);
+  display: flex;
+  align-items: center;
+  padding-left: 190px;
 }
 
 /*专辑封面*/
@@ -206,18 +229,17 @@ function playAll() {
   width: 200px;
   height: 200px;
   border-radius: 30px;
-  position: relative;
-  top: 50%;
-  left: 18%;
-  transform: translate(-50%, -50%);
+
 }
 
 /*选项模块*/
 .albumInfo_mod {
-  height: 250px;
-  position: absolute;
-  top: 79px;
-  left: 430px;
+  min-width: 300px;
+  /*  transform: translateY(-10px);*/
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /*歌单基础信息*/
@@ -225,10 +247,8 @@ function playAll() {
   max-width: 450px;
   height: 40px;
   display: flex;
-  position: relative;
-  top: 30px;
-  left: 10px;
   align-items: center;
+  margin-bottom: 15px;
 }
 
 .basicInfo_mod span {
@@ -243,12 +263,11 @@ function playAll() {
 .ALSingerInfo_mod {
   width: 160px;
   height: 30px;
-  position: relative;
-  top: 40px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   left: 10px;
+  margin-bottom: 15px;
 }
 
 .ALSingerInfo_mod img {
@@ -269,12 +288,10 @@ function playAll() {
 
 /*播放和下载按钮*/
 .playAndLoad_mod {
-  width: 350px;
+  max-width: 300px;
   height: 50px;
-  position: absolute;
-  bottom: 24px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
 
 }

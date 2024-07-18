@@ -11,7 +11,6 @@ import myInfo from '../views/myInfo.vue'
 import playlistDetails from '../views/SecondPage/playlistDetail.vue'
 import albumDetail from '../views/SecondPage/albumDetail.vue'
 import singerDetail from '../views/SecondPage/singerDetail.vue'
-import dailyRecomm from '../views/SecondPage/dailyRecomm.vue'
 import signIn from '../views/LRF/signIn.vue'
 import signUp from '../views/LRF/signUp.vue'
 import forgetPass from '../views/LRF/fogerPass.vue'
@@ -84,11 +83,6 @@ const router = createRouter({
             path: '/singerDetail',
             name: 'singerDetail',
             component: singerDetail
-        },
-        {
-            path: '/dailyRecomm',
-            name: 'dailyRecomm',
-            component: dailyRecomm
         }, {
             path: '/signIn',
             name: 'signIn',

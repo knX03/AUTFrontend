@@ -56,7 +56,7 @@ onMounted(() => {
  */
 .second_mod {
   width: 100%;
-  background-color: #f7f9fc;
+  padding-bottom: 20px;
 }
 
 .ListOption_mod {

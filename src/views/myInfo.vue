@@ -12,8 +12,6 @@ import LikeList from "@/components/myInfo/likeList.vue";
   <div>
     <AUTnav></AUTnav>
     <Info></Info>
-    <create-list></create-list>
-    <like-list></like-list>
     <bottom-logo></bottom-logo>
     <backtop></backtop>
   </div>

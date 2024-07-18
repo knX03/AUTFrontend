@@ -51,7 +51,7 @@
 /*编辑资料模块框架*/
 .editUserInfo .el-dialog {
     width: 50%;
-    height: 70%;
+    height: 50% !important;
     border-radius: 20px;
     background-color: #626262;
 }

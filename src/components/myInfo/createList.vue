@@ -279,7 +279,9 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 .createSongPlaylistsInfo_mod {
   width: 100%;
   height: 600px;
+  /*
   background-image: linear-gradient(#ffffff, #c7c7c7, #8DB799, #c7c7c7, #FFFFFF);
+  */
   margin-bottom: 50px;
   padding-top: 20px;
   padding-left: 70px;
@@ -297,7 +299,7 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 /*歌单列表模块*/
 .songListInfo_mod {
   width: 100%;
-  height: 100%;
+/*  height: 100%;*/
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;
@@ -358,7 +360,7 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 
 .songPlaylistsName_mod {
   font-family: STXihei, serif;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: #000000;
   position: relative;

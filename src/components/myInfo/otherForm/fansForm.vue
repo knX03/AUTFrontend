@@ -122,6 +122,7 @@ function unFollowUser(fan_id) {
   border-radius: 20px;
   min-height: 700px;
   background-color: #ffffff;
+  transform: translateY(-60px);
 }
 
 #fansFM :deep(.el-dialog__body) {

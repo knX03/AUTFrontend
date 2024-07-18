@@ -1,5 +1,5 @@
 <script setup>
-import {getCurrentInstance, onMounted, reactive, ref, toRaw, watch} from "vue";
+import {getCurrentInstance, onBeforeUpdate, onMounted, reactive, ref, toRaw, watch} from "vue";
 import router from "@/router/index.js";
 import {ElMessage, ElNotification} from "element-plus";
 import {useRoute} from "vue-router";
@@ -13,6 +13,7 @@ import {
 } from "@/api/api.js";
 
 import useMusicPlayStore from "@/store/musicPlayStore.js";
+import SongList from "@/components/SecondPage/songlistPlaylistDetail/songList.vue";
 
 const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
@@ -23,6 +24,7 @@ let ifCollect = ref(false)
 let fileType = ref(["png", "jpg", "jpeg"])
 let new_playlist_Cover = ref("")
 let colletBUTX = ref("收藏")
+const bg_info = ref()
 
 let creator = ref({
   ID: '',
@@ -101,6 +103,9 @@ onMounted(() => {
   selectPlaylistTags(FPlaylist_ID)
   getAllPLTag()
   editInfo(FPlaylist_ID)
+})
+onBeforeUpdate(() => {
+  bg_info.value.style.backgroundImage = "url(" + "/" + songPlaylists.value.playlist_Cover + ")";
 })
 
 /*根据跳转的歌单ID查询歌单详情*/
@@ -340,132 +345,152 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 </script>
 
 <template>
-  <div class="first_mod">
-    <img :src="songPlaylists.playlist_Cover" class="cover_mod">
-    <div class="option_mod">
-      <div class="basicInfo_mod">
-        <span class="playListName_mod">{{ songPlaylists.playlist_Name }}</span>
-        <img v-show="showEdit" src="/src/photos/logo/editGray.png" class="editInfo_mod"
-             @click="dialogVisible=true">
-      </div>
-      <div class="plIntroduction_mod"
-           v-if="![null,''].includes(songPlaylists.playlist_Introduction)">
-        <el-tooltip
-            class="box-item"
-            :content="songPlaylists.playlist_Introduction"
-            placement="bottom"
-            effect="light"
-        >
-          <span>{{ songPlaylists.playlist_Introduction }}</span>
-        </el-tooltip>
-      </div>
-      <div class="userInfo_mod">
-        <img :src="creator.avatar" @click="toUserInfo(creator.ID)">
-        <span class="userName_mod" @click="toUserInfo(creator.ID)">
+  <div ref="bg_info" class="bg_mod">
+    <div class="bg_shade">
+      <div class="first_mod">
+        <img :src="songPlaylists.playlist_Cover" class="cover_mod">
+        <div class="option_mod">
+          <div class="basicInfo_mod">
+            <span class="playListName_mod">{{ songPlaylists.playlist_Name }}</span>
+            <img v-show="showEdit" src="/src/photos/logo/editGray.png" class="editInfo_mod"
+                 @click="dialogVisible=true">
+          </div>
+          <div class="plIntroduction_mod"
+               v-if="![null,''].includes(songPlaylists.playlist_Introduction)">
+            <el-tooltip
+                class="box-item"
+                :content="songPlaylists.playlist_Introduction"
+                placement="bottom"
+                effect="light"
+            >
+              <span>{{ songPlaylists.playlist_Introduction }}</span>
+            </el-tooltip>
+          </div>
+          <div class="userInfo_mod">
+            <img :src="creator.avatar" @click="toUserInfo(creator.ID)">
+            <span class="userName_mod" @click="toUserInfo(creator.ID)">
           {{ creator.name }}
         </span>
-        <div class="playlistTag_mod" v-if="PLTags.length>0">
-          <span>标签：</span>
-          <label class="tag_mod" v-for="item in PLTags" @click="toPLbyTag(item.tag_id)">
-            {{ item.tag_name }}
-            <span v-if="PLTags.length>1"> /</span></label>
+            <div class="playlistTag_mod" v-if="PLTags.length>0">
+              <span>标签：</span>
+              <label class="tag_mod" v-for="item in PLTags" @click="toPLbyTag(item.tag_id)">
+                {{ item.tag_name }}
+                <span v-if="PLTags.length>1"> /</span></label>
+            </div>
+            <span class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</span>
+          </div>
+          <!--todo 播放和下载功能待实现-->
+          <div class="playAndLoad_mod">
+            <el-button type="warning" @click="playAll()">
+              <img src="/src/photos/logo/playWhite.png">
+              <span>播放全部</span>
+            </el-button>
+            <el-button type="info" @click="downloadAll()">
+              <img src="/src/photos/logo/downLoadWhite.png">
+              <span>下载全部</span>
+            </el-button>
+            <!-- 收藏歌单功能-->
+            <div class="collect_mod" v-if="collectBT">
+              <el-button type="info" v-if="!ifCollect"
+                         @click="collectPlaylist(songPlaylists.playlist_ID)">
+                <img src="/src/photos/logo/collect.png">
+                {{ colletBUTX }}
+              </el-button>
+              <el-button type="warning" v-if="ifCollect"
+                         @click="delColPlaylist(songPlaylists.playlist_ID)">
+                <img src="/src/photos/logo/collect.png">
+                {{ colletBUTX }}
+              </el-button>
+            </div>
+          </div>
         </div>
-        <span class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</span>
       </div>
-      <!--todo 播放和下载功能待实现-->
-      <div class="playAndLoad_mod">
-        <el-button type="warning" @click="playAll()">
-          <img src="/src/photos/logo/playWhite.png">
-          <span>播放全部</span>
-        </el-button>
-        <el-button type="info" @click="downloadAll()">
-          <img src="/src/photos/logo/downLoadWhite.png">
-          <span>下载全部</span>
-        </el-button>
-        <!-- 收藏歌单功能-->
-        <div class="collect_mod" v-if="collectBT">
-          <el-button type="info" v-if="!ifCollect"
-                     @click="collectPlaylist(songPlaylists.playlist_ID)">
-            <img src="/src/photos/logo/collect.png">
-            {{ colletBUTX }}
-          </el-button>
-          <el-button type="warning" v-if="ifCollect"
-                     @click="delColPlaylist(songPlaylists.playlist_ID)">
-            <img src="/src/photos/logo/collect.png">
-            {{ colletBUTX }}
-          </el-button>
-        </div>
+
+
+      <!--编辑歌单资料-->
+      <div class="editUserInfo" id="edituserinfo">
+        <el-dialog
+            title="编辑歌单信息"
+            v-model="dialogVisible"
+            width="50%"
+        >
+          <div class="editForm" id="editform">
+            <el-form :model="playlistForm" label-width="80px">
+              <el-form-item label="名称：" id="playlist_Name">
+                <el-input size="large" v-model="playlistForm.playlist_Name"
+                          @blur="checkPlaylistName(playlistForm.playlist_Name)"></el-input>
+              </el-form-item>
+              <el-form-item label="简介：" id="eidtplaylist_introduction">
+                <el-input size="large"
+                          type="textarea"
+                          v-model="playlistForm.playlist_Introduction"
+                          placeholder="200"
+                          maxlength="200"
+                          show-word-limit></el-input>
+              </el-form-item>
+              <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
+              <el-form-item label="标签">
+                <el-select
+                    v-model="playlistForm.playlist_Tag"
+                    multiple
+                    size="large"
+                    placeholder="选择标签"
+                >
+                  <el-option
+                      v-for="item in PLTagList"
+                      :key="item.tag_id"
+                      :label="item.tag_name"
+                      :value="item.tag_id"
+                      :disabled="tagFlag"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button size="large" @click="dialogVisible = false">取消</el-button>
+                <el-button size="large" type="primary" @click="changePlaylistInfo()">保存</el-button>
+              </el-form-item>
+            </el-form>
+
+            <div class="editCover">
+              <el-upload
+                  class="avatar-uploader"
+                  action="#"
+                  :show-file-list="false"
+                  :before-upload="beforeUpload"
+                  :http-request="uploadCover"
+              >
+                <img :src="new_playlist_Cover" class="Cover">
+              </el-upload>
+            </div>
+          </div>
+          <span slot="footer" class="dialog-footer"></span>
+        </el-dialog>
       </div>
+      <song-list></song-list>
     </div>
-  </div>
-
-
-  <!--编辑歌单资料-->
-  <div class="editUserInfo" id="edituserinfo">
-    <el-dialog
-        title="编辑歌单信息"
-        v-model="dialogVisible"
-        width="50%"
-    >
-      <div class="editForm" id="editform">
-        <el-form :model="playlistForm" label-width="80px">
-          <el-form-item label="名称：" id="playlist_Name">
-            <el-input size="large" v-model="playlistForm.playlist_Name"
-                      @blur="checkPlaylistName(playlistForm.playlist_Name)"></el-input>
-          </el-form-item>
-          <el-form-item label="简介：" id="eidtplaylist_introduction">
-            <el-input size="large"
-                      type="textarea"
-                      v-model="playlistForm.playlist_Introduction"
-                      placeholder="200"
-                      maxlength="200"
-                      show-word-limit></el-input>
-          </el-form-item>
-          <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
-          <el-form-item label="标签">
-            <el-select
-                v-model="playlistForm.playlist_Tag"
-                multiple
-                size="large"
-                placeholder="选择标签"
-            >
-              <el-option
-                  v-for="item in PLTagList"
-                  :key="item.tag_id"
-                  :label="item.tag_name"
-                  :value="item.tag_id"
-                  :disabled="tagFlag"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="large" @click="dialogVisible = false">取消</el-button>
-            <el-button size="large" type="primary" @click="changePlaylistInfo()">保存</el-button>
-          </el-form-item>
-        </el-form>
-
-        <div class="editCover">
-          <el-upload
-              class="avatar-uploader"
-              action="#"
-              :show-file-list="false"
-              :before-upload="beforeUpload"
-              :http-request="uploadCover"
-          >
-            <img :src="new_playlist_Cover" class="Cover">
-          </el-upload>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer"></span>
-    </el-dialog>
   </div>
 </template>
 
 <style scoped>
+
+.bg_mod {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg_shade {
+  width: 100%;
+  background: rgb(208 208 208 / 42%);
+  backdrop-filter: blur(50px);
+}
+
 .first_mod {
   width: 100%;
   height: 250px;
-  background-image: linear-gradient(to right, #ED5736, #25F8CD);
+  display: flex;
+  align-items: center;
+  padding-left: 190px;
 }
 
 /*歌单封面*/
@@ -473,20 +498,13 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   width: 200px;
   height: 200px;
   border-radius: 30px;
-  position: relative;
-  top: 50%;
-  left: 18%;
-  transform: translate(-50%, -50%);
 }
 
 /*选项模块*/
 .option_mod {
   min-width: 300px;
-  height: 224px;
-  padding-top: 23px;
-  position: absolute;
-  top: 79px;
-  left: 430px;
+/*  transform: translateY(-10px);*/
+  padding-left: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -498,6 +516,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   height: 40px;
   display: flex;
   align-items: center;
+  margin-bottom: 15px;
 }
 
 .playListName_mod {
@@ -505,6 +524,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   font-size: 30px;
   font-weight: 900;
   color: white;
+
 }
 
 /*编辑选项*/
@@ -523,8 +543,9 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   white-space: nowrap; /*强制单行显示*/
   text-overflow: ellipsis; /*超出部分省略号表示*/
   overflow: hidden; /*超出部分隐藏*/
-  width: 1000px; /*设置显示的最大宽度*/
+  max-width: 1000px; /*设置显示的最大宽度*/
   display: inline-block;
+  margin-bottom: 15px;
 }
 
 /*自定义文字弹出背景*/
@@ -546,6 +567,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   height: 30px;
   display: flex;
   align-items: center;
+  margin-bottom: 15px;
 }
 
 .userInfo_mod img {
@@ -588,7 +610,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 
 /*播放和下载按钮*/
 .playAndLoad_mod {
-  width: 233px;
+  max-width: 340px;
   height: 50px;
   display: flex;
   justify-content: space-between;

@@ -25,13 +25,13 @@
 .bottom_mod {
   /*width: 100%;*/
   height: 100px;
-  background-color: #707070;
+  background-color: #e8e8e8;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 0;
-  margin-top: 15px;
+/*  margin-top: 15px;*/
 }
 
 .bottom_mod i {

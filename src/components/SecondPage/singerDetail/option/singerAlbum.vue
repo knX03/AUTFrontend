@@ -116,7 +116,7 @@ function toAlbum(row) {
   display: flex;
   justify-content: center;
   align-items: start;
-  min-height: 600px;
+  min-height: 430px;
 }
 
 .singerAlbumList_container {

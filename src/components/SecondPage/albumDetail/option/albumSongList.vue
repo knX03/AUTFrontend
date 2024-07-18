@@ -162,7 +162,7 @@ function play(index) {
   z-index: 2;
   border-radius: 12px;
   padding-bottom: 20px;
-  box-shadow: 0 0 10px 3px #e58c43;
+  box-shadow: 0 0 10px 3px #cacaca;
   backdrop-filter: blur(8px);
 }
 

@@ -116,6 +116,7 @@ function messUser(user_ID) {
   border-radius: 20px;
   min-height: 700px;
   background-color: #ffffff;
+  transform: translateY(-60px);
 }
 
 #followFM >>> .el-dialog__body {

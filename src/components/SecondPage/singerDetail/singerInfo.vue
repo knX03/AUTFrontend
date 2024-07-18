@@ -1,16 +1,18 @@
 <script setup>
 
 
-import {onMounted, ref} from "vue";
+import {onBeforeUpdate, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {aFollowUser, aIfFollowUser, aSelectSingerDetail, aSongBySinger, aUserUnfollowFan} from "@/api/api.js";
 import router from "@/router/index.js";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 import useMusicPlayStore from "@/store/musicPlayStore.js";
+import SingerSongList from "@/components/SecondPage/singerDetail/songList.vue";
 
 const musicPlayStore = useMusicPlayStore();
 const route = useRoute()
+const bg_info = ref()
 let user = ref(
     {user_Name: '', user_ID: ''}
 )
@@ -47,6 +49,9 @@ onMounted(() => {
   selectSongBySinger(FSinger_ID)
 })
 
+onBeforeUpdate(() => {
+  bg_info.value.style.backgroundImage = "url(" + "/" + singer.value.singer_Avatar + ")";
+})
 
 /*歌手详情查询*/
 function selectSingerDetail(singer_ID) {
@@ -124,49 +129,68 @@ function playAll() {
 </script>
 
 <template>
-  <div class="first_mod">
+  <div ref="bg_info" class="bg_mod">
+    <div class="bg_shade">
+      <div class="first_mod">
 
-    <img :src="singer.singer_Avatar" class="Avatar_mod">
+        <img :src="singer.singer_Avatar" class="Avatar_mod">
 
-    <div class="singerInfo_mod">
-      <div class="basicInfo_mod">
-        <label class="singerName_mod">{{ singer.singer_Name }}</label>
+        <div class="singerInfo_mod">
+          <div class="basicInfo_mod">
+            <label class="singerName_mod">{{ singer.singer_Name }}</label>
+          </div>
+          <div class="singerNameEN_mod">
+            <span>{{ singer.singer_Name }}</span>
+            <span class="toSingerU_mod" @click="toUserInfo(singer.user_ID)">个人页 ></span>
+          </div>
+          <!--todo 播放和下载功能待实现-->
+          <div class="playAndLoad_mod" id="PAL_mod">
+            <el-button type="warning" @click="playAll()">
+              <img src="/src/photos/logo/playWhite.png">
+              <span>播放全部</span>
+            </el-button>
+            <el-button type="warning" plain v-if="!ifFolSinger" @click="followSinger(singer.user_ID)">
+              <el-icon>
+                <Plus/>
+              </el-icon>
+              &nbsp;关注
+            </el-button>
+            <el-button type="warning" v-if="ifFolSinger" @click="unFollowSinger(singer.user_ID)">
+              <el-icon>
+                <Check/>
+              </el-icon>
+              &nbsp;关注
+            </el-button>
+          </div>
+        </div>
       </div>
-      <div class="singerNameEN_mod">
-        <span>{{ singer.singer_Name }}</span>
-        <span class="toSingerU_mod" @click="toUserInfo(singer.user_ID)">个人页 ></span>
-      </div>
-      <!--todo 播放和下载功能待实现-->
-      <div class="playAndLoad_mod" id="PAL_mod">
-        <el-button type="warning" @click="playAll()">
-          <img src="/src/photos/logo/playWhite.png">
-          <span>播放全部</span>
-        </el-button>
-        <el-button type="warning" plain v-if="!ifFolSinger" @click="followSinger(singer.user_ID)">
-          <el-icon>
-            <Plus/>
-          </el-icon>
-          &nbsp;关注
-        </el-button>
-        <el-button type="warning" v-if="ifFolSinger" @click="unFollowSinger(singer.user_ID)">
-          <el-icon>
-            <Check/>
-          </el-icon>
-          &nbsp;关注
-        </el-button>
-      </div>
+      <singer-song-list></singer-song-list>
     </div>
   </div>
 </template>
 
 <style scoped>
+.bg_mod {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg_shade {
+  width: 100%;
+  background: rgb(208 208 208 / 76%);
+  backdrop-filter: blur(50px);
+}
+
 /**
 歌手信息部分
  */
 .first_mod {
   width: 100%;
   height: 240px;
-  background-image: linear-gradient(#333333, #ffffff);
+  display: flex;
+  align-items: center;
+  padding-left: 220px;
 }
 
 /*歌手海报*/
@@ -174,18 +198,15 @@ function playAll() {
   width: 200px;
   height: 200px;
   border-radius: 30px;
-  position: relative;
-  top: 50%;
-  left: 18%;
-  transform: translate(-50%, -50%);
 }
 
 /*选项模块*/
 .singerInfo_mod {
-  height: 250px;
-  position: absolute;
-  top: 79px;
-  left: 430px;
+  min-width: 300px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /*歌单基础信息*/
@@ -193,10 +214,8 @@ function playAll() {
   max-width: 450px;
   height: 40px;
   display: flex;
-  position: relative;
-  top: 30px;
-  left: 10px;
   align-items: center;
+  margin-bottom: 15px;
 }
 
 .singerName_mod {
@@ -210,12 +229,11 @@ function playAll() {
 .singerNameEN_mod {
   width: 160px;
   height: 30px;
-  position: relative;
-  top: 40px;
   display: flex;
   justify-content: left;
   align-items: center;
   left: 15px;
+  margin-bottom: 15px;
 }
 
 
@@ -239,8 +257,6 @@ function playAll() {
 .playAndLoad_mod {
   width: 233px;
   height: 50px;
-  position: absolute;
-  bottom: 24px;
   display: flex;
   align-items: center;
 

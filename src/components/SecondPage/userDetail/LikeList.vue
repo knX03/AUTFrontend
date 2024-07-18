@@ -72,9 +72,8 @@ function selectLikeDetail(userID) {
 .likeInfo_mod {
   width: 100%;
   height: 600px;
-  margin-bottom: 50px;
+  padding-bottom: 20px;
   padding-top: 20px;
-  background-image: linear-gradient(#ffffff, #c7c7c7, #dea582, #c7c7c7, #FFFFFF);
   padding-left: 70px;
 }
 
@@ -90,7 +89,6 @@ function selectLikeDetail(userID) {
 /*歌单收藏列表*/
 .likeListInfo_mod {
   width: 100%;
-  height: 100%;
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;
