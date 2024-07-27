@@ -50,7 +50,7 @@ onMounted(() => {
 })
 
 onBeforeUpdate(() => {
-  bg_info.value.style.backgroundImage = "url(" + "/" + singer.value.singer_Avatar + ")";
+  bg_info.value.style.backgroundImage = "url(" + singer.value.singer_Avatar + ")";
 })
 
 /*歌手详情查询*/
@@ -143,7 +143,7 @@ function playAll() {
             <span>{{ singer.singer_Name }}</span>
             <span class="toSingerU_mod" @click="toUserInfo(singer.user_ID)">个人页 ></span>
           </div>
-          <!--todo 播放和下载功能待实现-->
+          <!--todo 下载功能待实现-->
           <div class="playAndLoad_mod" id="PAL_mod">
             <el-button type="warning" @click="playAll()">
               <img src="/src/photos/logo/playWhite.png">
@@ -186,11 +186,11 @@ function playAll() {
 歌手信息部分
  */
 .first_mod {
-  width: 100%;
+  /*  width: 100%;*/
   height: 240px;
   display: flex;
   align-items: center;
-  padding-left: 220px;
+  padding-left: 11%;
 }
 
 /*歌手海报*/
@@ -203,6 +203,7 @@ function playAll() {
 /*选项模块*/
 .singerInfo_mod {
   min-width: 300px;
+  max-width: 1200px;
   padding-left: 20px;
   display: flex;
   flex-direction: column;

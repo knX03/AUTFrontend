@@ -2,6 +2,16 @@
 编辑资料模块
  */
 /*头像展示*/
+
+.editForm {
+    display: flex;
+}
+
+
+.editForm .el-scrollbar {
+    width: 100%;
+}
+
 .editAvatar {
     width: 150px;
     height: 150px;
@@ -10,9 +20,6 @@
     /*超出部分隐藏*/
     overflow: hidden;
     border-radius: 50%;
-    position: absolute;
-    top: 80px;
-    right: 80px;
     cursor: pointer;
 }
 
@@ -50,8 +57,7 @@
 
 /*编辑资料模块框架*/
 .editUserInfo .el-dialog {
-    width: 50%;
-    height: 50% !important;
+    height: 60% !important;
     border-radius: 20px;
     background-color: #626262;
 }

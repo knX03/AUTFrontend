@@ -9,9 +9,13 @@
   <music-play></music-play>
 </template>
 <script setup>
-import MusicPlay from "@/components/utils/musicPlayer.vue";
+import MusicPlay from "@/views/musicPlay.vue";
 </script>
 <style>
+body {
+  margin: 0;
+}
+
 /* 路由切换动画 */
 /* fade-transform */
 .fade-leave-active,

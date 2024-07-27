@@ -7,9 +7,6 @@
     overflow: hidden;
     border-radius: 15px;
     transition: 0.5s all ease-in-out;
-    position: absolute;
-    top: 80px;
-    right: 80px;
     cursor: pointer;
 }
 
@@ -20,9 +17,9 @@
 
 /*新建歌单模块框架*/
 .createPlaylistForm .el-dialog {
-    height: 70%;
+    height: 50%;
     border-radius: 20px;
-    background-color: #626262;
+    background-color: #13131a;
 }
 
 /*标题*/

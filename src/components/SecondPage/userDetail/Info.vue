@@ -67,7 +67,7 @@ onMounted(() => {
 })
 
 onBeforeUpdate(() => {
-  bg_info.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
+  bg_info.value.style.backgroundImage = "url(" + user.value.user_Avatar + ")";
 })
 
 
@@ -194,11 +194,9 @@ function postMess() {
         </div>
         <div class="nameAndOther_mod">
           <label class="username_mod">{{ user.user_Name }}</label>
-          <!--修改性别时切换性别logo-->
           <div class="InfoLogo">
             <img id="sexLogo" :src=sex_logo alt="">
           </div>
-          <!--todo 关注与粉丝模块（暂无bug）-->
           <div class="followAndFans_mod">
             <span @click="followDetail()">{{ sumFollowAndFan.followSum }} 关注</span>
             <span @click="fansDetail()">{{ sumFollowAndFan.fanSum }} 粉丝</span>
@@ -268,7 +266,7 @@ function postMess() {
 
 /*用户资料*/
 .userInfo_mod {
-  width: 100%;
+  width: auto;
   height: 240px;
   display: flex;
   align-items: center;

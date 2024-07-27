@@ -9,7 +9,7 @@ import useUserStore from "@/store/userStore.js";
 
 
 let token = store.get('access_token').value
-let url = "ws://127.0.0.1:80/ws/server"
+let url = "ws://127.0.0.1:8800/ws/server"
 let ws = new WebSocket(url, [token]);
 
 const userStore = useUserStore()
@@ -250,7 +250,7 @@ function scrollDown() {
                 </div>
                 <img :src="item.user_Avatar">
                 <div class="user_info">
-                  <span>{{ item.user_Name }}</span>
+                  {{ item.user_Name }}
                 </div>
               </div>
             </el-scrollbar>
@@ -334,7 +334,7 @@ function scrollDown() {
 }
 
 .message_mod_op_list {
-  width: 160px;
+  width: 10%;
   height: 830px;
   background: rgba(239, 239, 239, 0.76);
   backdrop-filter: blur(2px);
@@ -357,6 +357,10 @@ function scrollDown() {
 }
 
 .op_list_content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .op_list_content_item {
@@ -382,8 +386,8 @@ function scrollDown() {
 }
 
 .message_mod_de {
-  width: 1000px;
-  height: 830px;
+  width: 60%;
+  height: 790px;
   padding: 20px 20px;
   background: linear-gradient(to right, rgba(255, 255, 255, 0.18), rgba(252, 252, 252, 0.71));
   backdrop-filter: blur(5px);
@@ -391,7 +395,7 @@ function scrollDown() {
 
 
 .message_mod_de_title {
-  width: 100%;
+  width: auto;
   height: 50px;
   background-color: #ffffff;
   border-radius: 12px;
@@ -407,6 +411,7 @@ function scrollDown() {
 
 .message_mod_de_content {
   width: 100%;
+
   height: 720px;
   display: flex;
   border-radius: 12px;
@@ -418,6 +423,7 @@ function scrollDown() {
 
 .de_content_user_list {
   width: 25%;
+  min-width: 170px;
   height: 100%;
   background: #FFFFFF;
   border-top-left-radius: 12px;
@@ -445,12 +451,12 @@ function scrollDown() {
 }
 
 .user_list_content_mod {
-  width: 100%;
+  width: auto;
   height: 70px;
-  padding: 10px 20px;
+  padding: 10px 10px 10px 0px;
   display: flex;
   align-items: center;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .user_list_content_mod.active {
@@ -461,7 +467,6 @@ function scrollDown() {
 .delete_BT {
   width: 15px;
   height: 15px;
-  position: absolute;
   transform: translate(-35px, 0px);
   opacity: 0;
   transition: all 0.3s ease-in-out;
@@ -478,7 +483,7 @@ function scrollDown() {
 
 .user_list_content_mod:hover .delete_BT {
   opacity: 1;
-  transform: translate(-17px, 0px);
+  transform: translate(0px, 0px);
 }
 
 .user_list_content_mod img {
@@ -489,7 +494,9 @@ function scrollDown() {
 }
 
 .user_info {
-  height: 80%;
+  width: 50%;
+  word-wrap: break-word;
+  font-family: STXihei, serif;
   font-size: 15px;
 }
 
@@ -518,7 +525,7 @@ function scrollDown() {
 }
 
 .de_content_chat_mod_content {
-  height: 500px;
+  height: 478px;
   border-bottom: 1px solid #d4d4d7;
   padding: 20px 0 20px 20px;
 }
@@ -664,7 +671,7 @@ todo 有bug
 }
 
 .message_container {
-  width: 100%;
+  width: 95%;
   height: 100%;
   background-color: transparent;
   color: #000000;
@@ -692,6 +699,7 @@ todo 有bug
   align-items: center;
   justify-content: end;
   padding: 0 20px;
+  margin-bottom: 10px;
 }
 
 .post_mess_bt {

@@ -65,8 +65,7 @@ function selectCreateDetail(userID) {
 <style scoped>
 /*创建的歌单列表*/
 .createSongPlaylistsInfo_mod {
-  width: 100%;
-  height: 600px;
+  height: auto;
   margin-bottom: 50px;
   padding-top: 20px;
   padding-left: 70px;

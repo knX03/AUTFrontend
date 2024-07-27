@@ -5,6 +5,8 @@ const musicPlayStore = defineStore("muPlayData", {
     state: () => ({
         index: -1,
         play: false,
+        playing: false,
+        currentTime:'',
         musicUrl: '',
         musicUrlList: [],
         songList: [{

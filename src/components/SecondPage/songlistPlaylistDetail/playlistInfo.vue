@@ -105,7 +105,7 @@ onMounted(() => {
   editInfo(FPlaylist_ID)
 })
 onBeforeUpdate(() => {
-  bg_info.value.style.backgroundImage = "url(" + "/" + songPlaylists.value.playlist_Cover + ")";
+  bg_info.value.style.backgroundImage = "url(" + songPlaylists.value.playlist_Cover + ")";
 })
 
 /*根据跳转的歌单ID查询歌单详情*/
@@ -235,18 +235,12 @@ function changePlaylistInfo() {
     return;
   }
   aChangePlaylistInfo(playlistForm.value).then(resp => {
-    if (resp.status === 401) {
-      ElNotification({
-        title: '请先登录!',
-        type: 'error'
-      })
-    } else if (resp.data.code === 200) {
+    if (resp.data.code === 200) {
       dialogVisible.value = false
       ElMessage.success(resp.data.msg)
       songPlaylists.value = playlistForm.value
       selectPlaylistTags(songPlaylists.value.playlist_ID)
-      //selectDetail(songPlaylists.value.playlist_ID)
-    } else if (resp.data.code === 500) {
+    } else {
       dialogVisible.value = false
       ElMessage.error(resp.data.msg)
     }
@@ -289,6 +283,7 @@ uploadCover(item) {
   aUploadPlaylistCover(FormDatas).then(resp => {
     if (resp.data.code === 200) {
       playlistForm.value.playlist_Cover = resp.data.data
+      console.log(playlistForm.value)
       ElMessage.success("封面上传成功！")
     } else {
       ElMessage({
@@ -379,7 +374,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
             </div>
             <span class="creatTime_mod">{{ songPlaylists.create_Time }} 创建</span>
           </div>
-          <!--todo 播放和下载功能待实现-->
+          <!--todo 下载功能待实现-->
           <div class="playAndLoad_mod">
             <el-button type="warning" @click="playAll()">
               <img src="/src/photos/logo/playWhite.png">
@@ -412,56 +407,59 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
         <el-dialog
             title="编辑歌单信息"
             v-model="dialogVisible"
-            width="50%"
+            width="40%"
         >
           <div class="editForm" id="editform">
-            <el-form :model="playlistForm" label-width="80px">
-              <el-form-item label="名称：" id="playlist_Name">
-                <el-input size="large" v-model="playlistForm.playlist_Name"
-                          @blur="checkPlaylistName(playlistForm.playlist_Name)"></el-input>
-              </el-form-item>
-              <el-form-item label="简介：" id="eidtplaylist_introduction">
-                <el-input size="large"
-                          type="textarea"
-                          v-model="playlistForm.playlist_Introduction"
-                          placeholder="200"
-                          maxlength="200"
-                          show-word-limit></el-input>
-              </el-form-item>
-              <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
-              <el-form-item label="标签">
-                <el-select
-                    v-model="playlistForm.playlist_Tag"
-                    multiple
-                    size="large"
-                    placeholder="选择标签"
-                >
-                  <el-option
-                      v-for="item in PLTagList"
-                      :key="item.tag_id"
-                      :label="item.tag_name"
-                      :value="item.tag_id"
-                      :disabled="tagFlag"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-button size="large" @click="dialogVisible = false">取消</el-button>
-                <el-button size="large" type="primary" @click="changePlaylistInfo()">保存</el-button>
-              </el-form-item>
-            </el-form>
-
-            <div class="editCover">
-              <el-upload
-                  class="avatar-uploader"
-                  action="#"
-                  :show-file-list="false"
-                  :before-upload="beforeUpload"
-                  :http-request="uploadCover"
-              >
-                <img :src="new_playlist_Cover" class="Cover">
-              </el-upload>
-            </div>
+            <el-scrollbar height="480px">
+              <el-form :model="playlistForm" label-width="80px">
+                <el-form-item label="封面：">
+                  <div class="editCover">
+                    <el-upload
+                        class="avatar-uploader"
+                        action="#"
+                        :show-file-list="false"
+                        :before-upload="beforeUpload"
+                        :http-request="uploadCover"
+                    >
+                      <img :src="new_playlist_Cover" class="Cover">
+                    </el-upload>
+                  </div>
+                </el-form-item>
+                <el-form-item label="名称：" id="playlist_Name">
+                  <el-input size="large" v-model="playlistForm.playlist_Name"
+                            @blur="checkPlaylistName(playlistForm.playlist_Name)"></el-input>
+                </el-form-item>
+                <el-form-item label="简介：" id="eidtplaylist_introduction">
+                  <el-input size="large"
+                            type="textarea"
+                            v-model="playlistForm.playlist_Introduction"
+                            placeholder="200"
+                            maxlength="200"
+                            show-word-limit></el-input>
+                </el-form-item>
+                <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
+                <el-form-item label="标签">
+                  <el-select
+                      v-model="playlistForm.playlist_Tag"
+                      multiple
+                      size="large"
+                      placeholder="选择标签"
+                  >
+                    <el-option
+                        v-for="item in PLTagList"
+                        :key="item.tag_id"
+                        :label="item.tag_name"
+                        :value="item.tag_id"
+                        :disabled="tagFlag"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="large" @click="dialogVisible = false">取消</el-button>
+                  <el-button size="large" type="primary" @click="changePlaylistInfo()">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </el-scrollbar>
           </div>
           <span slot="footer" class="dialog-footer"></span>
         </el-dialog>
@@ -486,24 +484,27 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 }
 
 .first_mod {
-  width: 100%;
+  /*  width: 100%;*/
   height: 250px;
   display: flex;
   align-items: center;
-  padding-left: 190px;
+  padding-left: 11%;
 }
 
 /*歌单封面*/
 .cover_mod {
   width: 200px;
+  min-width: 200px;
   height: 200px;
+  min-height: 200px;
   border-radius: 30px;
 }
 
 /*选项模块*/
 .option_mod {
   min-width: 300px;
-/*  transform: translateY(-10px);*/
+  max-width: 1200px;
+  /*  transform: translateY(-10px);*/
   padding-left: 20px;
   display: flex;
   flex-direction: column;

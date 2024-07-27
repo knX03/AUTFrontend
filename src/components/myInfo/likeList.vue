@@ -34,7 +34,6 @@ onMounted(() => {
 })
 
 
-
 /*用户收藏的歌单详情*/
 function selectLikeDetail(user_ID) {
   aSelectLikePlaylist(user_ID).then(resp => {
@@ -70,16 +69,10 @@ function selectLikeDetail(user_ID) {
 
 /*收藏的歌单列表*/
 .likeInfo_mod {
-  width: 100%;
-  height: 600px;
-  /*
-  margin-bottom: 50px;
-  */
-  padding-bottom:20px;
+  width: auto;
+  height: auto;
+  padding-bottom: 20px;
   padding-top: 20px;
-  /* 使用用户的头像作为背景
-  background-image: linear-gradient(#ffffff, #c7c7c7, #dea582, #c7c7c7, #FFFFFF);
-  */
   padding-left: 70px;
 }
 
@@ -95,7 +88,7 @@ function selectLikeDetail(user_ID) {
 /*歌单收藏列表*/
 .likeListInfo_mod {
   width: 100%;
- /* height: 100%;*/
+  /* height: 100%;*/
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;

@@ -212,7 +212,6 @@ function handleCurrentChange(val) {
             <div class="playMusic_button" @click="play(index)">
               <img src="/src/photos/logo/playGray.png">
             </div>
-            <!--todo 重写收藏歌单的表单，将歌单的封面，歌曲数量展示-->
             <div class="addPlaylist_button" @click="beforeCL(item.song_ID)">
               <img src="/src/photos/logo/addGray.png">
             </div>
@@ -330,7 +329,7 @@ function handleCurrentChange(val) {
 .buttonList_mod {
   width: 430px;
   height: 60px;
-  margin-left: 200px;
+  margin-left: 12%;
   margin-top: 20px;
   display: flex;
   align-items: center;
@@ -346,12 +345,14 @@ function handleCurrentChange(val) {
 /*歌曲列表*/
 .songList_mod {
   width: 75%;
+  min-height: 199px;
   background-color: #f7f7f7;
-  margin-left: 200px;
+  margin-left: 11%;
   margin-top: 10px;
   z-index: 2;
   border-radius: 12px;
   padding-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /*表头栏*/

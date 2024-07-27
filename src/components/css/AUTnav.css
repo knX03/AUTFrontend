@@ -3,21 +3,46 @@ a {
 }
 
 /*导航容器*/
-.container {
-    width: 1290px;
+.nav_container {
+    width: auto;
+    height: 70px;
+    background-color: #e58c43;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 /*导航栏标题*/
-.navbar-brand {
-    margin-left: 100px;
-    margin-right: 200px;
+.navbar_logo {
+    width: 300px;
+    text-align: center;
+}
+
+.navbar_searchBox {
+    width: 300px;
+    display: flex;
+    justify-content: center;
 }
 
 /*搜索框*/
-#searchBox input {
+.navbar_searchBox input {
     border-radius: 0.975rem
 }
 
+.navbar_search_input {
+    display: block;
+    width: 205px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #2f2f2f;
+    background-color: white;
+    background-clip: padding-box;
+    border: 2px solid white;
+    appearance: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
 
 .search_mod {
     background-color: #fbfbfb;
@@ -169,7 +194,7 @@ a {
     padding-left: 20px;
     padding-right: 20px;
     height: 50px;
-    width: 100%;
+    width: 310px;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -191,14 +216,32 @@ a {
     font-family: STXihei, serif;
 }
 
+.navbar_singer_mod {
+    min-width: 70px;
+    color: rgba(241, 241, 241, 0.93);
+    font-family: STXihei, serif;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.navbar_singer_mod:hover {
+    color: #FFFFFF;
+}
+
 /*分割线*/
-#split {
+.navbar_split {
     width: 1px;
     height: 30px;
     background-color: white;
     opacity: 0.7;
-    position: relative;
-    left: -90px;
+}
+
+.navbar_option_mod {
+    display: flex;
+    width: 200px;
+    justify-content: space-around;
+    align-items: center;
+    margin-right: 98px;
 }
 
 .userInfo {
@@ -229,9 +272,9 @@ a {
     background-color: #FFFFFF;
     box-shadow: 0 0 15px 2px rgb(226 226 226);
     position: absolute;
-    right: 167px;
+    top: 63px;
+    transform: scale(0, 0) translateX(-45px);
     opacity: 0;
-    transform: scale(0, 0) translateY(-20px);
     transition: all 0.5s ease-in-out;
     z-index: 3;
     display: flex;
@@ -249,7 +292,7 @@ a {
 
 .userInfoOP_mod.oActive {
     opacity: 1;
-    transform: scale(1, 1);
+    transform: scale(1, 1) translateX(-45px);
 }
 
 .userInfoOP_mod_fans {
@@ -343,7 +386,7 @@ a {
     top: 50px;
     z-index: 9;
     opacity: 0;
-    transform: scale(0, 0);
+    transform: scale(0, 0) translate(55px, 0);
     transition: all 0.3s ease-in-out;
 }
 
@@ -357,12 +400,12 @@ a {
 
 .message_mod:hover + .op_list_container {
     opacity: 1;
-    transform: scale(1, 1) translate(-45px, 0);;
+    transform: scale(1, 1) translate(55px, 0);
 }
 
 .op_list_container:hover {
     opacity: 1;
-    transform: scale(1, 1) translate(-45px, 0);;
+    transform: scale(1, 1) translate(55px, 0);
 }
 
 .op_list_item {

@@ -98,7 +98,7 @@ function unFollowUser(fan_id) {
         width="500"
         class="fansFMDia"
     >
-      <el-scrollbar max-height="700px" noresize>
+      <el-scrollbar max-height="600px" noresize>
         <div class="fanList" v-if="fansExist" @click="toUserDetail(item.fan_ID)" v-for="item in fansList">
           <div class="fAvatar">
             <img :src="item.fan_avatar">
@@ -161,7 +161,7 @@ function unFollowUser(fan_id) {
 
 
 .fanList {
-  width: 100%;
+  width: auto;
   display: flex;
   padding: 10px 20px;
   cursor: pointer;

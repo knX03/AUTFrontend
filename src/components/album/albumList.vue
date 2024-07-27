@@ -61,6 +61,7 @@ function toAlbum(row) {
   display: flex;
   justify-content: center;
   min-height: 600px;
+  margin-bottom: 15px;
 }
 
 .albumList_container {

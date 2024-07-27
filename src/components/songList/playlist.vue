@@ -149,6 +149,7 @@ function handleClick(data) {
   flex-direction: column;
   align-items: center;
   min-height: 600px;
+  margin-bottom: 15px;
 }
 
 /*歌单选择器*/

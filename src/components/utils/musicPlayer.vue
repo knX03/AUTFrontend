@@ -1,7 +1,6 @@
 <script setup>
 import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import useMusicPlayStore from "@/store/musicPlayStore.js";
-import router from "@/router/index.js";
 import {
   aCollectSongToPlaylist,
   aDeleteLikeSong,
@@ -11,8 +10,9 @@ import {
   aSelectLikeSong
 } from "@/api/api.js";
 import {ElMessage, ElNotification} from "element-plus";
+import {useRouter} from "vue-router";
 
-
+const router = useRouter()
 const musicPlayStore = useMusicPlayStore();
 const music = ref()//播放器
 const cover = ref()//歌曲封面
@@ -76,7 +76,7 @@ const customColors = [
 ]
 //歌曲列表
 let songList = ref({
-  song_ID: '',
+  song_ID: '1',
   song_Name: '',
   singer_ID: '',
   singer_name: '',
@@ -106,6 +106,7 @@ function toSinger() {
 
 //播放歌曲
 function playMusic() {
+  musicPlayStore.playing = true;
   if (music.value) {
     setTimeout(() => {
       music.value.play();
@@ -117,6 +118,7 @@ function playMusic() {
 
 //停止播放
 function pauseMusic() {
+  musicPlayStore.playing = false;
   music.value.pause();
   cover.value.style.animationPlayState = 'paused'
   play.value = !play.value
@@ -230,6 +232,7 @@ function timeFormat(number) {
 //进度条发生变化时触发
 function updateTime() {
   currentDuration.value = timeFormat(music.value.currentTime)
+  musicPlayStore.currentTime = timeFormat(music.value.currentTime)
   //如果不是正在移动 和 没有暂停播放就执行
   if (!isMoveIn.value || !music.value.paused) {
     // 设置当前时间
@@ -525,6 +528,13 @@ function collectSongToPlaylist() {
     }
   })
 }
+
+function toMusicPlayerDE(song_ID) {
+  router.push({
+    path: '/playerDetail',
+    query: {song_ID},
+  })
+}
 </script>
 
 <template>
@@ -538,7 +548,7 @@ function collectSongToPlaylist() {
     </audio>
     <div class="songInfo_mod_player">
       <div ref="cover" class="songCover_mod_player">
-        <img :src=songList.song_Cover @click.stop="playerDetail=!playerDetail">
+        <img :src=songList.song_Cover @click.stop="toMusicPlayerDE(songList.song_ID)">
       </div>
       <div class="songName_mod_player">
         <span style="color: #000000;font-size: 17px;font-weight: bolder">{{ songList.song_Name }}</span>
@@ -621,10 +631,6 @@ function collectSongToPlaylist() {
         </div>
       </div>
     </div>
-  </div>
-  <!--todo 详情-->
-  <div v-if="playerDetail" class="playerDetail">
-    aaa
   </div>
   <!--收藏歌曲至歌单-->
   <div class="collectToPL">

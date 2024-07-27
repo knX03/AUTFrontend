@@ -61,6 +61,7 @@ function selectCreateDetail(user_ID) {
   aSelectCreateDetail(user_ID).then(resp => {
     if (resp.data.code === 200) {
       creatList.value = resp.data.data
+      console.log(creatList.value)
     } else if (resp.data.code === 500) {
       console.error(resp.data.msg)
     }
@@ -99,7 +100,7 @@ createPlaylist() {
         message: resp.data.msg,
         type: "success"
       })
-      selectCreateDetail()
+      creatList.value = resp.data.data
     } else if (resp.data.code === 500) {
       dialogVisibleP.value = false
       ElMessage({
@@ -219,55 +220,59 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
         :before-close="handleClose"
     >
       <div class="creatForm" id="creatform">
-        <el-form :model="playlist" label-width="80px">
-          <el-form-item size="large" label="名称：" id="playlist_Name">
-            <el-input
-                maxlength="15"
-                show-word-limit
-                v-model="playlist.playlist_Name"
-                @blur="checkPlaylistName(playlist.playlist_Name)"></el-input>
-          </el-form-item>
-          <el-form-item size="large" label="简介：" id="playlist_Introduction">
-            <el-input type="textarea"
-                      v-model="playlist.playlist_Introduction"
-                      placeholder="200"
-                      maxlength="200"
-                      show-word-limit></el-input>
-          </el-form-item>
-          <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
-          <el-form-item label="标签" id="spLabel">
-            <el-select
-                v-model="playlist.playlist_Tag"
-                multiple
-                size="large"
-                placeholder="选择标签"
-            >
-              <el-option
-                  v-for="item in PLTagList"
-                  :key="item.tag_id"
-                  :label="item.tag_name"
-                  :value="item.tag_id"
-                  :disabled="tagFlag"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item id="formbutton">
-            <el-button size="large" @click="dialogVisibleP=false">取消</el-button>
-            <el-button size="large" type="primary" @click="createPlaylist()">保存</el-button>
-          </el-form-item>
-        </el-form>
-        <!--上传封面-->
-        <div class="playlistCover">
-          <el-upload
-              class="avatar-uploader"
-              action="#"
-              :show-file-list="false"
-              :before-upload="beforeUpload"
-              :http-request="uploadCover"
-          >
-            <img :src="new_playlist_Cover" class="Cover">
-          </el-upload>
-        </div>
+        <el-scrollbar height="480px">
+          <el-form :model="playlist" label-width="80px">
+            <el-form-item size="large" label="封面：">
+              <!--上传封面-->
+              <div class="playlistCover">
+                <el-upload
+                    class="avatar-uploader"
+                    action="#"
+                    :show-file-list="false"
+                    :before-upload="beforeUpload"
+                    :http-request="uploadCover"
+                >
+                  <img :src="new_playlist_Cover" class="Cover">
+                </el-upload>
+              </div>
+            </el-form-item>
+            <el-form-item size="large" label="名称：" id="playlist_Name">
+              <el-input
+                  maxlength="15"
+                  show-word-limit
+                  v-model="playlist.playlist_Name"
+                  @blur="checkPlaylistName(playlist.playlist_Name)"></el-input>
+            </el-form-item>
+            <el-form-item size="large" label="简介：" id="playlist_Introduction">
+              <el-input type="textarea"
+                        v-model="playlist.playlist_Introduction"
+                        placeholder="200"
+                        maxlength="200"
+                        show-word-limit></el-input>
+            </el-form-item>
+            <!--todo 标签模块(需将同一类型的标签进行分类，不可重复选择同一类型标签)-->
+            <el-form-item label="标签" id="spLabel">
+              <el-select
+                  v-model="playlist.playlist_Tag"
+                  multiple
+                  size="large"
+                  placeholder="选择标签"
+              >
+                <el-option
+                    v-for="item in PLTagList"
+                    :key="item.tag_id"
+                    :label="item.tag_name"
+                    :value="item.tag_id"
+                    :disabled="tagFlag"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item id="formbutton">
+              <el-button size="large" @click="dialogVisibleP=false">取消</el-button>
+              <el-button size="large" type="primary" @click="createPlaylist()">保存</el-button>
+            </el-form-item>
+          </el-form>
+        </el-scrollbar>
       </div>
       <span slot="footer" class="dialog-footer"></span>
     </el-dialog>
@@ -277,11 +282,8 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 <style scoped>
 /*创建的歌单列表*/
 .createSongPlaylistsInfo_mod {
-  width: 100%;
-  height: 600px;
-  /*
-  background-image: linear-gradient(#ffffff, #c7c7c7, #8DB799, #c7c7c7, #FFFFFF);
-  */
+  width: auto;
+  height: auto;
   margin-bottom: 50px;
   padding-top: 20px;
   padding-left: 70px;
@@ -299,7 +301,7 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 /*歌单列表模块*/
 .songListInfo_mod {
   width: 100%;
-/*  height: 100%;*/
+  /*  height: 100%;*/
   padding-top: 5px;
   padding-bottom: 10px;
   display: flex;

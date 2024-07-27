@@ -62,8 +62,7 @@ onMounted(() => {
 .ListOption_mod {
   width: 350px;
   height: 40px;
-  position: relative;
-  left: 190px;
+  margin-left: 11%;
   display: flex;
   align-items: center;
   justify-content: space-around;

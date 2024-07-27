@@ -61,15 +61,6 @@ function downloadFile(filepath) {
         </div>
       </div>
     </div>
-    <!--    &lt;!&ndash;todo 播放和下载功能待实现&ndash;&gt;
-        <div class="buttonList_mod">
-          <el-button type="warning" plain round>
-            播放全部
-          </el-button>
-          <el-button type="info" round @click="downloadSong()">下载全部</el-button>
-          &lt;!&ndash;todo 批量操作待实现&ndash;&gt;
-          &lt;!&ndash;<el-button type="info" round>批量操作</el-button>&ndash;&gt;
-        </div>-->
     <div>
       <transition name="fade" mode="out-in">
         <KeepAlive>
@@ -126,17 +117,6 @@ function downloadFile(filepath) {
   background-color: #e58c43;
   border-radius: 30px;
   cursor: pointer;
-}
-
-/*按钮列表*/
-.buttonList_mod {
-  width: 430px;
-  height: 60px;
-  margin-left: 200px;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
 }
 
 

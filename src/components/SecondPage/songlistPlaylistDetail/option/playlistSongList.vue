@@ -129,7 +129,6 @@ function playMusic(index) {
       <span class="downloadTitle">下载</span>
     </div>
     <div class="ListBody_mod" v-for="(item,index) in songList ">
-      <!--todo 播放功能待实现-->
       <div class="playButton_mod" @click="playMusic(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>
@@ -217,9 +216,8 @@ function playMusic(index) {
   min-height: 413px;
   width: 75%;
   background-color: #efefef;
-  margin-left: 200px;
+  margin-left: 11%;
   margin-top: 10px;
-  z-index: 2;
   border-radius: 12px;
   padding-bottom: 20px;
   box-shadow: 0 0 10px 3px #cacaca;
@@ -432,7 +430,7 @@ function playMusic(index) {
 }
 
 .playlistNull_mod {
-  min-height: 413px;
+  min-height: 426px;
   width: 100%;
   display: flex;
   flex-direction: column;

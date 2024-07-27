@@ -62,7 +62,6 @@ function selectLikeDetail(userID) {
           <span class="songPlaylistsName_mod">{{ list.playlist_Name }}</span>
         </router-link>
       </div>
-
     </div>
   </div>
 </template>
@@ -70,8 +69,7 @@ function selectLikeDetail(userID) {
 
 /*收藏的歌单列表*/
 .likeInfo_mod {
-  width: 100%;
-  height: 600px;
+  height: auto;
   padding-bottom: 20px;
   padding-top: 20px;
   padding-left: 70px;

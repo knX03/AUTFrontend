@@ -62,7 +62,7 @@ onMounted(() => {
   selectSongByAlbum(FAlbum_ID)
 })
 onBeforeUpdate(() => {
-  bg_info.value.style.backgroundImage = "url(" + "/" + album.value.album_Cover + ")";
+  bg_info.value.style.backgroundImage = "url(" + album.value.album_Cover + ")";
 })
 
 /*专辑详情查询*/
@@ -177,7 +177,7 @@ function playAll() {
             <span style="cursor: pointer" @click="toSinger(singer.singer_ID)">{{ singer.singer_Name }}</span>
             <span style="color: #e7e7e7">{{ album.create_Time }} 发布</span>
           </div>
-          <!--todo 播放、下载功能待实现-->
+          <!--todo 下载功能待实现-->
           <div class="playAndLoad_mod">
             <el-button type="warning" @click="playAll()">
               <img src="/src/photos/logo/playWhite.png">
@@ -217,11 +217,11 @@ function playAll() {
 }
 
 .first_mod {
-  width: 100%;
+  /*  width: 100%;*/
   height: 240px;
   display: flex;
   align-items: center;
-  padding-left: 190px;
+  padding-left: 11%;
 }
 
 /*专辑封面*/
@@ -235,6 +235,7 @@ function playAll() {
 /*选项模块*/
 .albumInfo_mod {
   min-width: 300px;
+  max-width: 1200px;
   /*  transform: translateY(-10px);*/
   padding-left: 20px;
   display: flex;

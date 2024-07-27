@@ -8,7 +8,7 @@ import singer from '../views/singer.vue'
 import songList from '../views/songList.vue'
 import album from '../views/album.vue'
 import myInfo from '../views/myInfo.vue'
-import playlistDetails from '../views/SecondPage/playlistDetail.vue'
+import playlistDetails from '../views/SecondPage/playListDetail.vue'
 import albumDetail from '../views/SecondPage/albumDetail.vue'
 import singerDetail from '../views/SecondPage/singerDetail.vue'
 import signIn from '../views/LRF/signIn.vue'
@@ -21,6 +21,7 @@ import artHome from '../views/Artists/artDetail/artHome.vue'
 import searchDetail from "../views/search.vue";
 import message from "../views/message.vue";
 import MusicPlayer from "@/components/utils/musicPlayer.vue";
+import playerDetail from "@/views/playerDetail.vue";
 import musicPlay from '../views/musicPlay.vue'
 import {ElNotification} from "element-plus";
 import {store} from "xijs";
@@ -120,6 +121,10 @@ const router = createRouter({
             path: '/message',
             name: 'message',
             component: message,
+        }, {
+            path: '/playerDetail',
+            name: 'playerDetail',
+            component: playerDetail,
         },
         /*, {
             path: '/MusicPlay',

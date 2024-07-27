@@ -62,15 +62,14 @@ onMounted(() => {
  */
 .second_mod {
   width: 100%;
-/*  background-color: #f7f9fc;*/
+  /*  background-color: #f7f9fc;*/
   padding-bottom: 20px;
 }
 
 .ListOption_mod {
   width: 350px;
   height: 40px;
-  position: relative;
-  left: 190px;
+  margin-left: 11%;
   display: flex;
   align-items: center;
   justify-content: space-around;

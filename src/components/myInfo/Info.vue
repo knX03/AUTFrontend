@@ -75,7 +75,7 @@ onMounted(() => {
 })
 
 onBeforeUpdate(() => {
-  bg_info.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
+  bg_info.value.style.backgroundImage = "url(" + user.value.user_Avatar + ")";
 })
 
 /* 用户详情查询*/
@@ -277,58 +277,63 @@ function changeSexLogo() {
         <el-dialog
             title="编辑个人信息"
             v-model="dialogVisible"
-            width="50%"
+            width="40%"
         >
           <div class="editForm" id="editform">
-            <el-form :model="form" label-width="80px">
-              <el-form-item label="昵称：" id="username">
-                <el-input size="large"
-                          maxlength="15"
-                          show-word-limit
-                          v-model="form.user_Name"
-                          @blur="checkName(form.user_Name)"></el-input>
-              </el-form-item>
-              <el-form-item label="生日：" id="user_Birthday">
-                <el-col :span="11">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.user_Birthday"
-                                  value-format="YYYY-MM-DD"
-                                  size="large"></el-date-picker>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="性别：" id="user_Sex">
-                <el-radio-group v-model="form.user_Sex">
-                  <el-radio label="男" value="男"></el-radio>
-                  <el-radio label="女" value="女"></el-radio>
-                  <el-radio label="外星人" value="外星人"></el-radio>
-                  <el-radio label="沃尔玛" value="沃尔玛"></el-radio>
-                  <el-radio label="不被定义的" value="不被定义的"></el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item size="large" label="简介：" id="eidtuserIntroduction">
-                <el-input type="textarea"
-                          v-model="form.user_Introduction"
-                          placeholder="200"
-                          maxlength="200"
-                          show-word-limit></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button size="large" @click="catchSubmit()">取消</el-button>
-                <el-button size="large" type="primary" @click="onSubmit()">保存</el-button>
-              </el-form-item>
-            </el-form>
-            <!--更换头像-->
-            <div class="editAvatar">
-              <label class="changeAvatar"><i class="el-icon-picture-outline-round"></i>切换头像</label>
-              <el-upload
-                  class="avatar-uploader"
-                  action="#"
-                  :show-file-list="false"
-                  :before-upload="beforeUpload"
-                  :http-request="uploadAvatar"
-              >
-                <img :src="new_user_avatar" class="avatar" alt="">
-              </el-upload>
-            </div>
+            <el-scrollbar height="480px">
+              <el-form :model="form" label-width="80px">
+                <el-form-item label="头像：">
+                  <!--更换头像-->
+                  <div class="editAvatar">
+                    <el-upload
+                        class="avatar-uploader"
+                        action="#"
+                        :show-file-list="false"
+                        :before-upload="beforeUpload"
+                        :http-request="uploadAvatar"
+                    >
+                      <img :src="new_user_avatar" class="avatar" alt="">
+                    </el-upload>
+                  </div>
+                </el-form-item>
+                <el-form-item label="昵称：" id="username">
+                  <el-input size="large"
+                            maxlength="15"
+                            show-word-limit
+                            v-model="form.user_Name"
+                            @blur="checkName(form.user_Name)"></el-input>
+                </el-form-item>
+
+                <el-form-item label="生日：" id="user_Birthday">
+                  <el-col :span="11">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.user_Birthday"
+                                    value-format="YYYY-MM-DD"
+                                    size="large"></el-date-picker>
+                  </el-col>
+                </el-form-item>
+                <el-form-item label="性别：" id="user_Sex">
+                  <el-radio-group v-model="form.user_Sex">
+                    <el-radio label="男" value="男"></el-radio>
+                    <el-radio label="女" value="女"></el-radio>
+                    <el-radio label="外星人" value="外星人"></el-radio>
+                    <el-radio label="沃尔玛" value="沃尔玛"></el-radio>
+                    <el-radio label="不被定义的" value="不被定义的"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item size="large" label="简介：" id="eidtuserIntroduction">
+                  <el-input type="textarea"
+                            v-model="form.user_Introduction"
+                            placeholder="200"
+                            maxlength="200"
+                            show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="large" @click="catchSubmit()">取消</el-button>
+                  <el-button size="large" type="primary" @click="onSubmit()">保存</el-button>
+                </el-form-item>
+              </el-form>
+
+            </el-scrollbar>
           </div>
         </el-dialog>
       </div>
@@ -363,7 +368,7 @@ function changeSexLogo() {
 
 /*用户资料*/
 .userInfo_mod {
-  width: 100%;
+  width: auto;
   height: 240px;
   display: flex;
   align-items: center;

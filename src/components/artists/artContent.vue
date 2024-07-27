@@ -89,12 +89,11 @@ function singerInfo() {
 
 <style scoped>
 .artContent_mod {
-  //height: 951px;
   height: 834px;
   background-color: #f5f6fa;
   display: flex;
   padding-top: 20px;
-  padding-left: 200px;
+  padding-left: 12%;
 }
 
 .artMenu_mod {
@@ -148,11 +147,7 @@ function singerInfo() {
 
 .menuDetail_mod {
   margin-left: 20px;
-  width: 75%;
+  width: 70%;
   border-radius: 12px;
-  /*  background-color: #FFFFFF;
-    max-height: 97%;
-
-    box-shadow: 0px 0px 6px 1px #ececec;*/
 }
 </style>

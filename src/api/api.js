@@ -413,6 +413,13 @@ export const aGetUserAlbums = data => {
 
 /*Song--------------------------------------------------------------*/
 
+/*查询歌曲详情*/
+export const aSongDE = data => {
+    return Service({
+        url: '/song/songDE?songID=' + data,
+        method: 'GET',
+    })
+}
 /*查询喜欢的歌曲*/
 export const aSelectLikeSong = data => {
     return Service({

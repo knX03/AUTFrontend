@@ -43,6 +43,7 @@ function selectSongBySinger(data) {
   aSongBySinger(data).then(resp => {
     if (resp.data.code === 200) {
       songList.value = resp.data.data;
+      console.log(songList.value)
       if (songList.value.length > 0) {
         singerSongExist.value = true
       }
@@ -99,6 +100,7 @@ function dislikeSong(row) {
     })
   })
 }
+
 /*音乐播放*/
 function play(index) {
   musicPlayStore.play = false
@@ -119,7 +121,6 @@ function play(index) {
       <span class="downloadTitle">下载</span>
     </div>
     <div class="ListBody_mod" v-for="(item,index) in songList ">
-      <!--todo 播放功能待实现-->
       <div class="playButton_mod" @click="play(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>
@@ -206,7 +207,7 @@ function play(index) {
   width: 75%;
   min-height: 413px;
   background-color: #efefef;
-  margin-left: 200px;
+  margin-left: 11%;
   margin-top: 10px;
   z-index: 2;
   border-radius: 12px;

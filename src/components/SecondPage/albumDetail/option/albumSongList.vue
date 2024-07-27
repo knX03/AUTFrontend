@@ -119,7 +119,6 @@ function play(index) {
       <span class="downloadTitle">下载</span>
     </div>
     <div class="albumListBody_mod" v-for="(item,index) in songList ">
-      <!--todo 播放功能待实现-->
       <div class="playButton_mod" @click="play(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>
@@ -157,7 +156,7 @@ function play(index) {
   width: 75%;
   min-height: 413px;
   background-color: #f7f9fc;
-  margin-left: 200px;
+  margin-left: 11%;
   margin-top: 10px;
   z-index: 2;
   border-radius: 12px;

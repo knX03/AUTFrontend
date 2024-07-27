@@ -83,7 +83,7 @@ function toArtists() {
     aGetSingerByUser().then(resp => {
       if (resp.data.code === 200) {
         store.set("access_singer_token", resp.data.data, Date.now() + 1000 * 60 * 60 * 24 * 7)
-        //todo 无法成功跳转
+        //todo 跳转有bug，会进行两次路由访问
         router.go({
           path: '/artHome',
         })
@@ -311,138 +311,120 @@ function getSumFollowAndFan(userID) {
 </script>
 
 <template>
-  <div class="navbar navbar-expand-lg bg-primary navbar-dark">
-    <nav class="container">
-      <router-link to="/" href="#" class="navbar-brand">
-        <img src="../icons/AUT.png">
-      </router-link>
-      <button class="navbar-toggler border-2" data-bs-target="#aa" data-bs-toggler="collapse">
-        <i class="navbar-toggler-icon"></i>
-      </button>
-      <div class="navbar-collapse  " id="navbar_collapse">
-        <div id="searchBox" class="d-flex me-auto " role="search">
-          <input v-model="searchText"
-                 @input="search()"
-                 ref="searchS"
-                 @focus="focusSearch"
-                 @keydown="enterSearch"
-                 class="form-control me-2" type="search" placeholder="搜索你想听的音乐"
-                 aria-label="Search">
+  <div class="nav_container">
+    <router-link to="/" href="#" class="navbar_logo">
+      <img src="../icons/AUT.png">
+    </router-link>
+    <div id="searchBox" class="navbar_searchBox">
+      <input v-model="searchText"
+             @input="search()"
+             ref="searchS"
+             @focus="focusSearch"
+             @keydown="enterSearch"
+             class="navbar_search_input" placeholder="搜索你想听的音乐"
+             aria-label="Search">
 
-          <div class="search_mod"
-               :class={activeS:showSearchF}
-               v-click-outside="onClickOutside"
-          >
-            <el-scrollbar>
-              <div v-show="searchText.length > 0">
-                <span class="search_mod_title">猜你想搜</span>
-                <div class="search_mod_show">
+      <div class="search_mod"
+           :class={activeS:showSearchF}
+           v-click-outside="onClickOutside"
+      >
+        <el-scrollbar>
+          <div v-show="searchText.length > 0">
+            <span class="search_mod_title">猜你想搜</span>
+            <div class="search_mod_show">
                 <span v-for="item in searchRes" @click="searchDetail(item)">
                   {{ item }}
                 </span>
+            </div>
+          </div>
+          <div class="search_mod_show_home" v-show="searchText.length === 0">
+            <div class="search_mod_show_history" v-show="searchHistory.length> 0">
+              <div class="search_mod_show_history_title">
+                <span>搜索历史</span>
+                <el-icon class="search_mod_show_history_delBT" @click="delSeaHistory()">
+                  <Delete/>
+                </el-icon>
+              </div>
+              <div class="search_history_bt_mod">
+                <div class="search_history_bt" v-for="item in searchHistory">
+                  <span class="search_history_bt_text" @click="searchDetail(item)">{{ item }}</span>
                 </div>
               </div>
-              <div class="search_mod_show_home" v-show="searchText.length === 0">
-                <div class="search_mod_show_history" v-show="searchHistory.length> 0">
-                  <div class="search_mod_show_history_title">
-                    <span>搜索历史</span>
-                    <el-icon class="search_mod_show_history_delBT" @click="delSeaHistory()">
-                      <Delete/>
-                    </el-icon>
-                  </div>
-                  <div class="search_history_bt_mod">
-                    <div class="search_history_bt" v-for="item in searchHistory">
-                      <span class="search_history_bt_text" @click="searchDetail(item)">{{ item }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="search_mod_show_recom">
+            </div>
+            <div class="search_mod_show_recom">
                   <span class="search_mod_show_recom_title">
                     热搜榜</span>
-                  <div class="search_mod_show_recom_form">
-                    <div class="search_mod_show_recom_form_item"
-                         v-for="(item,index) in searchHot"
-                         @click="searchDetail(item)">
-                      <span class="item_index" :class="{red:index<3}">{{ index + 1 }}</span>
-                      <span style="max-width:250px">{{ item }}</span>
-                    </div>
-                  </div>
+              <div class="search_mod_show_recom_form">
+                <div class="search_mod_show_recom_form_item"
+                     v-for="(item,index) in searchHot"
+                     @click="searchDetail(item)">
+                  <span class="item_index" :class="{red:index<3}">{{ index + 1 }}</span>
+                  <span style="max-width:250px">{{ item }}</span>
                 </div>
               </div>
-            </el-scrollbar>
+            </div>
+          </div>
+        </el-scrollbar>
+      </div>
+    </div>
+    <div class="navbar_singer_mod" @click="toArtists">
+      我是歌手
+    </div>
+    <div class="navbar_split"></div>
+    <div class="navbar_option_mod">
+      <div class="userInfo">
+        <img class="nav_avatar"
+             @mouseover="avatarOver"
+             @mouseout="avatarFlag=false"
+             :src=user.user_Avatar
+             :class="{aActive:avatarFlag}"
+             alt="avatar">
+      </div>
+      <div class="userInfoOP_mod"
+           @mouseover="avatarOver"
+           @mouseout="avatarFlag=false"
+           :class="{oActive:avatarFlag}">
+        <span class="borderText" style="margin-bottom: 15px">{{ user.user_Name }}</span>
+        <div class="userInfoOP_mod_fans">
+          <div class="userInfoOP_mod_fans_item"><span class="borderText">关注</span>
+            {{ sumFollowAndFan.followSum }}<span></span></div>
+          <div class="userInfoOP_mod_fans_item"><span class="borderText">粉丝</span>
+            {{ sumFollowAndFan.fanSum }}<span></span></div>
+        </div>
+        <div class="userInfoOP_mod_DE" @click="toUser">
+          <div style="display: flex;align-items: center">
+            <el-icon style="margin-right: 10px">
+              <UserFilled/>
+            </el-icon>
+            <span>个人中心</span>
+          </div>
+          <span> > </span>
+        </div>
+        <div class="userInfoOP_mod_split"></div>
+        <div class="userInfoOP_mod_EX" @click="logOff()">
+          <el-icon style="margin-right: 10px">
+            <Promotion/>
+          </el-icon>
+          <span>退出登录</span>
+        </div>
+      </div>
+      <div class="message_mod">
+        <el-badge :is-dot="isDot" class="item" style="width: 1.4em;">
+          <Message style="width: 1.3em; height: 1.3em; margin-right: 8px;" @click="checkMessage(0)"/>
+        </el-badge>
+      </div>
+      <div class="op_list_container">
+        <div class="at_message_mod_op_list">
+          <div class="op_list_item"
+               v-for="(item,index) in opList"
+               @click="checkMessage(index)">
+            {{ item }}
           </div>
         </div>
-        <div class="navbar-nav me-auto">
-          <a href="#" class="nav-link" @click="toArtists">
-            我是歌手
-          </a>
-        </div>
-        <div id="split" class="navbar-nav">
-        </div>
-        <ul class="navbar-nav align-items-center">
-          <li class="nav-item me-5">
-            <div class="userInfo">
-              <img class="nav_avatar"
-                   @mouseover="avatarOver"
-                   @mouseout="avatarFlag=false"
-                   :src=user.user_Avatar
-                   :class="{aActive:avatarFlag}"
-                   alt="avatar">
-              <div class="userInfoOP_mod"
-                   @mouseover="avatarOver"
-                   @mouseout="avatarFlag=false"
-                   :class="{oActive:avatarFlag}">
-                <span class="borderText" style="margin-bottom: 15px">{{ user.user_Name }}</span>
-                <div class="userInfoOP_mod_fans">
-                  <div class="userInfoOP_mod_fans_item"><span class="borderText">关注</span>
-                    {{ sumFollowAndFan.followSum }}<span></span></div>
-                  <div class="userInfoOP_mod_fans_item"><span class="borderText">粉丝</span>
-                    {{ sumFollowAndFan.fanSum }}<span></span></div>
-                </div>
-                <div class="userInfoOP_mod_DE" @click="toUser">
-                  <div style="display: flex;align-items: center">
-                    <el-icon style="margin-right: 10px">
-                      <UserFilled/>
-                    </el-icon>
-                    <span>个人中心</span>
-                  </div>
-                  <span> > </span>
-                </div>
-                <div class="userInfoOP_mod_split"></div>
-                <div class="userInfoOP_mod_EX" @click="logOff()">
-                  <el-icon style="margin-right: 10px">
-                    <Promotion/>
-                  </el-icon>
-                  <span>退出登录</span>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item  me-2">
-            <div class="message_mod">
-              <el-badge :is-dot="isDot" class="item" style="width: 1.4em;">
-                <Message style="width: 1.3em; height: 1.3em; margin-right: 8px;" @click="checkMessage(0)"/>
-              </el-badge>
-            </div>
-            <div class="op_list_container">
-              <div class="at_message_mod_op_list">
-                <div class="op_list_item"
-                     v-for="(item,index) in opList"
-                     @click="checkMessage(index)">
-                  {{ item }}
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
       </div>
-    </nav>
+    </div>
+
   </div>
-  <!--  <div id="mess">
-      <keep-alive>
-        <component :is="message"></component>
-      </keep-alive>
-    </div>-->
 </template>
 
 <style scoped src="../css/AUTnav.css"></style>

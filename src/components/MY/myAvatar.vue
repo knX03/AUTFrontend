@@ -18,7 +18,7 @@ onMounted(() => {
 })
 
 onBeforeUpdate(() => {
-  avatarCON.value.style.backgroundImage = "url(" + "/" + user.value.user_Avatar + ")";
+  avatarCON.value.style.backgroundImage = "url(" + user.value.user_Avatar + ")";
 })
 
 /*不同的性别对应不同的logo*/

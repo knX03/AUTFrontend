@@ -49,7 +49,7 @@ function messUser(user_ID) {
         width="500"
         class="fansFMDia"
     >
-      <el-scrollbar max-height="700px" noresize>
+      <el-scrollbar max-height="600px" noresize>
         <div class="followList" v-if="followExist" @click="toUserDetail(item.user_ID)" v-for="item in followList">
           <div class="fAvatar">
             <img :src="item.user_Avatar">
@@ -122,7 +122,7 @@ function messUser(user_ID) {
 }
 
 .followList {
-  width: 100%;
+  width: auto;
   display: flex;
   padding: 10px 20px;
   cursor: pointer;

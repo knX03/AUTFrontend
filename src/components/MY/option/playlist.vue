@@ -144,12 +144,14 @@ function deletePlaylist(row) {
 /*歌曲列表*/
 .songList_mod {
   width: 75%;
+  min-height: 199px;
   background-color: #f7f7f7;
-  margin-left: 200px;
+  margin-left: 11%;
   margin-top: 10px;
   z-index: 2;
   border-radius: 12px;
   padding-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /*表头栏*/

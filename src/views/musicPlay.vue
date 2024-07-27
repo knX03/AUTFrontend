@@ -1,6 +1,6 @@
 <script setup>
 
-import MusicPlay from "@/App.vue";
+import MusicPlay from "@/components/utils/musicPlayer.vue";
 </script>
 
 <template>
