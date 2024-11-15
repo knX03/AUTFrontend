@@ -46,13 +46,16 @@ watch(() => musicPlayStore.index, (newValue, OldValue) => {
     musicU.value = musicPlayStore.songList[newValue].song_Directory
     songList.value = musicPlayStore.songList[newValue]
     activeItem.value = newValue
+    setTimeout(() => {
+      loadMusic()
+    })
     loadMusic()
-    play.value = true
+    play.value = false
   }
 }, {deep: true});
 
 let player = ref(false)//播放器显示
-let play = ref(true)//播放按钮
+let play = ref(false)//播放按钮
 let playType = ref(3) //播放模式 1：列表循环，2：单曲循环，3：随机播放
 let loop = ref(false)//是否循环播放
 let musicU = ref('')//播放器音乐路径
@@ -238,8 +241,9 @@ function updateTime() {
     // 设置当前时间
     let MoveXC = progress.value.clientWidth * (music.value.currentTime / music.value.duration)
     let MoveX = (music.value.currentTime / music.value.duration) * 100
-    // const cirOffsetX = circle.value.style.left.replace('px', '');
-    circle.value.style.left = 685 + MoveXC + 'px' //685 为circle的初始位置
+    // circle.value.style.left = 685 + MoveXC + 'px' //685 为circle的初始位置
+    circle.value.style.translate = MoveXC + 'px' //685 为circle的初始位置
+    // console.log(circle.value.style.translate)
     //播放时更新距离
     currentProgress.value = MoveX
   }
@@ -261,7 +265,8 @@ function updateProgress(MoveX) {
   music.value.currentTime = music.value.duration * clickProgress
   //设置移动的位置
   currentProgress.value = MoveX / 3
-  circle.value.style.left = 685 + MoveX + 'px'//685 为circle的初始位置
+  circle.value.style.translate = MoveX + 'px' //685 为circle的初始位置
+  // circle.value.style.left = 685 + MoveX + 'px'//685 为circle的初始位置
   play.value = true
 }
 
@@ -518,6 +523,11 @@ function selectSP(playlist_ID) {
   CLSong.value.playlist_ID = playlist_ID;
 }
 
+function cancelLike() {
+  CLSong.value.playlist_ID = '';
+  dialogVisible.value = false;
+}
+
 /*收藏歌曲至指定歌单*/
 function collectSongToPlaylist() {
   aCollectSongToPlaylist(CLSong.value.playlist_ID, CLSong.value.song_ID).then(resp => {
@@ -580,8 +590,10 @@ function toMusicPlayerDE(song_ID) {
       <div class="progressBar_mod_player">
         <span>{{ currentDuration }}</span>
         <div class="progressBar_mod" ref="progress" @click="clickProgress" @mouseup="handleMouseup">
-          <el-progress :percentage=currentProgress :color="customColors"><span></span></el-progress>
-          <div class="circle" ref="circle" @mousedown="handleMousedown"></div>
+          <el-progress :percentage=currentProgress :color="customColors"><span></span>
+            <div class="circle" ref="circle" @mousedown="handleMousedown"></div>
+          </el-progress>
+
         </div>
         <span>{{ duration }}</span>
       </div>
@@ -614,7 +626,7 @@ function toMusicPlayerDE(song_ID) {
              v-click-outside="onClickOutside"
         >
           <div class="song_title_item">
-            <span style="font-weight: bolder;font-size: 18px;color: black">播放列表<span
+            <span style="font-weight: bolder;font-size: 18px;color: black;margin-left: 20px">播放列表<span
                 class="list_len">{{ songListLen }}</span></span>
             <span style="cursor: pointer" @click="deleteSongList()"><el-icon><Delete/></el-icon>清空</span>
           </div>
@@ -651,7 +663,7 @@ function toMusicPlayerDE(song_ID) {
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button @click="dialogVisible=false">取消</el-button>
+          <el-button @click="cancelLike()">取消</el-button>
           <el-button type="primary" @click="ifExistSong()">收藏</el-button>
         </el-form-item>
       </el-form>
@@ -793,10 +805,21 @@ function toMusicPlayerDE(song_ID) {
 }
 
 .circle {
+  /*  position: absolute;
+    display: none;
+    bottom: 12px;
+    left: 685px;
+    left: 42.9rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #FFFFFF;*/
   position: absolute;
-  display: none;
-  bottom: 12px;
-  left: 685px;;
+  /* display: none; */
+  bottom: -4px;
+  /* left: 685px; */
+  /* left: 23.9rem; */
+  transform: translate(-12px, 0px);
   width: 14px;
   height: 14px;
   border-radius: 50%;
@@ -891,8 +914,19 @@ function toMusicPlayerDE(song_ID) {
 }
 
 .folderAdd:hover {
-  transition: 0.2s all ease-in-out;
-  transform: scale(1.1, 1.1);
+  animation: jumpBoxHandler 0.3s; /*事件完成时间周期 infinite无限循环 */
+}
+
+@keyframes jumpBoxHandler { /* css事件 */
+  0% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(0px, -2px); /* 可配置跳动方向 */
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
 }
 
 /*歌曲列表展示模块*/
@@ -908,12 +942,12 @@ function toMusicPlayerDE(song_ID) {
 }
 
 .songList_perform img:hover {
-  transform: scale(1.1, 1.1);
+  animation: jumpBoxHandler 0.3s; /*事件完成时间周期 infinite无限循环 */
 }
 
 .showSongList {
   width: 400px;
-  height: 500px;
+  height: 0;
   overflow: hidden;
   background-color: #ffffff;
   position: absolute;
@@ -921,13 +955,14 @@ function toMusicPlayerDE(song_ID) {
   right: 0px;
   border-top-left-radius: 12px;
   opacity: 0;
-  transform: scale(0, 0);
+  /*  transform: scale(0, 0);*/
   transition: all 0.3s ease-in-out;
 }
 
 .showSongList.activeM {
   opacity: 1;
   transform: scale(1, 1);
+  height: 500px;
 }
 
 .song_title_item {
@@ -938,8 +973,6 @@ function toMusicPlayerDE(song_ID) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 .list_len {

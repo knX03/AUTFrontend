@@ -2,6 +2,12 @@
 编辑资料模块
  */
 /*头像展示*/
+/*编辑资料模块框架*/
+.ue_editUserInfo .el-dialog {
+    height: 50%;
+    border-radius: 20px;
+    background-color: #000000;
+}
 
 .editForm {
     display: flex;
@@ -55,15 +61,8 @@
 }
 
 
-/*编辑资料模块框架*/
-.editUserInfo .el-dialog {
-    height: 60% !important;
-    border-radius: 20px;
-    background-color: #626262;
-}
-
 /*标题*/
-.editUserInfo .el-dialog__title {
+.ue_editUserInfo .el-dialog__title {
     font-size: 25px;
     font-family: STXihei, serif;
     font-weight: 900;
@@ -74,30 +73,30 @@
 }
 
 
-.editUserInfo .el-dialog__body {
+.ue_editUserInfo .el-dialog__body {
     padding-left: 40px;
 }
 
 
 /*使用id选择器提高权重，覆写组件样式 ,按钮样式*/
-#edituserinfo .el-button--primary {
+#ue_editUserInfo .el-button--primary {
     margin-left: 30px;
     /*    margin-top: 40px;*/
     background-color: #e58c43;
     border-color: #e58c43;
 }
 
-#edituserinfo .el-button {
+#ue_editUserInfo .el-button {
     margin-top: 40px;
 }
 
-#edituserinfo .el-button--primary:hover {
+#ue_editUserInfo .el-button--primary:hover {
     background-color: #fff4ea;
     border-color: #fff4ea;
     color: #e58c43;
 }
 
-#edituserinfo .el-button:hover {
+#ue_editUserInfo .el-button:hover {
     background-color: #fff4ea;
     border-color: #fff4ea;
     color: #e58c43;

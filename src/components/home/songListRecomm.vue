@@ -18,6 +18,10 @@ const dailyRe = ref(
     {url: 'src/photos/Daily/' + today.value + '.png', today: day}
 )
 
+/*
+const dailyRe = ref(
+    {url: '/assets/Daily/' + today.value + '.png', today: day} //todo ECS
+)*/
 
 const toPlaylist = (playlist_ID) => {
   router.push({

@@ -2,6 +2,30 @@
 编辑资料模块
  */
 /*头像展示*/
+/*编辑资料模块框架*/
+.pl_editUserInfo .el-dialog {
+    border-radius: 20px;
+    background-color: #13131a;
+}
+
+/*标题*/
+.pl_editUserInfo .el-dialog__title {
+    font-size: 25px;
+    font-family: STXihei, serif;
+    font-weight: 900;
+    position: relative;
+    top: 10px;
+    left: 20px;
+    color: white;
+}
+
+/**
+编辑表单
+ */
+.editForm {
+    display: flex;
+}
+
 .editCover {
     width: 150px;
     height: 150px;
@@ -21,49 +45,13 @@
     transition: all 0.5s ease-in-out;
 }
 
-/*需要切换时显示*/
-.changeCover {
-    color: white;
-    font-family: STXihei, serif;
-    font-weight: 600;
-    font-size: 20px;
-    position: absolute;
-    top: 62px;
-    left: 30px;
-    display: none;
-    cursor: pointer;
-}
 
-/*鼠标在头像处显示*/
-.editCover:hover .changeCover {
-    display: block;
-}
-
-/*编辑资料模块框架*/
-.editUserInfo .el-dialog {
-    height: 70%;
-    border-radius: 20px;
-    background-color: #13131a;
-}
-
-/*标题*/
-.editUserInfo .el-dialog__title {
-    font-size: 25px;
-    font-family: STXihei, serif;
-    font-weight: 900;
-    position: relative;
-    top: 10px;
-    left: 20px;
-    color: white;
-}
-
-
-.editUserInfo .el-dialog__body {
+.pl_editUserInfo .el-dialog__body {
     padding-left: 40px;
 }
 
 /*按钮位置*/
-.editUserInfo .el-dialog__footer {
+.pl_editUserInfo .el-dialog__footer {
     position: absolute;
     bottom: 20px;
     display: flex;
@@ -72,32 +60,29 @@
 }
 
 /*使用id选择器提高权重，覆写组件样式 ,按钮样式*/
-#edituserinfo .el-button--primary {
+#pl_editUserInfo .el-button--primary {
     margin-left: 30px;
-    margin-top: 40px;
     background-color: #e58c43;
     border-color: #e58c43;
 }
 
-#edituserinfo .el-button--primary:hover {
+#pl_editUserInfo .el-button--primary:hover {
     background-color: #fff4ea;
     border-color: #fff4ea;
     color: #e58c43;
 }
 
-#edituserinfo .el-button--default:hover {
+#pl_editUserInfo .el-button:hover {
     background-color: #fff4ea;
     border-color: #fff4ea;
     color: #e58c43;
 }
 
 
-/**
-编辑表单
- */
 .editForm .el-scrollbar {
     width: 100%;
 }
+
 
 /*表单文字*/
 .editForm .el-form-item__label {
@@ -128,4 +113,16 @@
     bottom: 5px;
     left: 230px;
     right: inherit;
+}
+
+#pl_editUserInfo .el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close {
+    color: #e58c43 !important;
+}
+
+#pl_editUserInfo .el-textarea__inner:focus {
+    outline: 0;
+    box-shadow: 0 0 0 1px #e58c43 inset;
+}
+#pl_editUserInfo .el-select__wrapper.is-focused{
+    box-shadow: 0 0 0 1px #e58c43 inset;
 }

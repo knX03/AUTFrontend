@@ -187,27 +187,29 @@ function handleCurrentChange(val) {
 
 <template>
   <div>
-    <!--todo 播放和下载功能待实现-->
+<!--    &lt;!&ndash;todo 批量下载功能待实现&ndash;&gt;
     <div class="buttonList_mod">
       <el-button type="warning" plain round @click="playAll()">
         播放全部
       </el-button>
       <el-button type="info" round @click="downloadAllSong()">下载全部</el-button>
-      <!--todo 批量操作待实现-->
-      <!--<el-button type="info" round>批量操作</el-button>-->
-    </div>
+      &lt;!&ndash;todo 批量操作待实现&ndash;&gt;
+      &lt;!&ndash;<el-button type="info" round>批量操作</el-button>&ndash;&gt;
+    </div>-->
     <div class="songList_mod" v-if="userLikeSongExist">
       <div class="listTitle_mod">
-        <label class="songTitle">歌曲</label>
-        <label class="singerTitle">歌手</label>
-        <label class="albumTitle">专辑</label>
-        <label class="optionTitle"></label>
+        <span class="songTitle">歌曲</span>
+        <span class="singerTitle">歌手</span>
+        <span class="albumTitle">专辑</span>
+        <span class="optionTitle"></span>
       </div>
-      <div class="listSong_mod" v-for="(item,index) in songList ">
+      <div class="listSong_mod" v-for="(item,index) in songList" @dblclick="play(index)">
         <div class="SN">{{ index + 1 }}</div>
         <div class="songName">
-          <img :src="item.song_Cover">
-          <label>{{ item.song_Name }}</label>
+          <img :src="item.song_Cover" v-if="item.song_Cover.length>0">
+          <div class="songCover_layout" v-else/>
+          <span v-if="item.song_Name.length>0">{{ item.song_Name }}</span>
+          <div class="songName_layout" v-else/>
           <div class="playAndAdd">
             <div class="playMusic_button" @click="play(index)">
               <img src="/src/photos/logo/playGray.png">
@@ -217,11 +219,11 @@ function handleCurrentChange(val) {
             </div>
           </div>
         </div>
-        <div class="singerName" @click="toSinger(item.singer_ID)">
-          <label>{{ item.singer_name }}</label>
+        <div class="singerName">
+          <span @click="toSinger(item.singer_ID)">{{ item.singer_name }}</span>
         </div>
-        <div class="albumName" @click="toAlbum(item.album_ID)">
-          <label>{{ item.album_name }}</label>
+        <div class="albumName">
+          <span @click="toAlbum(item.album_ID)">{{ item.album_name }}</span>
         </div>
         <div class="option_mod">
           <div class="deleteAndDownload">
@@ -367,9 +369,11 @@ function handleCurrentChange(val) {
 
 }
 
-.listTitle_mod label {
-  color: #9999a5;
-  font-family: 方正粗黑宋简体, serif;
+.listTitle_mod span {
+  font-family: STXihei, serif;
+  color: #2f2f2f;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .songTitle {
@@ -396,8 +400,13 @@ function handleCurrentChange(val) {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  transition: all 0.2s ease-in-out;
+  background-color: #f7f7f7;
 }
 
+.listSong_mod:hover{
+  background: #FFFFFF;
+}
 
 /*鼠标悬浮显示操作按钮*/
 .listSong_mod:hover .songName .playAndAdd {
@@ -413,7 +422,6 @@ function handleCurrentChange(val) {
 .SN {
   width: 50px;
   height: 50px;
-  background-color: #f7f7f7;
   color: #9999a5;
   display: flex;
   align-items: center;
@@ -423,7 +431,6 @@ function handleCurrentChange(val) {
 .songName {
   width: 400px;
   height: 50px;
-  background-color: #f7f7f7;
   color: #000000;
   display: flex;
   align-items: center;
@@ -435,7 +442,7 @@ function handleCurrentChange(val) {
   border-radius: 50%;
 }
 
-.songName label {
+.songName span {
   margin-left: 10px;
   margin-right: 50px;
   cursor: pointer;
@@ -451,18 +458,17 @@ function handleCurrentChange(val) {
   width: 300px;
   height: 50px;
   color: #000000;
-  background-color: #f7f7f7;
   display: flex;
   align-items: center;
 }
 
-.singerName label {
+.singerName span {
   cursor: pointer;
   font-family: STXihei, serif;
   font-size: 15px;
 }
 
-.singerName label:hover {
+.singerName span:hover {
   color: #e58c43;
 }
 
@@ -470,30 +476,42 @@ function handleCurrentChange(val) {
   width: 300px;
   height: 50px;
   color: #000000;
-  background-color: #f7f7f7;
   display: flex;
   align-items: center;
 }
 
-.albumName label {
+.albumName span {
   cursor: pointer;
   font-family: STXihei, serif;
   font-size: 15px;
 }
 
-.albumName label:hover {
+.albumName span:hover {
   color: #e58c43;
 }
 
 .option_mod {
   width: 210px;
   height: 50px;
-  background-color: #f7f7f7;
   display: flex;
   align-items: center;
   justify-content: right;
 }
 
+.songCover_layout {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #f0f0f1;
+}
+
+.songName_layout {
+  margin-left: 10px;
+  margin-right: 50px;
+  height: 21px;
+  width: 60px;
+  background: #f0f0f1;
+}
 
 /*操作的按钮*/
 

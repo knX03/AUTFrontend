@@ -23,7 +23,6 @@ let singerToken = store.get('access_singer_token').value
 
 Service.interceptors.request.use(
     config => {
-        console.log(token)
         if (token) {
             config.headers["authorization"] = token;
         }

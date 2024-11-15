@@ -221,8 +221,28 @@ function sendCode() {
 </script>
 
 <template>
+  <div class="headerNav">
+    <div class="one">
+      <div class="logoOne">
+        <router-link to="/" href="#" class="navbar_logo">
+          <img src="../icons/AUT.png">
+        </router-link>
+      </div>
+      <ul class="menuOne">
+        <li class="menuPart mactive">四</li>
+        <li class="menuPart">一</li>
+        <li class="menuPart">二</li>
+        <li class="menuPart">三</li>
+      </ul>
+    </div>
+  </div>
   <div class="loginBack_mod" v-loading="loading">
     <div v-if="showbox" class="backMask_mod">
+    </div>
+    <div>
+      <div class="logotext">
+        AUT
+      </div>
     </div>
     <div class="login_form_mod" v-if="loginMode===0">
       <div class="nav_mod">
@@ -249,10 +269,10 @@ function sendCode() {
           />
         </div>
         <div class="rememberPassword_mod">
-          <div class="rememberPassword">
+<!--          <div class="rememberPassword">
             <el-checkbox v-model="userForm.remFlag" size="large"/>
             <span class="remPassword_text">记住密码</span>
-          </div>
+          </div>-->
           <span class="forgetPassword_mod">
           <router-link to="forgetPass">忘记密码</router-link>
           </span>
@@ -326,6 +346,50 @@ function sendCode() {
   padding: 0;
 }
 
+/*todo 测试*/
+.headerNav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  width: 100%;
+  padding: 1rem .75rem .75rem;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.91), rgba(17, 17, 17, 0.87), transparent);
+}
+
+.one {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  height: 6rem;
+}
+
+.logoOne {
+  display: flex;
+  align-items: center;
+}
+
+.menuOne {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-right: 5rem;
+  color: white;
+  font-size: 22px;
+  list-style: none;
+}
+
+.menuPart {
+  cursor: pointer;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  transition: all 0.5s ease-in-out;
+}
+
+.menuPart:hover.menuPart {
+  background: rgba(224, 224, 224, 0.67);
+}
 /*登录页面背景*/
 .loginBack_mod {
   background: url('/src/photos/background/music80.jpg') no-repeat fixed center center;
@@ -342,6 +406,19 @@ function sendCode() {
   justify-content: center;
   min-width: 1200px;
   margin: 0 auto;
+}
+
+/*todo 测试*/
+.logotext {
+  font-size: 300px;
+  -webkit-background-clip: text;
+  font-weight: 900;
+  -webkit-text-stroke: 5px #ffffff;
+  background: url(/src/photos/background/music80.jpg) no-repeat fixed center center;
+  background-clip: text;
+  color: transparent;
+  cursor: default;
+  margin-right: 15rem;
 }
 
 /*背景遮罩*/
@@ -405,8 +482,8 @@ function sendCode() {
   align-items: center;
   border-radius: 10px;
   color: #FFFFFF;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(60px);
+  backdrop-filter: blur(60px);
   box-shadow: inset 0 0 6px 5px #FFFFFF33;
   transition: 0.5s all ease-in-out;
 }
@@ -468,10 +545,9 @@ function sendCode() {
 .rememberPassword_mod {
   width: 100%;
   margin-top: 20px;
-  padding-left: 45px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
 }
 
 .rememberPassword {
@@ -493,11 +569,12 @@ function sendCode() {
 .signIn_mod {
   margin-top: 30px;
   height: 35px;
-  width: 90px;
+  width: 100px;
   background-color: #d4b73d;
   border: 0;
   border-radius: 5px;
   font-family: STXihei, serif;
+  transform: translate(20px,0);
   transition: 1s all ease-in-out;
 }
 
@@ -505,7 +582,7 @@ function sendCode() {
   transition: 1s all ease-in-out;
   margin-left: 0;
   width: 200px;
-  box-shadow: 0 0 10px 8px #3969b4;
+  box-shadow: 0 0 10px 8px rgba(57, 105, 180, 0);
 }
 
 
@@ -533,6 +610,7 @@ function sendCode() {
   color: #8DB799;
   text-decoration: none;
   transition: 0.5s all ease-in-out;
+  transform: translate(20px,0);
 }
 
 .signUp_mod:hover {
@@ -545,6 +623,7 @@ function sendCode() {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  transform: translate(20px,0);
 }
 
 .moreLogin_BT span {

@@ -4,8 +4,10 @@ import useFlagStore from '@/store/flagStore.js'
 import router from "@/router/index.js";
 import {aGetUserFollow} from "@/api/api.js";
 import useUserStore from "@/store/userStore.js";
+import useMessageStore from "@/store/messageStore.js";
 
 const flagStore = useFlagStore();
+const messageStore = useMessageStore();
 const userStore = useUserStore()
 const userID = "";
 let followExist = ref(true)
@@ -37,8 +39,16 @@ function getUserFollow(userID) {
   })
 }
 
-function messUser(user_ID) {
-  console.log(user_ID)
+//私信
+function messUser(user) {
+  let index = '0';
+  messageStore.recipient.user_ID = user.user_ID
+  messageStore.recipient.user_Name = user.user_Name
+  messageStore.recipient.user_Avatar = user.user_Avatar
+  router.push({
+    path: '/message',
+    query: {index}
+  })
 }
 </script>
 <template>
@@ -59,7 +69,7 @@ function messUser(user_ID) {
             <span class="fIntro">{{ item.user_Introduction }}</span>
           </div>
           <div id="messBT">
-            <el-button type="info" plain round @click.stop="messUser(item.follow_id)">
+            <el-button type="info" plain round @click.stop="messUser(item)">
               <el-icon>
                 <Message/>
               </el-icon>

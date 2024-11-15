@@ -173,11 +173,14 @@ function unFollowUser(ID) {
 
 //私信
 function postMess() {
+  console.log(user.value)
+  let index = '0';
   messageStore.recipient.user_ID = user.value.user_ID
   messageStore.recipient.user_Name = user.value.user_Name
   messageStore.recipient.user_Avatar = user.value.user_Avatar
   router.push({
     path: '/message',
+    query: {index}
   })
 }
 

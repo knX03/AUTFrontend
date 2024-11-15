@@ -128,7 +128,7 @@ function playMusic(index) {
       <span class="likeTitle">喜欢</span>
       <span class="downloadTitle">下载</span>
     </div>
-    <div class="ListBody_mod" v-for="(item,index) in songList ">
+    <div class="ListBody_mod" v-for="(item,index) in songList" @dblclick="playMusic(index)">
       <div class="playButton_mod" @click="playMusic(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>
@@ -430,7 +430,7 @@ function playMusic(index) {
 }
 
 .playlistNull_mod {
-  min-height: 426px;
+  min-height: 439px;
   width: 100%;
   display: flex;
   flex-direction: column;

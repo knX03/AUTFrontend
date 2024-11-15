@@ -165,8 +165,10 @@ function deletePlaylist(row) {
 }
 
 .listTitle_mod span {
-  color: #9999a5;
-  font-family: 方正粗黑宋简体, serif;
+  font-family: STXihei, serif;
+  color: #2f2f2f;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .songTitle {

@@ -107,6 +107,7 @@ function toArtists() {
 function checkMessage(index) {
   router.push({
     path: '/message',
+    query: {index}
   })
   messageStore.showMess = !messageStore.showMess
   if (isDot.value) {
@@ -372,14 +373,12 @@ function getSumFollowAndFan(userID) {
     </div>
     <div class="navbar_split"></div>
     <div class="navbar_option_mod">
-      <div class="userInfo">
-        <img class="nav_avatar"
-             @mouseover="avatarOver"
-             @mouseout="avatarFlag=false"
-             :src=user.user_Avatar
-             :class="{aActive:avatarFlag}"
-             alt="avatar">
-      </div>
+      <img class="nav_avatar"
+           @mouseover="avatarOver"
+           @mouseout="avatarFlag=false"
+           :src=user.user_Avatar
+           :class="{aActive:avatarFlag}"
+           alt="avatar">
       <div class="userInfoOP_mod"
            @mouseover="avatarOver"
            @mouseout="avatarFlag=false"

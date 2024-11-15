@@ -273,7 +273,7 @@ function changeSexLogo() {
       </div>
 
       <!--编辑资料模块-->
-      <div class="editUserInfo" id="edituserinfo">
+      <div class="ue_editUserInfo" id="ue_editUserInfo">
         <el-dialog
             title="编辑个人信息"
             v-model="dialogVisible"

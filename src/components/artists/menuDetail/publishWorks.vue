@@ -172,6 +172,7 @@ function creatAlbumBf() {
 function selectAlbum(data) {
   album.value.album_ID = data.album_ID
   album.value.album_Name = data.album_ID
+  album.value.album_Cover=data.album_Cover
 }
 
 function uploadAlCover() {

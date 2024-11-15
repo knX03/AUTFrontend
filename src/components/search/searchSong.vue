@@ -138,9 +138,10 @@ function collectSongToPlaylist() {
   <div class="search_list_mod">
     <div class="search_list_song_mod_content"
          v-if="songSearch.length>0"
-         v-for="(item,index) in songSearch">
+         v-for="(item,index) in songSearch"
+         @dblclick="playMusic(index)">
       <div style="display:flex;">
-        <img class="play_bt" src="/src/photos/logo/playGray.png" alt="" @click="playMusic(index)">
+<!--        <img class="play_bt" src="/src/photos/logo/playGray.png" alt="" @click="playMusic(index)">-->
         <img :src="item.song_Cover" class="search_list_mod_songCover" alt="">
         <div class="search_list_mod_info">
           <div><span>{{ item.song_Name }}</span></div>

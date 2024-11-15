@@ -85,6 +85,13 @@ const toSinger = (singer_ID) => {
     query: {singer_ID}
   })
 }
+
+const toPL = (playlist_ID) => {
+  router.push({
+    path: '/playlistDetails',
+    query: {playlist_ID}
+  })
+}
 </script>
 
 <template>
@@ -119,7 +126,8 @@ const toSinger = (singer_ID) => {
             </div>
           </div>
         </div>
-        <div class="search_list_mod_content" v-for="item in spSearch">
+        <div class="search_list_mod_content" v-for="item in spSearch"
+             @click="toPL(item.playlist_ID)">
           <div style="display:flex;">
             <img :src="item.playlist_Cover">
             <div class="search_list_mod_info">

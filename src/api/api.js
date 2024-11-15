@@ -618,6 +618,14 @@ export const aUserMess = (userID) => {
         method: 'GET',
     })
 }
+
+
+export const aGetSysMess = (userID) => {
+    return Service({
+        url: '/message/getSysMess',
+        method: 'GET',
+    })
+}
 /*Search----------------------------------------------------------------------------*/
 
 //搜索

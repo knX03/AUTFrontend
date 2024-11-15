@@ -257,8 +257,7 @@ function applySinger() {
 <style scoped>
 .apply_page_mod {
   width: 100%;
-  /*  height: 100%;*/
-  height: 849px;
+  height: 847px;
   background-color: #f5f6fa;
   display: flex;
   justify-content: center;
@@ -276,7 +275,7 @@ function applySinger() {
 }
 
 .apply_form_container {
-  width: 100%;
+  width: auto;
   max-height: 815px;
   background-color: #FFFFFF;
   border-radius: 12px;

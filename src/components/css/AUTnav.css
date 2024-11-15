@@ -267,22 +267,21 @@ a {
 
 .userInfoOP_mod {
     width: 300px;
-    height: 400px;
+    height: 0px;
     border-radius: 12px;
     background-color: #FFFFFF;
     box-shadow: 0 0 15px 2px rgb(226 226 226);
     position: absolute;
     top: 63px;
     transform: scale(0, 0) translateX(-45px);
+    /*    transform: translateX(-45px);*/
     opacity: 0;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.3s ease-out;
     z-index: 3;
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    padding-top: 50px;
-    padding-bottom: 10px;
 }
 
 .userInfoOP_mod span {
@@ -292,6 +291,9 @@ a {
 
 .userInfoOP_mod.oActive {
     opacity: 1;
+    height: 400px;
+    padding-top: 50px;
+    padding-bottom: 10px;
     transform: scale(1, 1) translateX(-45px);
 }
 
@@ -364,7 +366,7 @@ a {
 }
 
 .message_mod:hover {
-    animation: jumpBoxHandler 0.3s; /* 1.8s 事件完成时间周期 infinite无限循环 */
+    animation: jumpBoxHandler 0.3s; /*事件完成时间周期 infinite无限循环 */
 }
 
 @keyframes jumpBoxHandler { /* css事件 */
@@ -380,32 +382,38 @@ a {
 }
 
 .op_list_container {
-    width: 130px;
-    padding-top: 15px;
+    width: 140px;
+    height: 0px;
     position: absolute;
     top: 50px;
     z-index: 9;
     opacity: 0;
-    transform: scale(0, 0) translate(55px, 0);
-    transition: all 0.3s ease-in-out;
+    transform: translate(55px, 0);
+    transition: all 0.5s ease-out;
+    overflow: hidden;
+    border-radius: 12px;
+    text-align: center;
 }
 
 .at_message_mod_op_list {
-    width: 100%;
+    width: 90%;
     border-radius: 12px;
     padding: 10px 0;
     background-color: #FFFFFF;
     box-shadow: 0 0 10px 2px #aaaaaa;
+    transform: translateX(7px);
 }
 
 .message_mod:hover + .op_list_container {
     opacity: 1;
-    transform: scale(1, 1) translate(55px, 0);
+    height: 195px;
+    padding-top: 15px;
 }
 
 .op_list_container:hover {
     opacity: 1;
-    transform: scale(1, 1) translate(55px, 0);
+    height: 195px;
+    padding-top: 15px;
 }
 
 .op_list_item {
@@ -419,4 +427,5 @@ a {
 
 .op_list_item:hover {
     background-color: #e0e0e0;
+    color: #e58c43;
 }

@@ -72,8 +72,6 @@ const PLTagList = ref([
   {tag_id: '', tag_name: ''}
 ])
 
-let tagFlag = ref(false)
-
 const toUserInfo = (user_ID) => {
   aIfMy(user_ID).then(resp => {
     if (resp.data.data) {
@@ -89,12 +87,6 @@ const toUserInfo = (user_ID) => {
   })
 }
 
-const toPLbyTag = (tag_ID) => {
-  router.push({
-    path: '/songList',
-    query: {tag_ID}
-  })
-}
 
 onMounted(() => {
   let FPlaylist_ID = route.query.playlist_ID
@@ -107,6 +99,13 @@ onMounted(() => {
 onBeforeUpdate(() => {
   bg_info.value.style.backgroundImage = "url(" + songPlaylists.value.playlist_Cover + ")";
 })
+
+const toPLbyTag = (tag_ID) => {
+  router.push({
+    path: '/songList',
+    query: {tag_ID}
+  })
+}
 
 /*根据跳转的歌单ID查询歌单详情*/
 function selectDetail(data) {
@@ -237,7 +236,7 @@ function changePlaylistInfo() {
   aChangePlaylistInfo(playlistForm.value).then(resp => {
     if (resp.data.code === 200) {
       dialogVisible.value = false
-      ElMessage.success(resp.data.msg)
+      ElMessage.success("修改成功!")
       songPlaylists.value = playlistForm.value
       selectPlaylistTags(songPlaylists.value.playlist_ID)
     } else {
@@ -330,11 +329,12 @@ function downloadAll() {
   window.open(formData.get('songFile'))
 }
 
-//todo 监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
+//监听标签选择(无法获取playlist_Tag的长度判断最多三个标签)
 watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
-  let tags = toRaw(newValue)
-  /*  console.log("new" + newValue);
-    console.log("raw" + tags);*/
+  if (newValue.length > 3) {
+    playlistForm.value.playlist_Tag.pop()
+    ElMessage.error('最多只能选择三个标签')
+  }
 });
 
 </script>
@@ -403,7 +403,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 
 
       <!--编辑歌单资料-->
-      <div class="editUserInfo" id="edituserinfo">
+      <div class="pl_editUserInfo" id="pl_editUserInfo">
         <el-dialog
             title="编辑歌单信息"
             v-model="dialogVisible"
@@ -450,7 +450,6 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
                         :key="item.tag_id"
                         :label="item.tag_name"
                         :value="item.tag_id"
-                        :disabled="tagFlag"
                     />
                   </el-select>
                 </el-form-item>
@@ -686,5 +685,6 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   align-items: center;
   justify-content: center;
 }
+
 </style>
 <style src="../../css/secondPage/playDetail/playlistInfoEdit.css"></style>

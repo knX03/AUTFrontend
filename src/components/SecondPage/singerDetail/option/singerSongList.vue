@@ -120,7 +120,7 @@ function play(index) {
       <span class="likeTitle">喜欢</span>
       <span class="downloadTitle">下载</span>
     </div>
-    <div class="ListBody_mod" v-for="(item,index) in songList ">
+    <div class="ListBody_mod" v-for="(item,index) in songList" @dblclick="play(index)">
       <div class="playButton_mod" @click="play(index)">
         <img src="/src/photos/logo/playGray.png">
       </div>

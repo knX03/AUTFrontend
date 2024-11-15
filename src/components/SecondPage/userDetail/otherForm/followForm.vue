@@ -3,6 +3,7 @@ import {defineProps, onMounted, ref, watch} from "vue";
 import useFlagStore from '@/store/flagStore.js'
 import router from "@/router/index.js";
 import {aGetUserFollow, aIfMy} from "@/api/api.js";
+import useMessageStore from "@/store/messageStore.js";
 
 const flagStore = useFlagStore();
 const {user_ID} = defineProps(['user_ID']);
@@ -50,9 +51,6 @@ function getUserFollow(userID) {
   })
 }
 
-function messUser(user_ID) {
-  console.log(user_ID)
-}
 </script>
 <template>
   <div id="followFM">
@@ -72,7 +70,7 @@ function messUser(user_ID) {
             <span class="fIntro">{{ item.user_Introduction }}</span>
           </div>
           <div id="messBT" v-if="ifMyFlag">
-            <el-button type="info" plain round @click.stop="messUser(item.follow_id)">
+            <el-button type="info" plain round>
               <el-icon>
                 <Message/>
               </el-icon>
