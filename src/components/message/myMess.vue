@@ -230,6 +230,7 @@ function postMess() {//发送消息
 function scrollDown() {
   let moveTop = (messList.value.length) * 60
   chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(moveTop)
+  console.log(chatScrollbar.value)
 }
 
 </script>

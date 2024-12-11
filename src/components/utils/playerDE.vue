@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch} from "vue";
 import {aSongDE} from "@/api/api.js";
 import {useRoute} from "vue-router";
 import useMusicPlayStore from "@/store/musicPlayStore.js";
@@ -9,9 +9,10 @@ const route = useRoute()
 const record_needle = ref()
 const cover = ref()//歌曲封面
 const bg_info = ref()
-let ifPlay = ref(musicPlayStore.playing)//歌曲是否在播放
+const lyricUl = ref()
 let currentTimeIndex = ref()
 let wordFlag = ref(0);
+let moveY = ref(0)
 //歌曲信息
 let song = ref({
   song_ID: '',
@@ -23,18 +24,18 @@ let song = ref({
   song_Cover: '/src/photos/logo/唱片.png',
   song_Directory: '',
 })
-const dataStr2 = '[00:00.00]稻香 - 周杰伦\n' +
+const dataStr = '[00:00.00]稻香 - 周杰伦\n' +
     '[00:05.00]词：周杰伦 曲：周杰伦\n' +
-    '[00:27.98]对这个世界如果你有太多的抱怨\n' +
-    '[00:31.03]跌倒了就不敢继续往前走\n' +
-    '[00:33.94]为什麽人要这麽的脆弱 堕落\n' +
-    '[00:38.45]请你打开电视看看\n' +
-    '[00:40.19]多少人为生命在努力勇敢的走下去\n' +
-    '[00:43.83]我们是不是该知足\n' +
-    '[00:45.75]珍惜一切 就算没有拥有\n' +
-    '[00:51.20]还记得你说家是唯一的城堡\n' +
-    '[00:54.48]随着稻香河流继续奔跑\n' +
-    '[00:57.49]微微笑 小时候的梦我知道\n' +
+    '[00:31.98]对这个世界如果你有太多的抱怨\n' +
+    '[00:33.03]跌倒了就不敢继续往前走\n' +
+    '[00:38.94]为什麽人要这麽的脆弱 堕落\n' +
+    '[00:40.45]请你打开电视看看\n' +
+    '[00:43.19]多少人为生命在努力勇敢的走下去\n' +
+    '[00:45.83]我们是不是该知足\n' +
+    '[00:51.75]珍惜一切 就算没有拥有\n' +
+    '[00:54.20]还记得你说家是唯一的城堡\n' +
+    '[00:57.48]随着稻香河流继续奔跑\n' +
+    '[00:58.49]微微笑 小时候的梦我知道\n' +
     '[01:02.53]不要哭让萤火虫带着你逃跑\n' +
     '[01:05.98]乡间的歌谣永远的依靠\n' +
     '[01:09.14]回家吧 回到最初的美好\n' +
@@ -87,26 +88,42 @@ watch(() => musicPlayStore.playing, (newValue, OldValue) => {
   }
 }, {deep: true});
 
-//todo 歌词高亮停留，与歌词偏移
+
+//监听歌曲变化
+watch(() => musicPlayStore.index, (newValue, OldValue) => {
+  song.value = musicPlayStore.songList[newValue]
+  bg_info.value.style.backgroundImage = "url(" + "/" + song.value.song_Cover + ")";
+}, {deep: true});
+
+//歌词高亮停留，与歌词偏移
 watch(() => musicPlayStore.currentTime, (newValue, OldValue) => {
   let index = newValue.match(/(\d{2}):(\d{2})/);
   if (index) {
     const [, minutes, seconds] = index
+    //点击进度条时滚动歌词
+    if (currentTimeIndex.value + 1 < parseInt(minutes) * 60 + parseInt(seconds)) {
+      findTime()
+    } else if (currentTimeIndex.value - 1 > parseInt(minutes) * 60 + parseInt(seconds)) {
+      findTime()
+    }
     // 将时间戳转换为秒
     currentTimeIndex.value = parseInt(minutes) * 60 + parseInt(seconds)
-    console.log("wordf" + wordFlag.value)
-    console.log("s" + songWord.value[wordFlag.value+1].time)
-    if (currentTimeIndex.value === songWord.value[wordFlag.value+1].time) {
+    // console.log("wordf" + wordFlag.value)
+    // console.log("s" + songWord.value[wordFlag.value + 1].time)
+    //滚动歌词
+    if (currentTimeIndex.value === songWord.value[wordFlag.value + 1].time) {
       wordFlag.value++;
+      moveWord()
     }
     // console.log("wordf" + wordFlag.value)
-    console.log(currentTimeIndex.value)
+    // console.log(currentTimeIndex.value)
   }
 }, {deep: true});
 
 
 onMounted(() => {
   const songID = route.query.song_ID
+  initPlayerDE()
   songDetail(songID)
   // parseLyrics()
   formatLyric();
@@ -129,6 +146,17 @@ const parseLyrics = () => {
   }
 }*/
 
+//初始化页面
+function initPlayerDE() {
+  if (musicPlayStore.playing === true) {
+    record_needle.value.style.transform = "rotate(32deg)"
+    cover.value.style.animationPlayState = ''
+  } else {
+    record_needle.value.style.transform = "rotate(0deg)"
+    cover.value.style.animationPlayState = 'paused'
+  }
+  // findTime()
+}
 
 function songDetail(ID) {
   aSongDE(ID).then(resp => {
@@ -137,12 +165,14 @@ function songDetail(ID) {
       bg_info.value.style.backgroundImage = "url(" + "/" + song.value.song_Cover + ")";
     }
   })
+  setTimeout(() => {
+    moveWord()
+  }, 100)
 }
 
 
 /**
  * 将歌词字符串解析为歌词数组
- * @param {*} lyric 歌词字符串 如 ""
  * @returns array 如： [{ time: "31.52", words: "你是 遥遥的路" }]
  */
 const formatLyric = () => {
@@ -150,7 +180,7 @@ const formatLyric = () => {
   let timeStr = "";
   let index = 0;
   // 把歌词数组用换行符\n分割成数组
-  dataStr2.split("\n").forEach((item) => {
+  dataStr.split("\n").forEach((item) => {
     // 去除最后一行分割的空字符串
     if (item === "") return;
     // item 如 "[00:31.52]你是 遥遥的路"
@@ -164,8 +194,6 @@ const formatLyric = () => {
         index: index,
         time: parseTime(timeStr),
         content: parts[1],
-        // 人造id
-        // uid: Math.random().toString().slice(-6),
       });
       index++;
     }
@@ -183,7 +211,7 @@ const parseTime = (timeStr) => {
   return +parts1[0] * 60 + +parts1[1];
 };
 
-//todo 寻找进入页面时最近的歌词时间（在详情页面点击进度条无法跳转对应的歌词）
+//寻找进入页面时最近的歌词时间
 function findTime() {
   let tempCT
   let index = musicPlayStore.currentTime.match(/(\d{2}):(\d{2})/);
@@ -202,19 +230,19 @@ function findTime() {
     })
     tempCT--;
   }
+  moveWord();
 }
 
-//todo 需将其拆分为播放与暂停，目前暂时看效果
+// 歌词滚动
+function moveWord() {
+  let moveTop = (wordFlag.value - 7) * 35;
+  lyricUl.value.scrollTop = lyricUl.value.setScrollTop(moveTop)
+}
 
-function playNeedle() {
-  musicPlayStore.playing = !musicPlayStore.playing
-  if (musicPlayStore.playing === true) {
-    record_needle.value.style.transform = "rotate(32deg)"
-    cover.value.style.animationPlayState = ''
-  } else {
-    record_needle.value.style.transform = "rotate(0deg)"
-    cover.value.style.animationPlayState = 'paused'
-  }
+//todo 点击歌词改变进度条(未完全测试) ,需在歌词处新增播放的ui
+function clickWord(index) {
+  wordFlag.value = index
+  musicPlayStore.otherCurrentTime = songWord.value[index].time
 }
 </script>
 
@@ -243,10 +271,12 @@ function playNeedle() {
               <span>歌手：<span>{{ song.singer_name }}</span></span>
             </div>
             <div class="playerDE_mod_info_text_songWord">
-              <el-scrollbar height="600px">
-                <div v-for="(item) in songWord"
+              <el-scrollbar ref="lyricUl" height="500px">
+                <div v-for="(item,index) in songWord"
                      class="songWord_item"
-                     :class="{playing:item.index===wordFlag}">{{ item.content }}
+                     :class="{playing:item.index===wordFlag}"
+                     @click="clickWord(index)"
+                >{{ item.content }}
                 </div>
               </el-scrollbar>
             </div>
@@ -387,9 +417,9 @@ function playNeedle() {
 }
 
 .playerDE_mod_info_text_songWord {
-  width: 400px;
+  width: 450px;
   height: 600px;
-  margin-top: 20px;
+  margin-top: 4rem;
 }
 
 .playerDE_mod_info_text_songWord :deep(.el-scrollbar__view) {
@@ -398,10 +428,11 @@ function playNeedle() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease-in-out;
 }
 
 .songWord_item {
-  height: 20px;
+  height: 25px;
   font-family: STXihei, serif;
   font-size: 17px;
   transition: all 0.3s ease-in-out;

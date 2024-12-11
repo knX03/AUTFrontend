@@ -304,6 +304,7 @@ function handleCurrentChange(val) {
           title="收藏"
           v-model="dialogVisible"
           width="50%"
+          draggable
       >
         <el-form :model="CLSong" label-width="120px">
           <el-form-item label="选择歌单：">

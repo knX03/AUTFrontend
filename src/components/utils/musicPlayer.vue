@@ -54,9 +54,14 @@ watch(() => musicPlayStore.index, (newValue, OldValue) => {
   }
 }, {deep: true});
 
+//监听进度条变化 todo 点击歌词改变进度条(未完全测试)
+watch(() => musicPlayStore.otherCurrentTime, (newValue, OldValue) => {
+  music.value.currentTime = newValue
+}, {deep: true});
+
 let player = ref(false)//播放器显示
 let play = ref(false)//播放按钮
-let playType = ref(3) //播放模式 1：列表循环，2：单曲循环，3：随机播放
+let playType = ref(1) //播放模式 1：列表循环，2：单曲循环，3：随机播放
 let loop = ref(false)//是否循环播放
 let musicU = ref('')//播放器音乐路径
 let volume = ref(1)//播放器音量
@@ -650,6 +655,7 @@ function toMusicPlayerDE(song_ID) {
         title="收藏"
         v-model="dialogVisible"
         width="50%"
+        draggable
     >
       <el-form :model="CLSong" label-width="120px">
         <el-form-item label="选择歌单：">

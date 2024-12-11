@@ -278,6 +278,7 @@ function changeSexLogo() {
             title="编辑个人信息"
             v-model="dialogVisible"
             width="40%"
+            draggable
         >
           <div class="editForm" id="editform">
             <el-scrollbar height="480px">

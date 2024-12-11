@@ -408,6 +408,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
             title="编辑歌单信息"
             v-model="dialogVisible"
             width="40%"
+            draggable
         >
           <div class="editForm" id="editform">
             <el-scrollbar height="480px">
