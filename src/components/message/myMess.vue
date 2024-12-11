@@ -81,14 +81,26 @@ onMounted(() => {
 
 function initMess() {
   if (messageStore.recipient.user_ID.length > 0) {
-    recipientList.value.unshift(messageStore.recipient)
+    let flag = recipientList.value.some(item => {
+      return item.user_ID === messageStore.recipient.user_ID;
+    })
+    if (!flag) {
+      recipientList.value.unshift(messageStore.recipient)
+    } else {
+      recipient.value.user_ID = messageStore.recipient.user_ID;
+      recipient.value.user_Name = messageStore.recipient.user_Name;
+      recipient.value.user_Avatar = messageStore.recipient.user_Avatar;
+      nextTick()
+      getMess(messageStore.recipient.user_ID)
+    }
+  } else {
+    let re = toRaw(recipientList.value[0]);
+    recipient.value.user_ID = re.user_ID;
+    recipient.value.user_Name = re.user_Name;
+    recipient.value.user_Avatar = re.user_Avatar;
+    nextTick()
+    getMess(recipientList.value[0].user_ID)
   }
-  let re = toRaw(recipientList.value[0]);
-  recipient.value.user_ID = re.user_ID;
-  recipient.value.user_Name = re.user_Name;
-  recipient.value.user_Avatar = re.user_Avatar;
-  nextTick()
-  getMess(recipientList.value[0].user_ID)
 }
 
 function getUserMessages() {
@@ -169,11 +181,10 @@ function selectEmoji(emoji) {
 
 }
 
-function getMess(user_ID) {
+function getMess(user_ID) {//获取相应聊天对象的记录
   aUserMess(user_ID).then(resp => {
     if (resp.data.code === 200) {
       messList.value = resp.data.data
-      console.log(messList.value)
     } else {
       messList.value = []
     }
@@ -183,20 +194,33 @@ function getMess(user_ID) {
   }, 100)
 }
 
-function chooseItem(item) {
+function chooseItem(item) {//选择聊天对象
   recipient.value = item
   getMess(item.user_ID)
 }
 
-function deleteMessItem(index) {
+function deleteMessItem(index) {//删除聊天对象
   recipientList.value.splice(index, 1)
 }
 
-function postMess() {
+function getNowFormatDate() {//获取当前时间
+  let date = new Date();
+  let seperator1 = "-";
+  // let seperator2 = ":";
+  let month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+  let strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+  let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+  /*  let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+        + " " + date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds();*/
+  return currentdate;
+}
+
+function postMess() {//发送消息
   messageForm.recipient_ID = recipient.value.user_ID
   messageForm.poster_ID = userStore.user_ID
-  //todo 判断消息类型
+  //todo 判断消息类型（图片类型直接发送）
   messageForm.messageType = "0"
+  messageForm.post_time = getNowFormatDate()
   ws.send(JSON.stringify(messageForm))
   messageForm.message = '';
   nextTick()

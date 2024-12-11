@@ -101,7 +101,7 @@ onMounted(() => {
 
 /*盒子模块*/
 .box_mod {
-  width: 100%;
+/*  width: 100%;*/
   background-color: #FFFFFF;
   border-radius: 12px;
   box-shadow: 0px 0px 6px 1px #ececec;

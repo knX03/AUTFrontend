@@ -133,6 +133,7 @@ function selectLikeDetail(user_ID) {
 
 .likeListName_action {
   font-family: STXihei, serif;
+  color: #ffffff;
   background: transparent;
   width: 100%;
   height: 50%;

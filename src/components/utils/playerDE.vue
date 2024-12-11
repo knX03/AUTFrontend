@@ -11,6 +11,7 @@ const cover = ref()//歌曲封面
 const bg_info = ref()
 let ifPlay = ref(musicPlayStore.playing)//歌曲是否在播放
 let currentTimeIndex = ref()
+let wordFlag = ref(0);
 //歌曲信息
 let song = ref({
   song_ID: '',
@@ -22,58 +23,57 @@ let song = ref({
   song_Cover: '/src/photos/logo/唱片.png',
   song_Directory: '',
 })
-
-const dataStr = `
-00:00 淘汰 – 陈奕迅 (Eason Chan)
-00:08 词：周杰伦
-00:17 曲：周杰伦
-00:26 编曲：C.Y.Kong
-00:35 我说了所有的谎
-00:39 你全都相信
-00:43 简单的我爱你
-00:46 你却老不信
-00:51 你书里的剧情
-00:55 我不想上演
-00:58 因为我喜欢
-01:01 喜剧收尾
-01:08 我试过完美放弃
-01:12 的确很踏实
-01:15 醒来了梦散了
-01:19 你我都走散了
-01:23 情歌的词何必押韵
-01:27 就算我是K歌之王
-01:31 也不见得把
-01:33 爱情唱得完美
-01:38 只能说我输了
-01:42 也许是你怕了
-01:46 我们的回忆没有皱褶
-01:51 你却用离开烫下句点
-01:54 只能说我认了
-01:58 你的不安赢得你信任
-02:03 我却得到你安慰的淘汰
-02:25 我试过完美放弃
-02:29 的确很踏实
-02:32 醒来了梦散了
-02:36 你我都走散了
-02:40 情歌的词何必押韵
-02:44 就算我是K歌之王
-02:48 也不见得把
-02:50 爱情唱得完美
-02:55 只能说我输了
-02:59 也许是你怕了
-03:03 我们的回忆没有皱褶
-03:08 你却用离开烫下句点
-03:11 只能说我认了
-03:15 你的不安赢得你信任
-03:21 我却得到你安慰的淘汰
-03:44 只能说我输了
-03:48 也许是你怕了
-03:52 我们的回忆没有皱褶
-03:57 你却用离开烫下句点
-04:00 只能说我认了
-04:04 你的不安赢得你信任
-04:09 我却得到你安慰的淘汰`
-
+const dataStr2 = '[00:00.00]稻香 - 周杰伦\n' +
+    '[00:05.00]词：周杰伦 曲：周杰伦\n' +
+    '[00:27.98]对这个世界如果你有太多的抱怨\n' +
+    '[00:31.03]跌倒了就不敢继续往前走\n' +
+    '[00:33.94]为什麽人要这麽的脆弱 堕落\n' +
+    '[00:38.45]请你打开电视看看\n' +
+    '[00:40.19]多少人为生命在努力勇敢的走下去\n' +
+    '[00:43.83]我们是不是该知足\n' +
+    '[00:45.75]珍惜一切 就算没有拥有\n' +
+    '[00:51.20]还记得你说家是唯一的城堡\n' +
+    '[00:54.48]随着稻香河流继续奔跑\n' +
+    '[00:57.49]微微笑 小时候的梦我知道\n' +
+    '[01:02.53]不要哭让萤火虫带着你逃跑\n' +
+    '[01:05.98]乡间的歌谣永远的依靠\n' +
+    '[01:09.14]回家吧 回到最初的美好\n' +
+    '[01:38.33]不要这麽容易就想放弃 就像我说的\n' +
+    '[01:41.39]追不到的梦想 换个梦不就得了\n' +
+    '[01:44.53]为自己的人生鲜艳上色 先把爱涂上喜欢的颜色\n' +
+    '[01:48.73]笑一个吧 功成名就不是目的\n' +
+    '[01:52.69]让自己快乐快乐这才叫做意义\n' +
+    '[01:55.76]童年的纸飞机 现在终於飞回我手里\n' +
+    '[02:01.37]所谓的那快乐 赤脚在田里追蜻蜓追到累了\n' +
+    '[02:09.26]偷摘水果被蜜蜂给叮到怕了 谁在偷笑呢\n' +
+    '[02:15.77]我靠着稻草人吹着风唱着歌睡着了\n' +
+    '[02:14.18]哦 哦 午后吉它在虫鸣中更清脆\n' +
+    '[02:16.65]哦 哦 阳光洒在路上就不怕心碎\n' +
+    '[02:19.44]珍惜一切 就算没有拥有\n' +
+    '[02:29.11]还记得你说家是唯一的城堡\n' +
+    '[02:33.30]随着稻香河流继续奔跑\n' +
+    '[02:36.21]微微笑 小时候的梦我知道\n' +
+    '[02:41.08]不要哭让萤火虫带着你逃跑\n' +
+    '[02:44.84]乡间的歌谣永远的依靠\n' +
+    '[02:47.93]回家吧 回到最初的美好\n' +
+    '[02:53.02]还记得你说家是唯一的城堡\n' +
+    '[02:56.63]随着稻香河流继续奔跑\n' +
+    '[02:59.58]微微笑 小时候的梦我知道\n' +
+    '[03:04.79]不要哭让萤火虫带着你逃跑\n' +
+    '[03:08.31]乡间的歌谣永远的依靠\n' +
+    '[03:11.29]回家吧 回到最初的美好\n' +
+    '[03:14.78]所谓的那快乐 赤脚在田里追蜻蜓追到累了\n' +
+    '[03:19.39]偷摘水果被蜜蜂给叮到怕了 谁在偷笑呢\n' +
+    '[03:23.96]我靠着稻草人吹着风唱着歌睡着了\n' +
+    '[03:27.65]哦 哦 午后吉它在虫鸣中更清脆\n' +
+    '[03:30.48]哦 哦 阳光洒在路上就不怕心碎\n' +
+    '[03:33.68]珍惜一切 就算没有拥有\n' +
+    '[03:38.24]还记得你说家是唯一的城堡\n' +
+    '[03:42.17]随着稻香河流继续奔跑\n' +
+    '[03:45.09]微微笑 小时候的梦我知道\n' +
+    '[03:49.51]不要哭让萤火虫带着你逃跑\n' +
+    '[03:53.75]乡间的歌谣永远的依靠\n' +
+    '[03:56.75]回家吧 回到最初的美好'
 let songWord = ref([])
 
 //监听音乐播放
@@ -89,12 +89,18 @@ watch(() => musicPlayStore.playing, (newValue, OldValue) => {
 
 //todo 歌词高亮停留，与歌词偏移
 watch(() => musicPlayStore.currentTime, (newValue, OldValue) => {
-  console.log(newValue)
   let index = newValue.match(/(\d{2}):(\d{2})/);
   if (index) {
     const [, minutes, seconds] = index
     // 将时间戳转换为秒
     currentTimeIndex.value = parseInt(minutes) * 60 + parseInt(seconds)
+    console.log("wordf" + wordFlag.value)
+    console.log("s" + songWord.value[wordFlag.value+1].time)
+    if (currentTimeIndex.value === songWord.value[wordFlag.value+1].time) {
+      wordFlag.value++;
+    }
+    // console.log("wordf" + wordFlag.value)
+    console.log(currentTimeIndex.value)
   }
 }, {deep: true});
 
@@ -102,23 +108,27 @@ watch(() => musicPlayStore.currentTime, (newValue, OldValue) => {
 onMounted(() => {
   const songID = route.query.song_ID
   songDetail(songID)
-  parseLyrics()
+  // parseLyrics()
+  formatLyric();
+  findTime()
 })
 
-//解析歌词数据
+/*//解析歌词数据
 const parseLyrics = () => {
   const lines = dataStr.split('\n')
+  let i = -1;
   for (const line of lines) {
     const match = line.match(/(\d{2}):(\d{2}) (.+)/)
-    // console.log(match)
     if (match) {
       const [, minutes, seconds, content] = match
       // 将时间戳转换为秒
       const index = parseInt(minutes) * 60 + parseInt(seconds)
-      songWord.value.push({index, content})
+      songWord.value.push({i, index, content})
     }
+    i++;
   }
-}
+}*/
+
 
 function songDetail(ID) {
   aSongDE(ID).then(resp => {
@@ -127,6 +137,71 @@ function songDetail(ID) {
       bg_info.value.style.backgroundImage = "url(" + "/" + song.value.song_Cover + ")";
     }
   })
+}
+
+
+/**
+ * 将歌词字符串解析为歌词数组
+ * @param {*} lyric 歌词字符串 如 ""
+ * @returns array 如： [{ time: "31.52", words: "你是 遥遥的路" }]
+ */
+const formatLyric = () => {
+  // 定义一个暂存变量接收日期字符串
+  let timeStr = "";
+  let index = 0;
+  // 把歌词数组用换行符\n分割成数组
+  dataStr2.split("\n").forEach((item) => {
+    // 去除最后一行分割的空字符串
+    if (item === "") return;
+    // item 如 "[00:31.52]你是 遥遥的路"
+    // parts 如 ["[00:31.52","你是 遥遥的路"]
+    const parts = item.split("]");
+    // timeStr 如 00:31.52
+    timeStr = parts[0].slice(1);
+    // 空歌词不要
+    if (parts[1] !== " " && parts[1] !== "") {
+      songWord.value.push({
+        index: index,
+        time: parseTime(timeStr),
+        content: parts[1],
+        // 人造id
+        // uid: Math.random().toString().slice(-6),
+      });
+      index++;
+    }
+  });
+  // console.log(songWord.value)
+};
+/**
+ * 将时间字符串解析为秒
+ * @param {*} timeStr 时间字符串
+ * @returns 秒
+ */
+const parseTime = (timeStr) => {
+  const parts = timeStr.split(".");
+  const parts1 = parts[0].split(":");
+  return +parts1[0] * 60 + +parts1[1];
+};
+
+//todo 寻找进入页面时最近的歌词时间（在详情页面点击进度条无法跳转对应的歌词）
+function findTime() {
+  let tempCT
+  let index = musicPlayStore.currentTime.match(/(\d{2}):(\d{2})/);
+  if (index) {
+    const [, minutes, seconds] = index
+    // 将时间戳转换为秒
+    tempCT = parseInt(minutes) * 60 + parseInt(seconds)
+  }
+  let flag = true
+  while (flag) {
+    songWord.value.forEach((item) => {
+      if (item.time === tempCT) {
+        wordFlag.value = item.index
+        flag = false;
+      }
+    })
+    tempCT--;
+  }
 }
 
 //todo 需将其拆分为播放与暂停，目前暂时看效果
@@ -171,7 +246,7 @@ function playNeedle() {
               <el-scrollbar height="600px">
                 <div v-for="(item) in songWord"
                      class="songWord_item"
-                     :class="{playing:item.index===currentTimeIndex}">{{ item.content }}
+                     :class="{playing:item.index===wordFlag}">{{ item.content }}
                 </div>
               </el-scrollbar>
             </div>

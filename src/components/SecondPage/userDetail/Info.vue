@@ -173,7 +173,6 @@ function unFollowUser(ID) {
 
 //私信
 function postMess() {
-  console.log(user.value)
   let index = '0';
   messageStore.recipient.user_ID = user.value.user_ID
   messageStore.recipient.user_Name = user.value.user_Name
@@ -227,7 +226,7 @@ function postMess() {
                 <ChatLineRound @click="postMess()"/>
               </el-icon>
             </el-button>
-            <el-dropdown trigger="click">
+<!--            <el-dropdown trigger="click">
               <el-button type="info">+</el-button>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -235,7 +234,7 @@ function postMess() {
                   <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
-            </el-dropdown>
+            </el-dropdown>-->
           </div>
         </div>
       </div>
@@ -380,7 +379,7 @@ function postMess() {
 
 
 .dOption_mod {
-  width: 200px;
+  width: 10rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

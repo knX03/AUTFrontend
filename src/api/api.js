@@ -427,6 +427,7 @@ export const aSelectLikeSong = data => {
         method: 'GET',
     })
 }
+/*查询全部喜欢的歌曲进行分页*/
 export const aSongByUser = (currentPage, pageSize) => {
     return Service({
         url: '/song/SongByUser?currentPage=' + currentPage + '&pageSize=' + pageSize,
@@ -466,7 +467,7 @@ export const aSongBySinger = data => {
 }
 
 /*Singer--------------------------------------------------------------*/
-
+//歌手筛选器
 export const aSingerSelector = data => {
     return Service({
         url: '/singer/singerSelector',
@@ -475,7 +476,7 @@ export const aSingerSelector = data => {
     })
 }
 
-
+//查询所有歌手
 export const aSelectAllSinger = data => {
     return Service({
         url: '/singer/allSingers',
@@ -492,6 +493,7 @@ export const aSelectSingerDetail = data => {
 }
 
 
+//判断用户是否是歌手
 export const aGetSingerByUser = data => {
     return Service({
         url: '/singer/getSingerByUser',
@@ -499,7 +501,7 @@ export const aGetSingerByUser = data => {
     })
 }
 
-
+//歌手信息退出
 export const aSinLogOff = data => {
     return Service({
         url: '/singer/sinLogOff?singer_token=' + data,
@@ -507,7 +509,7 @@ export const aSinLogOff = data => {
     })
 }
 
-
+//获取歌手信息
 export const aGetArtists = data => {
     return Service({
         url: '/singer/getArtists',
@@ -515,6 +517,7 @@ export const aGetArtists = data => {
     })
 }
 
+//申请成为音乐人
 export const aApplySinger = data => {
     return Service({
         url: '/singer/applySinger',
@@ -524,13 +527,14 @@ export const aApplySinger = data => {
 }
 /*comment--------------------------------------------------------------*/
 
+//获取相应评论
 export const aGetComments = (ID, type) => {
     return Service({
         url: '/comment/getComments?ID=' + ID + '&type=' + type,
         method: 'GET',
     })
 }
-
+//发表评论
 export const aPostComment = data => {
     return Service({
         url: '/comment/postComment',
@@ -541,6 +545,7 @@ export const aPostComment = data => {
 
 /*file--------------------------------------------------------------*/
 
+//上传用户头像
 export const aUploadUserAvatar = data => {
     return Service({
         url: '/user/uploadAvatar',
@@ -548,7 +553,7 @@ export const aUploadUserAvatar = data => {
         data
     })
 }
-
+//上传歌单封面
 export const aUploadPlaylistCover = data => {
     return Service({
         url: '/songPlaylist/uploadCover',
@@ -556,14 +561,15 @@ export const aUploadPlaylistCover = data => {
         data
     })
 }
+//上传歌曲数据
 export const aUploadSong = data => {
-    console.log(data)
     return Service({
         url: '/file/uploadSong',
         method: 'POST',
         data
     })
 }
+//上传专辑封面
 export const aUploadAlCover = data => {
     return Service({
         url: '/file/uploadAlCover',
@@ -572,7 +578,7 @@ export const aUploadAlCover = data => {
     })
 }
 
-
+//上传歌手头像
 export const aUploadSGAvatar = data => {
     return Service({
         url: '/file/uploadSGAvatar',
@@ -590,12 +596,6 @@ export const aUploadSGAvatar = data => {
 export const aGetUserMessages = data => {
     return Service({
         url: '/message/getUserMessages',
-        method: 'GET',
-    })
-}
-export const aPostMess = data => {
-    return Service({
-        url: '/message/postMess?user_ID=' + data,
         method: 'GET',
     })
 }
@@ -619,8 +619,8 @@ export const aUserMess = (userID) => {
     })
 }
 
-
-export const aGetSysMess = (userID) => {
+//获取用户系统消息
+export const aGetSysMess = () => {
     return Service({
         url: '/message/getSysMess',
         method: 'GET',
@@ -660,14 +660,14 @@ export const aSearchDetail = (data) => {
     })
 }
 
-
+//删除搜素历史
 export const aDelHistory = (data) => {
     return Service({
         url: '/search/delSearchHistory',
         method: 'PUT',
     })
 }
-
+//搜索结果
 export const aSearchALL = (data) => {
     return Service({
         url: '/search/searchALL?searchValue=' + data,

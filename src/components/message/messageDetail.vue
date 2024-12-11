@@ -32,182 +32,15 @@ const opMeList = ref([
   {id: 2, name: '我收到的赞', component: markRaw(LikesMess)},
   {id: 3, name: '系统消息', component: markRaw(SysMess)}])
 
-/*let messageForm = reactive({
-  poster_ID: '',
-  recipient_ID: '',
-  post_time: '2024',
-  message: '',
-  messageType: '',
-})
-let recipient = ref({
-  user_ID: '',
-  user_Name: '',
-  user_Avatar: ''
-})
-
-let recipientList = ref([{
-  user_ID: '',
-  user_Name: '',
-  user_Avatar: ''
-},])
-
-let messList = ref([{
-  poster_ID: '',
-  poster_Name: '',
-  poster_Avatar: '',
-  messageText: '',
-  post_Time: '',
-  messageType: '', // 消息类型：0是文本，1是图片
-}])*/
-/*watch(() => messageForm.message, (textarea) => {
-      textCount.value = textarea.length;
-      disabledPost = textCount.value > 500 || textCount.value <= 0;
-    }
-);*/
-
-//接收到消息
-/*ws.onmessage = function (event) {
-  const obj = JSON.parse(event.data);
-  formatMess(obj)
-};*/
-
 
 onMounted(() => {
-  console.log(route.query.index)
-  //todo 无法正确切换
-  // let newVar = ref(route.query.index)
-  // itemIndex.value = Number(newVar.value)
-  // getUserMessages()
+  itemIndex.value = parseInt(route.query.index)
 })
 
-/*
-function initMess() {
-  if (messageStore.recipient.user_ID.length > 0) {
-    recipientList.value.unshift(messageStore.recipient)
-  }
-  let re = toRaw(recipientList.value[0]);
-  recipient.value.user_ID = re.user_ID;
-  recipient.value.user_Name = re.user_Name;
-  recipient.value.user_Avatar = re.user_Avatar;
-  nextTick()
-  getMess(recipientList.value[0].user_ID)
+//todo url未改变
+function changeIndex(index) {
+  itemIndex.value = index
 }
-
-function getUserMessages() {
-  aGetUserMessages().then(resp => {
-    if (resp.data.code === 200) {
-      recipientList.value = resp.data.data;
-      nextTick()
-      initMess()
-    } else {
-      recipientList.value = []
-    }
-  })
-}
-
-
-function formatMess(data) {
-  let userID = data.poster_ID;
-  aSelectUserInfoByID(userID).then(resp => {
-    if (resp.data.code === 200) {
-      recipient.value.user_ID = userID
-      recipient.value.user_Name = resp.data.data.user_Name
-      recipient.value.user_Avatar = resp.data.data.user_Avatar
-      if (recipientList.value.some(item => {
-        return item.user_ID === userID;
-      })) {
-      } else {
-        recipientList.value.unshift(recipient.value)
-      }
-    }
-  })
-  nextTick()
-  getMess(recipient.value.user_ID)
-}
-
-// 定义局部自定义指令，这里是在 setup 标签下编写，指令名称以 v 开头，无需额外注册逻辑
-const vClickOutside = {
-  mounted(el, binding) {
-    function eventHandler(e) {
-      if (el.contains(e.target) || e.target === emojiLogo.value) {
-        return false
-      }
-
-      // 如果绑定的参数是函数，正常情况也应该是函数，执行
-      if (binding.value && typeof binding.value === 'function') {
-        binding.value(e)
-      }
-    }
-
-    // 用于销毁前注销事件监听
-    el.__click_outside__ = eventHandler
-    // 添加事件监听
-    document.addEventListener('click', eventHandler)
-  },
-  beforeUnmount(el) {
-    // 移除事件监听
-    document.removeEventListener('click', el.__click_outside__)
-    // 删除无用属性
-    delete el.__click_outside__
-  }
-}
-
-function onClickOutside() {
-  // 外部点击时的回调函数
-  clickEmo.value = false
-}
-
-// 选择emoji后调用的函数
-function selectEmoji(emoji) {
-  let postComment_text = document.getElementById("message_text")
-  let startPos = postComment_text.selectionStart
-  let endPos = postComment_text.selectionEnd
-  let resultText = postComment_text.value.substring(0, startPos) + emoji.i + postComment_text.value.substring(endPos)
-  postComment_text.value = resultText
-  postComment_text.focus()
-  postComment_text.selectionStart = startPos + emoji.i.length
-  postComment_text.selectionEnd = startPos + emoji.i.length
-  messageForm.message = resultText
-
-}
-
-function getMess(user_ID) {
-  aUserMess(user_ID).then(resp => {
-    if (resp.data.code === 200) {
-      messList.value = resp.data.data
-      console.log(messList.value)
-    } else {
-      messList.value = []
-    }
-  })
-  setTimeout(() => {
-    scrollDown()
-  }, 100)
-}
-
-function chooseItem(item) {
-  recipient.value = item
-  getMess(item.user_ID)
-}
-
-function deleteMessItem(index) {
-  recipientList.value.splice(index, 1)
-}
-
-function postMess() {
-  messageForm.recipient_ID = recipient.value.user_ID
-  messageForm.poster_ID = userStore.user_ID
-  messageForm.messageType = "0"
-  // ws.send(JSON.stringify(messageForm))
-  messageForm.message = '';
-  nextTick()
-  getMess(recipient.value.user_ID)
-}
-
-function scrollDown() {
-  let moveTop = (messList.value.length) * 60
-  chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(moveTop)
-}*/
 </script>
 
 <template>
@@ -226,7 +59,7 @@ function scrollDown() {
         <li class="op_list_content_item"
             :class="{active:itemIndex===index}"
             v-for="(item,index) in opList"
-            @click="itemIndex = index">{{ item }}
+            @click="changeIndex(index)">{{ item }}
         </li>
       </ul>
     </div>
