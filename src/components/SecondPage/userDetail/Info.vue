@@ -221,20 +221,20 @@ function postMess() {
               </el-icon>
               已关注
             </el-button>
-            <el-button type="info">
+            <el-button type="info" @click="postMess()">
               <el-icon>
-                <ChatLineRound @click="postMess()"/>
+                <ChatLineRound/>
               </el-icon>
             </el-button>
-<!--            <el-dropdown trigger="click">
-              <el-button type="info">+</el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item :icon="CloseBold">加入黑名单</el-dropdown-item>
-                  <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>-->
+            <!--            <el-dropdown trigger="click">
+                          <el-button type="info">+</el-button>
+                          <template #dropdown>
+                            <el-dropdown-menu>
+                              <el-dropdown-item :icon="CloseBold">加入黑名单</el-dropdown-item>
+                              <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
+                            </el-dropdown-menu>
+                          </template>
+                        </el-dropdown>-->
           </div>
         </div>
       </div>
@@ -316,6 +316,7 @@ function postMess() {
   font-size: 30px;
   font-weight: 900;
   color: white;
+  margin-bottom: 5px;
 }
 
 
@@ -325,12 +326,13 @@ function postMess() {
   display: flex;
   align-items: center;
   justify-content: left;
+  margin-bottom: 5px;
 }
 
 .InfoLogo img {
   width: 22px;
   height: 22px;
-  margin-left: 10px;
+  /*  margin-left: 10px;*/
   border-radius: 50%;
   transition: 0.5s all ease-in-out;
   animation-play-state: paused;
@@ -357,6 +359,7 @@ function postMess() {
   align-items: center;
   justify-content: space-between;
   width: 100px;
+  margin-bottom: 5px;
 }
 
 .followAndFans_mod span {

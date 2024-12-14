@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {aSongDE} from "@/api/api.js";
 import {useRoute} from "vue-router";
 import useMusicPlayStore from "@/store/musicPlayStore.js";
@@ -444,6 +444,12 @@ function clickWord(index) {
 .songWord_item.playing {
   transform: scale(1.2, 1.2);
   color: #e58c43;
+}
+
+.songWord_item:hover {
+  transform: scale(1.2, 1.2);
+  color: #e58c43;
+  cursor: pointer;
 }
 
 /*--------------------------------------------*/

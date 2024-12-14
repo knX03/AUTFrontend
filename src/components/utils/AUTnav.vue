@@ -11,7 +11,7 @@ import {
   aDelHistory,
   aGetSingerByUser, aGetSumFollowAndFan, aHotSearch,
   aIfMy,
-  aLogOff, aSearch, aSearchDetail, aSearchHistory, aSinLogOff,
+  aLogOff, aSaveSearchHS, aSearch, aSearchHistory, aSinLogOff,
   aUserDetail
 } from "@/api/api.js";
 import {ElMessageBox, ElNotification} from "element-plus";
@@ -288,7 +288,7 @@ function searchDetail(data) {
   searchText.value = data
   search()
   showSearchF.value = false
-  aSearchDetail(data).then(resp => {
+  aSaveSearchHS(data).then(resp => {
     gSearchHistory()
     searchStore.searchValue = data
     router.push({

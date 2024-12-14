@@ -653,9 +653,9 @@ export const aHotSearch = (data) => {
 }
 
 //保存搜索历史
-export const aSearchDetail = (data) => {
+export const aSaveSearchHS = (data) => {
     return Service({
-        url: '/search/searchDetail?searchValue=' + data,
+        url: '/search/aSaveSearchHS?searchValue=' + data,
         method: 'GET',
     })
 }

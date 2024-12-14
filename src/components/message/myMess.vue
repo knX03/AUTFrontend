@@ -1,20 +1,25 @@
 <script setup>
 
 import EmojiPicker from "vue3-emoji-picker";
-import {nextTick, onBeforeUpdate, onMounted, reactive, ref, toRaw, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch} from "vue";
 import useMessageStore from "@/store/messageStore.js";
 import {aGetUserMessages, aSelectUserInfoByID, aUserMess} from "@/api/api.js";
 import {store} from "xijs";
 import useUserStore from "@/store/userStore.js";
 import {useRoute} from "vue-router";
+import useNotiSocketStore from "@/store/notiSocket.js";
+import useWebSocketStore from "@/store/webSocketStore.js";
 
 
 let token = store.get('access_token').value
 let url = "ws://127.0.0.1:8800/ws/server"
 // let url = "ws://47.120.48.80:8800/ws/server" //todo ECS
-let ws = new WebSocket(url, [token]);
+// let ws = new WebSocket(url, [token]);
 const route = useRoute()
 
+const socketStore = useWebSocketStore();
+let ws = socketStore.ws
+// console.log(ws)
 const userStore = useUserStore()
 const messageStore = useMessageStore();
 const emojiLogo = ref()
@@ -43,7 +48,7 @@ let messageForm = reactive({
 let recipient = ref({
   user_ID: '',
   user_Name: '',
-  user_Avatar: ''
+  user_Avatar: '',
 })
 
 let recipientList = ref([{
@@ -66,7 +71,7 @@ watch(() => messageForm.message, (textarea) => {
     }
 );
 
-//接收到消息
+//todo 接收到消息
 ws.onmessage = function (event) {
   const obj = JSON.parse(event.data);
   formatMess(obj)
@@ -77,7 +82,10 @@ onMounted(() => {
   getUserMessages()
   chatShade.value = false
 })
-
+//todo 关闭当前的ws
+onBeforeUnmount (() => {
+  ws.close()
+})
 
 function initMess() {
   if (messageStore.recipient.user_ID.length > 0) {
@@ -115,22 +123,32 @@ function getUserMessages() {
   })
 }
 
-//todo 新消息无法在消息列表新增
+//处理新消息
 function formatMess(data) {
+
   let userID = data.poster_ID;
-  aSelectUserInfoByID(userID).then(resp => {
-    if (resp.data.code === 200) {
-      recipient.value.user_ID = userID
-      recipient.value.user_Name = resp.data.data.user_Name
-      recipient.value.user_Avatar = resp.data.data.user_Avatar
-      if (recipientList.value.some(item => {
-        return item.user_ID === userID;
-      })) {
-      } else {
-        recipientList.value.unshift(recipient.value)
+  /*  aSelectUserInfoByID(userID).then(resp => {
+      if (resp.data.code === 200) {
+        recipient.value.user_ID = userID
+        recipient.value.user_Name = resp.data.data.user_Name
+        recipient.value.user_Avatar = resp.data.data.user_Avatar
+        if (recipientList.value.some(item => {
+          return item.user_ID === userID;
+        })) {
+        } else {
+          recipientList.value.unshift(recipient.value)
+        }
       }
-    }
-  })
+    })*/
+  recipient.value.user_ID = userID
+  recipient.value.user_Name = data.poster_Name;
+  recipient.value.user_Avatar = data.poster_Avatar;
+  if (recipientList.value.some(item => {
+    return item.user_ID === userID;
+  })) {
+  } else {
+    recipientList.value.unshift(recipient.value)
+  }
   nextTick()
   getMess(recipient.value.user_ID)
 }
@@ -230,7 +248,6 @@ function postMess() {//发送消息
 function scrollDown() {
   let moveTop = (messList.value.length) * 60
   chatScrollbar.value.scrollTop = chatScrollbar.value.setScrollTop(moveTop)
-  console.log(chatScrollbar.value)
 }
 
 </script>

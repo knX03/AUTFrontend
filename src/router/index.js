@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHistory, useRouter} from 'vue-router'
 import Home from '../views/Home.vue'
 import Test from '../views/test.vue'
 import navAUT from '../components/utils/AUTnav.vue'
@@ -25,6 +25,7 @@ import playerDetail from "@/views/playerDetail.vue";
 import musicPlay from '../views/musicPlay.vue'
 import {ElNotification} from "element-plus";
 import {store} from "xijs";
+import {ref} from "vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -143,6 +144,8 @@ const router = createRouter({
         },*/
     ]
 })
+//todo 此方法实现从消息页面去到别的页面时进行页面的刷新，解决通知的不显示（考虑其他方式）
+const reloadF = ref(false);
 router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
         // 从本地存储localStorage获取当前的token是否存在
@@ -171,7 +174,17 @@ router.beforeEach((to, from, next) => {
             next()
         }
     }
-
+    //todo 此方法实现从消息页面去到别的页面时进行页面的刷新，解决通知的不显示（考虑其他方式）
+    if (from.name === 'message') {
+        reloadF.value = true
+    }
 });
+//todo 此方法实现从消息页面去到别的页面时进行页面的刷新，解决通知的不显示（考虑其他方式）
+router.afterEach(() => {
+    if (reloadF.value) {
+        window.location.reload()
+    }
+})
+
 
 export default router

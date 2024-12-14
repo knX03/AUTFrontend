@@ -422,6 +422,7 @@ function changeSexLogo() {
   font-size: 30px;
   font-weight: 900;
   color: white;
+
 }
 
 /*编辑按钮*/

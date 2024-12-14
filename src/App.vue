@@ -10,6 +10,29 @@
 </template>
 <script setup>
 import MusicPlay from "@/views/musicPlay.vue";
+import {store} from "xijs";
+import {ElNotification} from "element-plus";
+import useWebSocketStore from "@/store/webSocketStore.js";
+
+const socketStore = useWebSocketStore();
+if (socketStore.ws.url == null) {
+  let token = store.get('access_token').value
+  let url = "ws://127.0.0.1:8800/ws/server"
+  socketStore.ws = new WebSocket(url, [token])
+  // console.log("dd")
+}
+
+//接收到消息
+socketStore.ws.onmessage = function (event) {
+  const obj = JSON.parse(event.data);
+  console.log(obj)
+  ElNotification({
+    title: obj.poster_Name,
+    message: (obj.messageText),
+  })
+};
+
+
 </script>
 <style>
 body {
@@ -20,7 +43,7 @@ body {
 /* fade-transform */
 .fade-leave-active,
 .fade-enter-active {
-  transition: all 0.4s;
+  transition: all 0.3s ease-in-out;
 }
 
 /* 可能为enter失效，拆分为 enter-from和enter-to */
