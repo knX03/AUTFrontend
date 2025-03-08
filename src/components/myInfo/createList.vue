@@ -199,16 +199,15 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
       <div v-for="list in creatList">
         <div class="songPlaylistsCover_mod" @click="toPlaylist(list.playlist_ID)">
           <img :src="list.playlist_Cover"/>
-          <div class="createListName_action">{{ list.playlist_Name }}</div>
         </div>
         <span class="songPlaylistsName_mod">{{ list.playlist_Name }}</span>
       </div>
-      <a href="#" @click="dialogVisibleP=true" v-show="creatList.length<14">
+      <div style="cursor: pointer" @click="dialogVisibleP=true" v-show="creatList.length<14">
         <div class="createPlaylist">
           <img src="/src/photos/logo/addPlaylist.png"/>
         </div>
-        <label class="songPlaylistsName_mod">新建歌单</label>
-      </a>
+        <div class="songPlaylistsName_mod">新建歌单</div>
+      </div>
     </div>
   </div>
   <!--新建歌单模块-->
@@ -313,20 +312,20 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
 
 /*歌单封面*/
 .songPlaylistsCover_mod {
-  height: 200px;
-  width: 200px;
-  max-width: 200px;
-  max-height: 200px;
+  height: 150px;
+  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
   overflow: hidden;
-  border-radius: 20px;
-  margin: 20px;
+  border-radius: 12px;
+  margin: 20px 20px 10px;
   cursor: pointer;
 }
 
 .songPlaylistsCover_mod img {
-  height: 200px;
-  width: 200px;
-  border-radius: 20px;
+  height: 150px;
+  width: 150px;
+  border-radius: 12px;
   background-color: #C0C4CC;
   transition: 0.5s all ease-in-out;
 }
@@ -336,57 +335,30 @@ watch(() => playlist.value.playlist_Tag, (newValue, OldValue) => {
   transform: scale(1.2, 1.2);
 }
 
-.createListName_action {
-  font-family: STXihei, serif;
-  background: transparent;
-  width: 100%;
-  height: 50%;
-  transition: 2s all ease-in-out;
-  translate: 0 20px;
-}
-
-.songPlaylistsCover_mod:hover .createListName_action {
-  width: 100%;
-  height: 50%;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  padding-left: 15px;
-  translate: 0 -100px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-}
-
 
 .songPlaylistsName_mod {
   font-family: STXihei, serif;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   color: #000000;
-  position: relative;
-  left: 30px;
+  margin-left: 25px;
 }
 
 /* 新建歌单*/
 .createPlaylist {
-  height: 200px;
-  width: 200px;
-  max-width: 200px;
-  max-height: 200px;
+  height: 150px;
+  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
   overflow: hidden;
-  border-radius: 20px;
-  margin: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 12px;
+  margin: 20px 20px 10px;
 }
 
 .createPlaylist img {
-  height: 200px;
-  width: 200px;
-  border-radius: 20px;
+  height: 150px;
+  width: 150px;
+  border-radius: 12px;
   transition: 0.5s all ease-in-out;
 
 }

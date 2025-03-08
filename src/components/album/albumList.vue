@@ -6,6 +6,8 @@ import {aSelectAllAlbum} from "@/api/api.js";
 
 let albumList = ref([
   {
+    singer_name: '',
+    singer_ID: '',
     album_ID: '',
     album_Name: '',
     album_Cover: '',
@@ -34,6 +36,14 @@ function toAlbum(row) {
     query: {album_ID: row}
   })
 }
+
+/*歌手详情跳转*/
+const toSinger = (singer_ID) => {
+  router.push({
+    path: '/singerDetail',
+    query: {singer_ID}
+  })
+}
 </script>
 
 <template>
@@ -42,11 +52,9 @@ function toAlbum(row) {
       <div class="albumList_mod" v-for="item in albumList">
         <div class="img_container" @click="toAlbum(item.album_ID)">
           <img :src="item.album_Cover">
-          <div class="album_name_action">
-            {{ item.album_Name }}
-          </div>
         </div>
-        <span @click="toAlbum(item.album_ID)">{{ item.album_Name }}</span>
+        <div class="album_Name_mod" @click="toAlbum(item.album_ID)">{{ item.album_Name }}</div>
+        <div class="singerName_mod" @click="toSinger(item.singer_ID)">by: {{ item.singer_name }}</div>
       </div>
     </div>
   </div>
@@ -75,22 +83,21 @@ function toAlbum(row) {
 
 
 .albumList_mod {
-  height: 250px;
   border-radius: 12px;
   margin-top: 20px;
   margin-left: 40px;
 }
 
 .img_container {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   overflow: hidden;
   border-radius: 12px;
 }
 
 .img_container img {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   border-radius: 12px;
   cursor: pointer;
   transition: 0.5s all ease-in-out;
@@ -101,42 +108,19 @@ function toAlbum(row) {
   transform: scale(1.1, 1.1);
 }
 
-.album_name_action {
-  font-family: "微软雅黑 Light", serif;
-  background: transparent;
-  width: 100%;
-  height: 50%;
-  transition: 2s all ease-in-out;
-  translate: 0 20px;
-}
 
-.img_container:hover .album_name_action {
-  width: 100%;
-  height: 50%;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  padding-left: 15px;
-  translate: 0 -100px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-}
-
-
-.albumList_mod span {
-  display: flex;
-  font-family: "微软雅黑 Light", serif;
-  font-size: 16px;
-  margin-left: 15px;
-  margin-top: 15px;
+.album_Name_mod {
+  font-family: STXihei, serif;
+  font-size: 15px;
+  margin-top: 10px;
   cursor: pointer;
   color: #000000;
-  transition: 0.5s all ease-in-out;
 }
 
-.albumList_mod span:hover {
-  color: #75c1c4;
+.singerName_mod {
+  font-family: STXihei, serif;
+  font-size: 12px;
+  cursor: pointer;
+  color: #777777;
 }
 </style>

@@ -8,6 +8,7 @@ import {useRoute} from "vue-router";
 const route = useRoute()
 let SPlist = ref([
   {
+    create_By: '',
     playlist_ID: '',
     playlist_Name: '',
     playlist_Cover: '',
@@ -49,6 +50,7 @@ function selectALlPlaylist() {
   aSelectALlPlaylist().then(resp => {
     if (resp.data.code === 200) {
       SPlist.value = resp.data.data;
+      console.log(SPlist.value)
     } else if (resp.data.code === 500) {
       console.log(resp.data.msg)
     }
@@ -129,11 +131,9 @@ function handleClick(data) {
       <div class="songPlaylist_mod" v-for="item in SPlist">
         <div class="img_container" @click="toSongPlaylist(item.playlist_ID)">
           <img :src="item.playlist_Cover">
-          <div class="playlist_name_action">
-            {{ item.playlist_Name }}
-          </div>
         </div>
         <span @click="toSongPlaylist(item.playlist_ID)">{{ item.playlist_Name }}</span>
+        <div class="createBy_mod">by: {{ item.create_By }}</div>
       </div>
     </div>
   </div>
@@ -310,22 +310,21 @@ function handleClick(data) {
 
 
 .songPlaylist_mod {
-  height: 250px;
   border-radius: 12px;
   margin-top: 10px;
   margin-left: 20px;
 }
 
 .img_container {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   overflow: hidden;
   border-radius: 12px;
 }
 
 .img_container img {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   border-radius: 12px;
   cursor: pointer;
   transition: 0.5s all ease-in-out;
@@ -336,44 +335,20 @@ function handleClick(data) {
   transform: scale(1.1, 1.1);
 }
 
-.playlist_name_action {
-  font-family: "微软雅黑 Light", serif;
-  background: transparent;
-  width: 100%;
-  height: 50%;
-  transition: 2s all ease-in-out;
-  translate: 0 20px;
-}
-
-.img_container:hover .playlist_name_action {
-  width: 100%;
-  height: 50%;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  padding-left: 15px;
-  translate: 0 -100px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-}
 
 .songPlaylist_mod span {
-  display: flex;
-  font-family: "微软雅黑 Light", serif;
-  font-size: 16px;
-  margin-left: 15px;
-  margin-top: 15px;
+  font-family: STXihei, serif;
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 10px;
   cursor: pointer;
   color: #000000;
-  transition: 0.5s all ease-in-out;
 }
 
-.songPlaylist_mod span:hover {
-  transition: 0.5s all ease-in-out;
-  transform: scale(1.1, 1.1);
-  color: #75c1c4;
+.createBy_mod {
+  font-family: STXihei, serif;
+  font-size: 12px;
+  cursor: default;
+  color: #777777;
 }
-
 </style>

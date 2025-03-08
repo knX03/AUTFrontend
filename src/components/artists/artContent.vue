@@ -33,6 +33,7 @@ function selectChange(index) {
 }
 
 function publishing() {
+
   selectedComponent.value = menuRouteList.value[0].component
 }
 

@@ -17,7 +17,6 @@
 
 /*新建歌单模块框架*/
 .createPlaylistForm .el-dialog {
-    height: 50%;
     border-radius: 20px;
     background-color: #13131a;
 }

@@ -44,13 +44,11 @@ function selectAlbum() {
     <span class="title">专辑推荐</span>
     <div class="albumList_mod">
       <div class="albumRe" v-for="item in albumList">
-        <div class="albumc" @click="toAlbum(item.album_ID)">
+        <div class="albumRe_con" @click="toAlbum(item.album_ID)">
           <img class="albumCover" :src=item.album_Cover alt="">
         </div>
-        <div class="album_text">
-          <span class="albumName" @click="toAlbum(item.album_ID)">{{ item.album_Name }}</span>
-          <span class="singer" @click="toSinger(item.singer_ID)">{{ item.singer_name }}</span>
-        </div>
+        <div class="albumName" @click="toAlbum(item.album_ID)">{{ item.album_Name }}</div>
+        <div class="singer" @click="toSinger(item.singer_ID)">by: {{ item.singer_name }}</div>
       </div>
     </div>
   </div>
@@ -83,25 +81,27 @@ function selectAlbum() {
 }
 
 .albumRe {
-  background: #F4D5B7;
-  height: 200px;
-  width: 200px;
+  width: 150px;
   max-width: 200px;
   max-height: 200px;
   /*超出部分隐藏*/
   overflow: hidden;
-  border-radius: 20px;
   margin: 20px;
+}
+.albumRe_con{
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .albumCover {
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
   background-color: #C0C4CC;
   transition: 0.5s all ease-in-out;
   cursor: pointer;
-  border-radius: 20px;
-  z-index: -1;
+  border-radius: 12px;
 }
 
 .albumRe:hover .albumCover {
@@ -109,31 +109,20 @@ function selectAlbum() {
   transform: scale(1.2, 1.2);
 }
 
-.album_text {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  bottom: 80px;
-  padding-bottom: 30px;
-  padding-left: 10px;
-  transition: 2s all ease-in-out;
-}
 
 .albumName {
   font-family: STXihei, serif;
   font-weight: 900;
-  font-size: 30px;
-  color: white;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .singer {
   font-family: STXihei, serif;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 12px;
   cursor: pointer;
-  color: white;
-  margin-left: 15px;
+  color: #777777;
 }
 
 .albumRe:hover .album_text {

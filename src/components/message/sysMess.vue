@@ -61,7 +61,6 @@ onMounted(() => {
 function getSysMess() {
   aGetSysMess().then(resp => {
     sysMessList.value = resp.data.data
-    console.log(sysMessList)
   })
 }
 </script>
@@ -81,6 +80,10 @@ function getSysMess() {
           <span>{{ item.mess_text }}</span>
         </div>
       </div>
+      <div v-if="sysMessList ==null" class="sysMess_mod_card" style="align-items: center">
+        <img class="noMess_logo" src="/src/photos/logo/没有消息.png" alt="">
+        <label class="noMess_logo_text">暂无消息</label>
+      </div>
     </el-scrollbar>
   </div>
 </template>
@@ -98,7 +101,7 @@ function getSysMess() {
   padding: 0 20px;
   font-family: STXihei, serif;
   font-size: 17px;
-  color: #505050;
+  color: #282828;
 }
 
 .sysMess_mod_card_container {
@@ -115,10 +118,12 @@ function getSysMess() {
   border-radius: 12px;
   margin-bottom: 10px;
   box-shadow: 0 0 5px 2px #9f9f9f;
-  padding: 20px 20px;
+  padding: 15px 20px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
+
 
 .card_title {
   font-family: STXihei, serif;
@@ -131,5 +136,20 @@ function getSysMess() {
   font-family: STXihei, serif;
   font-size: 15px;
   color: #888888;
+}
+
+.noMess_logo {
+  width: 400px;
+  height: 400px;
+}
+
+.noMess_logo_text {
+  position: absolute;
+  font-family: STXihei, serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: #484848;
+  transform: translateY(95px);
+
 }
 </style>

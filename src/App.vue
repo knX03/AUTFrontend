@@ -13,23 +13,34 @@ import MusicPlay from "@/views/musicPlay.vue";
 import {store} from "xijs";
 import {ElNotification} from "element-plus";
 import useWebSocketStore from "@/store/webSocketStore.js";
+import {h} from "vue";
 
 const socketStore = useWebSocketStore();
 if (socketStore.ws.url == null) {
   let token = store.get('access_token').value
   let url = "ws://127.0.0.1:8800/ws/server"
   socketStore.ws = new WebSocket(url, [token])
-  // console.log("dd")
+  /*  console.log("dd")*/
 }
 
 //接收到消息
 socketStore.ws.onmessage = function (event) {
   const obj = JSON.parse(event.data);
-  console.log(obj)
+  // console.log(obj)
   ElNotification({
     title: obj.poster_Name,
-    message: (obj.messageText),
+    // duration: 0,
+    dangerouslyUseHTMLString: true,
+    message: h('div', {style: "display: flex;align-items: center"}, [
+      h('img', {
+        src: obj.poster_Avatar,
+        style: "height: 35px;width:35px;  border-radius: 50px;margin-right: 10px;",
+      }),
+      h('label', {style: "width: 224px;font-family: STXihei, serif;" +
+            "font-size: 13px;color: black"}, obj.messageText)
+    ]),
   })
+
 };
 
 

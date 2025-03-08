@@ -13,7 +13,6 @@ import BottomLogo from "@/components/utils/bottomLogo.vue";
   <div>
     <AUTnav></AUTnav>
     <secondNav></secondNav>
-    <swiper></swiper>
     <song-list-recomm></song-list-recomm>
     <album-recomm></album-recomm>
     <bottom-logo></bottom-logo>

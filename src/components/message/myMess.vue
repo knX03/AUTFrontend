@@ -82,10 +82,11 @@ onMounted(() => {
   getUserMessages()
   chatShade.value = false
 })
-//todo 关闭当前的ws
+
+/*//todo 关闭当前的ws
 onBeforeUnmount (() => {
   ws.close()
-})
+})*/
 
 function initMess() {
   if (messageStore.recipient.user_ID.length > 0) {
@@ -359,7 +360,7 @@ function scrollDown() {
   padding: 0 20px;
   font-family: STXihei, serif;
   font-size: 17px;
-  color: #505050;
+  color: #282828;
 }
 
 .message_mod_de_content {

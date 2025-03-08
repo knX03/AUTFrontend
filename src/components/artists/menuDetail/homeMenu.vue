@@ -1,11 +1,27 @@
 <script setup>
 import {defineProps, onMounted, reactive, ref} from "vue";
+import {aSelectArtistsFansData} from "@/api/api.js";
 
 const {singer} = defineProps(['singer']);
 /*let singerInfo = reactive({singer_Name: '', singer_Avatar: ''})
 onMounted(() => {
   singerInfo.value = singer
 })*/
+let fansData = ref({
+  fansNum: -1,
+})
+onMounted(() => {
+  selectFansData()
+})
+
+//查询粉丝数据
+function selectFansData() {
+  aSelectArtistsFansData().then(resp => {
+    if (resp.data.code === 200) {
+      fansData.value.fansNum = resp.data.data
+    }
+  })
+}
 </script>
 
 <template>
@@ -64,20 +80,24 @@ onMounted(() => {
     <div class="small_box_mod">
       <div class="fans_data_mod">
         <div class="title_dm">
-          <span style="font-weight: 900;font-size: 20px">粉丝数据</span>
+          <span style="font-weight: 900;font-size: 20px" title="数据每周一更新">粉丝数据</span>
           <span style="cursor: pointer">详细数据 > </span>
         </div>
         <div class="data_form_mod">
           <div class="data_part">
             <span style="font-size: 15px">当前粉丝数</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="fansData.fansNum>=0">{{
+                fansData.fansNum
+              }}</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="fansData.fansNum<0">
+              <el-icon><Loading/></el-icon></span>
+          </div>
+          <div class="data_part">
+            <span style="font-size: 15px">上周新增粉丝</span>
             <span style="font-weight: 900;font-size: 40px">0</span>
           </div>
           <div class="data_part">
-            <span style="font-size: 15px">昨日新增粉丝</span>
-            <span style="font-weight: 900;font-size: 40px">0</span>
-          </div>
-          <div class="data_part">
-            <span style="font-size: 15px">昨日取消关注</span>
+            <span style="font-size: 15px">上周取消关注</span>
             <span style="font-weight: 900;font-size: 40px">0</span>
           </div>
         </div>
@@ -101,7 +121,7 @@ onMounted(() => {
 
 /*盒子模块*/
 .box_mod {
-/*  width: 100%;*/
+  /*  width: 100%;*/
   background-color: #FFFFFF;
   border-radius: 12px;
   box-shadow: 0px 0px 6px 1px #ececec;

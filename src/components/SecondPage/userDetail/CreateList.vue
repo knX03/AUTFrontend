@@ -47,17 +47,20 @@ function selectCreateDetail(userID) {
 
 <template>
   <!--创建的歌单-->
-  <div v-if="CSwitch" class="createSongPlaylistsInfo_mod">
-    <label class="titleSong_mod">TA创建的歌单</label>
-    <div class="songListInfo_mod">
+  <div class="createSongPlaylistsInfo_mod">
+    <span class="titleSong_mod">TA创建的歌单</span>
+    <div v-if="CSwitch" class="songListInfo_mod">
       <!--点击跳转歌单详情并传送关键值-->
       <div v-for="list in creatList">
         <div class="songPlaylistsCover_mod" @click="toPlaylist(list.playlist_ID)">
           <img :src="list.playlist_Cover"/>
-          <div class="createListName_action">{{ list.playlist_Name }}</div>
         </div>
         <span class="songPlaylistsName_mod">{{ list.playlist_Name }}</span>
       </div>
+    </div>
+    <div v-if="!CSwitch" class="createList_null_logo">
+      <img src="/src/photos/logo/没有更多笔记.png">
+      <div class="createList_null_tip">用户暂未创建歌单</div>
     </div>
   </div>
 </template>
@@ -82,6 +85,8 @@ function selectCreateDetail(userID) {
 
 /*歌单列表模块*/
 .songListInfo_mod {
+  max-height: 405px;
+  overflow: auto;
   width: 100%;
   padding-top: 5px;
   padding-bottom: 10px;
@@ -94,20 +99,20 @@ function selectCreateDetail(userID) {
 
 /*歌单封面*/
 .songPlaylistsCover_mod {
-  height: 200px;
-  width: 200px;
-  max-width: 200px;
-  max-height: 200px;
+  height: 150px;
+  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
   overflow: hidden;
-  border-radius: 20px;
-  margin: 20px;
+  border-radius: 12px;
+  margin: 20px 20px 10px;
   cursor: pointer;
 }
 
 .songPlaylistsCover_mod img {
-  height: 200px;
-  width: 200px;
-  border-radius: 20px;
+  height: 150px;
+  width: 150px;
+  border-radius: 12px;
   background-color: #C0C4CC;
   transition: 0.5s all ease-in-out;
 }
@@ -117,36 +122,24 @@ function selectCreateDetail(userID) {
   transform: scale(1.2, 1.2);
 }
 
-.createListName_action {
-  font-family: STXihei, serif;
-  background: transparent;
-  width: 100%;
-  height: 50%;
-  transition: 2s all ease-in-out;
-  translate: 0 20px;
-}
-
-.songPlaylistsCover_mod:hover .createListName_action {
-  width: 100%;
-  height: 50%;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  padding-left: 15px;
-  translate: 0 -100px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-}
-
 
 .songPlaylistsName_mod {
   font-family: STXihei, serif;
   font-size: 15px;
   font-weight: 600;
-  color: white;
-  position: relative;
-  left: 30px;
+  color: #000000;
+  margin-left: 25px;
+}
+
+.createList_null_logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.createList_null_tip {
+  font-family: STXihei, serif;
+  font-size: 15px;
+  font-weight: 600;
 }
 </style>

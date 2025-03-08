@@ -96,6 +96,7 @@ function postComment() {
     })
   })
 }
+
 // 定义局部自定义指令，这里是在 setup 标签下编写，指令名称以 v 开头，无需额外注册逻辑
 const vClickOutside = {
   mounted(el, binding) {
@@ -170,14 +171,13 @@ function onClickOutside() {
           <span class="comment_time">{{ item.postingTime }}</span>
         </div>
         <div class="option_mod">
-          <div class="option_mod_next">
-            <el-icon :size="18">
-              <Star/>
-            </el-icon>
-            <el-icon :size="18">
+          <div class="option_mod_next" style="cursor: pointer">
+            <img src="/src/photos/logo/like.png" style="height: 18px;width: 18px">
+            <img src="/src/photos/logo/喜欢.png" style="height: 18px;width: 18px">
+            <el-icon :size="18" style="cursor: pointer">
               <Share/>
             </el-icon>
-            <el-icon :size="18">
+            <el-icon :size="18" style="cursor: pointer">
               <ChatDotRound/>
             </el-icon>
           </div>
@@ -266,7 +266,7 @@ function onClickOutside() {
   padding: 0.1rem 2rem;
   background: rgb(255, 255, 255);
   border-radius: 12px;
-  box-shadow:  0 0 6px 5px #FFFFFF33;
+  box-shadow: 0 0 6px 5px #FFFFFF33;
 }
 
 .writeComment {
@@ -295,6 +295,7 @@ function onClickOutside() {
   /*禁止textarea调整大小*/
   resize: none;
 }
+
 .chat_mod_write_Emoji {
   padding: 10px 20px;
   display: flex;
@@ -314,7 +315,7 @@ function onClickOutside() {
   opacity: 0;
   bottom: 80px;
   /*  transform: scale(0, 0);*/
-  transform: translate(0px,40px);
+  transform: translate(0px, 40px);
   transition: all 0.3s ease-out;
   overflow: hidden;
 }

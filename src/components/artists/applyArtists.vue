@@ -72,7 +72,7 @@ function beforeUpCover(file) {
   }
 }
 
-//上传封面
+//上传头像
 function uploadCover(item) {
   let aFormData = new FormData()
   aFormData.append("singerAvatar", item.file)
@@ -104,26 +104,28 @@ function applySinger() {
       title: '请确认阅读平台协议',
       type: 'error',
       duration: 1000,
-      position: 'top-left',
+      position: 'top-right',
     })
     return;
   }
+  //todo 申请后需等待审核
   aApplySinger(singer.value).then(resp => {
+    console.log(singer.value)
     if (resp.data.code === 200) {
       applyFlag.value = true;
       store.set("access_singer_token", resp.data.data,
           Date.now() + 1000 * 60 * 60 * 24 * 7)
       setTimeout(() => {
         ElNotification({
-          title: '你已成为AUT音乐人',
+          title: '你已成为AUT音乐人，即将跳转至首页',
           type: 'success',
           duration: 1000,
-          position: 'top-left',
+          position: 'top-right',
+        })
+        router.push({
+          path: '/artists',
         })
       }, 2000)
-      router.go({
-        path: '/artHome',
-      })
     } else {
       console.log(resp.data)
     }

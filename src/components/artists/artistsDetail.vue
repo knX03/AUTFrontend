@@ -2,8 +2,9 @@
 import {computed, onMounted, ref} from "vue";
 import router from "@/router/index.js";
 import {store} from "xijs";
-import {aUserDetail} from "@/api/api.js";
+import {aGetSingerByUser, aUserDetail} from "@/api/api.js";
 import bus from "@/eventbus.js";
+import {ElNotification} from "element-plus";
 
 let userInfoEx = ref(true)
 
@@ -52,10 +53,38 @@ function changeTitleA(value) {
   }
 }
 
+//进行申请
 function toApply() {
-  router.push({
-    path: '/applyArtist',
-  })
+  let singerToken = store.get('access_singer_token').value
+  if (singerToken === null) {
+    aGetSingerByUser().then(resp => {
+      if (resp.data.code === 200) {
+        store.set("access_singer_token", resp.data.data, Date.now() + 1000 * 60 * 60 * 24 * 7)
+        //todo 跳转有bug，会进行两次路由访问
+        ElNotification({
+          title: '您已经是音乐人啦1！',
+          type: 'success',
+          duration: 2000,
+          position: 'top-left',
+        })
+      } else {
+        router.push({
+          path: '/applyArtist',
+        })
+      }
+    }).catch(resp => {
+      router.push({
+        path: '/applyArtist',
+      })
+    })
+  } else {
+    ElNotification({
+      title: '您已经是音乐人啦2！',
+      type: 'success',
+      duration: 2000,
+      position: 'top-left',
+    })
+  }
 }
 </script>
 

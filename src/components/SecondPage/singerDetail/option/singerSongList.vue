@@ -43,7 +43,6 @@ function selectSongBySinger(data) {
   aSongBySinger(data).then(resp => {
     if (resp.data.code === 200) {
       songList.value = resp.data.data;
-      console.log(songList.value)
       if (songList.value.length > 0) {
         singerSongExist.value = true
       }

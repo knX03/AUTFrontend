@@ -195,7 +195,7 @@ function postMess() {
           <img :src="user.user_Avatar">
         </div>
         <div class="nameAndOther_mod">
-          <label class="username_mod">{{ user.user_Name }}</label>
+          <div class="username_mod">{{ user.user_Name }}</div>
           <div class="InfoLogo">
             <img id="sexLogo" :src=sex_logo alt="">
           </div>
@@ -226,15 +226,6 @@ function postMess() {
                 <ChatLineRound/>
               </el-icon>
             </el-button>
-            <!--            <el-dropdown trigger="click">
-                          <el-button type="info">+</el-button>
-                          <template #dropdown>
-                            <el-dropdown-menu>
-                              <el-dropdown-item :icon="CloseBold">加入黑名单</el-dropdown-item>
-                              <el-dropdown-item :icon="WarnTriangleFilled">举报</el-dropdown-item>
-                            </el-dropdown-menu>
-                          </template>
-                        </el-dropdown>-->
           </div>
         </div>
       </div>
@@ -258,8 +249,8 @@ function postMess() {
 
 .bg_shade {
   width: 100%;
-  background: rgb(208 208 208 / 76%);
-  backdrop-filter: blur(50px);
+  background: linear-gradient(transparent, white, white, white);
+  backdrop-filter: blur(200px);
 }
 
 /**
@@ -307,7 +298,7 @@ function postMess() {
 
 .nameAndOther_mod span {
   font-family: STXihei, serif;
-  color: white;
+  color: #000000;
   font-size: small;
 }
 
@@ -315,7 +306,6 @@ function postMess() {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: white;
   margin-bottom: 5px;
 }
 
@@ -360,6 +350,7 @@ function postMess() {
   justify-content: space-between;
   width: 100px;
   margin-bottom: 5px;
+  color: #000000;
 }
 
 .followAndFans_mod span {

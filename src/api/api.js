@@ -525,6 +525,14 @@ export const aApplySinger = data => {
         data
     })
 }
+
+export const aSelectArtistsFansData = data => {
+    return Service({
+        url: '/singer/aSelectArtistsFansData',
+        method: 'GET',
+    })
+}
+
 /*comment--------------------------------------------------------------*/
 
 //获取相应评论

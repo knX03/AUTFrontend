@@ -7,6 +7,7 @@ import {useRoute} from "vue-router";
 
 const route = useRoute()
 let likeList = ref([{
+  create_By: '',
   playlist_ID: '',
   playlist_Name: '',
   playlist_Cover: '',
@@ -50,18 +51,23 @@ function selectLikeDetail(userID) {
 
 <template>
   <!--收藏的歌单-->
-  <div v-if="LSwitch" class="likeInfo_mod">
-    <label class="titleLike_mod">TA收藏的歌单</label>
-    <div class="likeListInfo_mod">
+  <div class="likeInfo_mod">
+    <span class="titleLike_mod">TA收藏的歌单</span>
+    <div v-if="LSwitch" class="likeListInfo_mod">
       <div v-for="list in likeList">
         <router-link to="#" @click="toPlaylist(list.playlist_ID)">
           <div class="songPlaylistsCover_mod">
             <img :src="list.playlist_Cover"/>
-            <div class="likeListName_action">{{ list.playlist_Name }}</div>
           </div>
-          <span class="songPlaylistsName_mod">{{ list.playlist_Name }}</span>
+          <div class="songPlaylistsName_mod">{{ list.playlist_Name }}
+            <div class="createBy_mod">by: {{ list.create_By }}</div>
+          </div>
         </router-link>
       </div>
+    </div>
+    <div v-if="!LSwitch" class="likeList_null_logo">
+      <img src="/src/photos/logo/没有更多笔记.png">
+      <div class="likeList_null_tip">用户暂未收藏歌单</div>
     </div>
   </div>
 </template>
@@ -82,10 +88,13 @@ function selectLikeDetail(userID) {
   font-weight: 900;
   color: #000000;
   margin-bottom: 10px;
+  margin-left: 20px;
 }
 
 /*歌单收藏列表*/
 .likeListInfo_mod {
+  max-height: 405px;
+  overflow: auto;
   width: 100%;
   padding-top: 5px;
   padding-bottom: 10px;
@@ -105,20 +114,21 @@ function selectLikeDetail(userID) {
 
 /*歌单封面*/
 .songPlaylistsCover_mod {
-  height: 200px;
-  width: 200px;
-  max-width: 200px;
-  max-height: 200px;
+  height: 150px;
+  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
   /*超出部分隐藏*/
   overflow: hidden;
-  border-radius: 20px;
-  margin: 20px;
+  border-radius: 12px;
+  margin: 20px 20px 10px;
+
 }
 
 .songPlaylistsCover_mod img {
-  height: 200px;
-  width: 200px;
-  border-radius: 20px;
+  height: 150px;
+  width: 150px;
+  border-radius: 12px;
   background-color: #7d8561;
   transition: 0.5s all ease-in-out;
 
@@ -129,37 +139,29 @@ function selectLikeDetail(userID) {
   transform: scale(1.2, 1.2);
 }
 
-.likeListName_action {
-  font-family: STXihei, serif;
-  color: #ffffff;
-  background: transparent;
-  width: 100%;
-  height: 50%;
-  transition: 2s all ease-in-out;
-  translate: 0 20px;
-}
-
-.songPlaylistsCover_mod:hover .likeListName_action {
-  width: 100%;
-  height: 50%;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 900;
-  padding-left: 15px;
-  translate: 0 -100px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-}
 
 .songPlaylistsName_mod {
   font-family: STXihei, serif;
   font-size: 15px;
   font-weight: 600;
-  color: white;
-  position: relative;
-  left: 30px;
+  color: #000000;
+  margin-left: 25px;
 }
 
+.createBy_mod {
+  font-size: 12px;
+  color: #777777;
+}
+
+.likeList_null_logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.likeList_null_tip {
+  font-family: STXihei, serif;
+  font-size: 15px;
+  font-weight: 600;
+}
 </style>

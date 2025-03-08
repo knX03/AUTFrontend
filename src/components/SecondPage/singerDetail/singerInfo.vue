@@ -178,15 +178,14 @@ function playAll() {
 
 .bg_shade {
   width: 100%;
-  background: rgb(208 208 208 / 76%);
-  backdrop-filter: blur(50px);
+  background: linear-gradient(rgba(245, 245, 245, 0.3), white, white, white);
+  backdrop-filter: blur(200px);
 }
 
 /**
 歌手信息部分
  */
 .first_mod {
-  /*  width: 100%;*/
   height: 240px;
   display: flex;
   align-items: center;
@@ -223,7 +222,7 @@ function playAll() {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: #ffffff;
+  color: #000000;
 }
 
 /*用户信息模块*/
@@ -241,7 +240,7 @@ function playAll() {
 .singerNameEN_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
-  color: rgba(232, 232, 232, 0.82);
+  color: rgba(0, 0, 0, 0.82);
 }
 
 .toSingerU_mod {

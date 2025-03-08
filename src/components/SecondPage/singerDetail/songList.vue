@@ -63,7 +63,6 @@ onMounted(() => {
  */
 .second_mod {
   width: 100%;
-/*  background-color: #ffffff;*/
   padding-bottom: 20px;
 }
 

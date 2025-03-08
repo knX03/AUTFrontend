@@ -475,12 +475,13 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
+  z-index: 0;
 }
 
 .bg_shade {
   width: 100%;
-  background: rgb(208 208 208 / 42%);
-  backdrop-filter: blur(50px);
+  background: linear-gradient(rgba(245, 245, 245, 0.3), white, white, white);
+  backdrop-filter: blur(200px);
 }
 
 .first_mod {
@@ -524,7 +525,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: white;
+  color: #000000;
 
 }
 
@@ -539,7 +540,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 /*简介*/
 .plIntroduction_mod {
   font-family: STXihei, serif;
-  color: #ffffff;
+  color: #000000;
   font-size: 15px;
   white-space: nowrap; /*强制单行显示*/
   text-overflow: ellipsis; /*超出部分省略号表示*/
@@ -581,7 +582,7 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 .userInfo_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
-  color: #ffffff;
+  color: #000000;
 }
 
 .userName_mod {
@@ -650,10 +651,10 @@ watch(() => playlistForm.value.playlist_Tag, (newValue, OldValue) => {
 }
 
 /*下载按钮*/
-.playAndLoad_mod .el-button--info {
+.playAndLoad_mod:deep(.el-button--info)  {
   color: #FFF;
   backdrop-filter: blur(8px);
-  background: #FFFFFF33;
+  background: #000000;
 }
 
 /*收藏按钮*/

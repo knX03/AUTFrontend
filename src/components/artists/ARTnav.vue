@@ -57,6 +57,7 @@ function signIn() {
       </div>
     </div>
     <div class="infoNav_mod" v-if="userInfoEx">
+      <!--todo 下拉菜单等待重构-->
       <el-dropdown>
         <div class="avatarAName_mod" @click="toUserInfo()">
           <img :src=user.user_Avatar>

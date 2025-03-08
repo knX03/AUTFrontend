@@ -359,8 +359,8 @@ function changeSexLogo() {
 
 .bg_shade {
   width: 100%;
-  background: rgb(208 208 208 / 76%);
-  backdrop-filter: blur(50px);
+  background: linear-gradient(rgba(245, 245, 245, 0.3), white, white, white);
+  backdrop-filter: blur(200px);
 }
 
 /**

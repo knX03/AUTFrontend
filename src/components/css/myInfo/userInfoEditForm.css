@@ -4,7 +4,6 @@
 /*头像展示*/
 /*编辑资料模块框架*/
 .ue_editUserInfo .el-dialog {
-    height: 50%;
     border-radius: 20px;
     background-color: #000000;
 }

@@ -175,7 +175,7 @@ function playAll() {
           <div class="ALSingerInfo_mod">
             <img :src="singer.singer_Avatar" style="cursor: pointer" @click="toSinger(singer.singer_ID)">
             <span style="cursor: pointer" @click="toSinger(singer.singer_ID)">{{ singer.singer_Name }}</span>
-            <span style="color: #e7e7e7">{{ album.create_Time }} 发布</span>
+            <span style="color: #000000">{{ album.create_Time }} 发布</span>
           </div>
           <!--todo 下载功能待实现-->
           <div class="playAndLoad_mod">
@@ -212,8 +212,8 @@ function playAll() {
 
 .bg_shade {
   width: 100%;
-  background: rgb(208 208 208 / 76%);
-  backdrop-filter: blur(50px);
+  background: linear-gradient(rgba(245, 245, 245, 0.3), white, white, white);
+  backdrop-filter: blur(200px);
 }
 
 .first_mod {
@@ -229,7 +229,6 @@ function playAll() {
   width: 200px;
   height: 200px;
   border-radius: 30px;
-
 }
 
 /*选项模块*/
@@ -256,7 +255,7 @@ function playAll() {
   font-family: STXihei, serif;
   font-size: 30px;
   font-weight: 900;
-  color: #ffffff;
+  color: #000000;
 }
 
 
@@ -280,7 +279,7 @@ function playAll() {
 .ALSingerInfo_mod span {
   font-family: STXihei, serif;
   font-size: 12px;
-  color: #e7e7e7;
+  color: #000000;
 }
 
 .ALSingerInfo_mod span:hover {

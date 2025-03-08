@@ -523,8 +523,8 @@ function handleCurrentChange(val) {
 
 
 .playMusic_button {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   overflow: hidden;
   border-radius: 12px;
   background-color: #c7c7c7;
@@ -550,8 +550,8 @@ function handleCurrentChange(val) {
 
 
 .addPlaylist_button {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 12px;
   background-color: #c7c7c7;
   cursor: pointer;
@@ -583,8 +583,8 @@ function handleCurrentChange(val) {
 
 .download_button {
   display: flex;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 12px;
   background-color: #c7c7c7;
   cursor: pointer;
@@ -609,8 +609,8 @@ function handleCurrentChange(val) {
 
 .delete_button {
   display: flex;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 12px;
   background-color: #c7c7c7;
   cursor: pointer;

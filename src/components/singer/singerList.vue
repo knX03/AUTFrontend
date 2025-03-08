@@ -55,8 +55,8 @@ function selectAllSinger() {
       <div class="singer_mod" v-for="item in singerList">
         <div class="img_container" @click="toSinger(item.singer_ID)">
           <img :src="item.singer_Avatar">
-          <div class="singer_name_action">{{ item.singer_Name }}</div>
         </div>
+        <div class="singerName_mod">{{ item.singer_Name }}</div>
       </div>
     </div>
   </div>
@@ -84,22 +84,21 @@ function selectAllSinger() {
 
 /*歌手展示模块*/
 .singer_mod {
-  height: 250px;
   border-radius: 12px;
   margin-top: 10px;
   margin-left: 20px;
 }
 
 .img_container {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   overflow: hidden;
   border-radius: 50%;
 }
 
 .img_container img {
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   border-radius: 12px;
   cursor: pointer;
   transition: 0.5s all ease-in-out;
@@ -110,28 +109,10 @@ function selectAllSinger() {
   transform: scale(1.1, 1.1);
 }
 
-.singer_name_action {
-  width: 100%;
-  height: 50%;
-  font-family: "微软雅黑 Light", serif;
-  background: transparent;
-  padding-left: 70px;
-  translate: 0 20px;
-  transition: 2s all ease-in-out;
-}
 
-.img_container:hover .singer_name_action {
-  width: 100%;
-  height: 50%;
-  color: #ffffff;
-  font-size: 25px;
-  font-weight: 900;
-  padding-left: 70px;
-  translate: 0 -70px;
-  box-shadow: 0 0 20px 0 #bebebe;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: 0.2s all ease-in-out;
+.singerName_mod {
+  display: flex;
+  justify-content: center;
+  font-family: "Microsoft YaHei", serif;
 }
-
 </style>

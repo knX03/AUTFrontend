@@ -30,7 +30,7 @@ const next = () => {
     ElNotification({
       title: '请检查歌曲或专辑是否完整!',
       type: 'error',
-      duration: 1000,
+      duration: 2000,
       position: 'top-left',
     })
   }
@@ -210,7 +210,7 @@ function success() {
         ElNotification({
           title: '上传成功，两秒后退出!',
           type: 'success',
-          duration: 1000,
+          duration: 1500,
           position: 'top-left',
         })
         location.reload();
