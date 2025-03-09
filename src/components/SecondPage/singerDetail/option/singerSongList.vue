@@ -14,9 +14,9 @@ let songList = ref([{
   song_ID: '',
   song_Name: '',
   singer_ID: '',
-  singer_name: '',
+  singer_Name: '',
   album_ID: '',
-  album_name: '',
+  album_Name: '',
   song_cover: '',
   song_Directory: '',
 }])
@@ -130,11 +130,11 @@ function play(index) {
         <div class="songInfo_mod">
           <!--todo 歌曲详情-->
           <span class="song_Name">{{ item.song_Name }}</span>
-          <span class="singer_Name">{{ item.singer_name }}</span>
+          <span class="singer_Name">{{ item.singer_Name }}</span>
         </div>
       </div>
       <div class="albumName_mod">
-        <span @click="toAlbum(item.album_ID)">{{ item.album_name }}</span>
+        <span @click="toAlbum(item.album_ID)">{{ item.album_Name }}</span>
       </div>
       <div class="like_mod">
         <img src="/src/photos/logo/like.png" @click="likeSong(item.song_ID)"

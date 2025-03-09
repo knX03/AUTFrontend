@@ -42,9 +42,9 @@ let songList = ref([{
   song_ID: '',
   song_Name: '',
   singer_ID: '',
-  singer_name: '',
+  singer_Name: '',
   album_ID: '',
-  album_name: '',
+  album_Name: '',
   song_cover: '',
   song_Directory: '',
 }])

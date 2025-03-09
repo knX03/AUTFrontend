@@ -1,24 +1,41 @@
 <script setup>
 import {defineProps, onMounted, reactive, ref} from "vue";
-import {aSelectArtistsFansData} from "@/api/api.js";
+import {aSelectArtistsFansData, aSelectWorkData} from "@/api/api.js";
+import useArtistStore from "@/store/artistStore.js";
+
 
 const {singer} = defineProps(['singer']);
-/*let singerInfo = reactive({singer_Name: '', singer_Avatar: ''})
-onMounted(() => {
-  singerInfo.value = singer
-})*/
+const artistStore = useArtistStore();
 let fansData = ref({
   fansNum: -1,
 })
+let workData = ref({
+  workNum: -1,
+  albumNum: -1,
+})
 onMounted(() => {
   selectFansData()
+  selectWorkData()
 })
+const towWorkMan = () => {
+  artistStore.artistComIndex = 2
+}
 
 //查询粉丝数据
 function selectFansData() {
   aSelectArtistsFansData().then(resp => {
     if (resp.data.code === 200) {
       fansData.value.fansNum = resp.data.data
+    }
+  })
+}
+
+//查询作品数据
+function selectWorkData() {
+  aSelectWorkData().then(resp => {
+    if (resp.data.code === 200) {
+      workData.value.workNum = resp.data.data[0][0]
+      workData.value.albumNum = resp.data.data[1][0]
     }
   })
 }
@@ -54,23 +71,30 @@ function selectFansData() {
   </div>
 
   <div class="small_box_container">
-    <div class="small_box_mod">
+    <div class="small_box_mod" @click="towWorkMan">
       <div class="works_data_mod">
         <div class="title_dm">
           <span style="font-weight: 900;font-size: 20px">作品数据</span>
-          <span style="cursor: pointer">详细数据 > </span>
         </div>
         <div class="data_form_mod">
           <div class="data_part">
-            <span style="font-size: 15px">昨日歌曲播放</span>
-            <span style="font-weight: 900;font-size: 40px">0</span>
+            <span style="font-size: 15px">歌曲</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="workData.workNum>=0">{{
+                workData.workNum
+              }}</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="workData.workNum<0">
+              <el-icon><Loading/></el-icon></span>
           </div>
           <div class="data_part">
-            <span style="font-size: 15px">昨日评论量</span>
-            <span style="font-weight: 900;font-size: 40px">0</span>
+            <span style="font-size: 15px">专辑</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="workData.albumNum>=0">{{
+                workData.albumNum
+              }}</span>
+            <span style="font-weight: 900;font-size: 40px" v-if="workData.albumNum<0">
+              <el-icon><Loading/></el-icon></span>
           </div>
           <div class="data_part">
-            <span style="font-size: 15px">昨日收藏量</span>
+            <span style="font-size: 15px">播放</span>
             <span style="font-weight: 900;font-size: 40px">0</span>
           </div>
         </div>
@@ -81,7 +105,6 @@ function selectFansData() {
       <div class="fans_data_mod">
         <div class="title_dm">
           <span style="font-weight: 900;font-size: 20px" title="数据每周一更新">粉丝数据</span>
-          <span style="cursor: pointer">详细数据 > </span>
         </div>
         <div class="data_form_mod">
           <div class="data_part">
@@ -138,7 +161,7 @@ function selectFansData() {
 
 /*小盒子模块*/
 .small_box_mod {
-  width: 49%;
+  width: 44%;
   background-color: #FFFFFF;
   border-radius: 12px;
   box-shadow: 0px 0px 6px 1px #ececec;
@@ -207,6 +230,7 @@ function selectFansData() {
 .works_data_mod {
   width: 100%;
   height: 150px;
+  cursor: pointer;
 }
 
 /*粉丝数据*/

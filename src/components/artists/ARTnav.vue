@@ -99,13 +99,13 @@ function signIn() {
 
 
 .logoA {
-  margin-left: 100px;
+  margin-left: 7rem;
   display: flex;
   align-items: center;
 }
 
 .optionNav_mod {
-  margin-left: 100px;
+  margin-left: 5rem;
   width: 300px;
   display: flex;
   align-items: center;
@@ -131,7 +131,7 @@ function signIn() {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-right: 200px;
+  margin-right: 9rem;
   min-width: 150px;
 }
 

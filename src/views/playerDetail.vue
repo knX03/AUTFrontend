@@ -1,4 +1,7 @@
 <script setup>
+import wordMan from "@/components/artists/menuDetail/worksManage.vue";
+
+wordMan
 
 import AUTnav from "@/components/utils/AUTnav.vue";
 import PlayerDE from "@/components/utils/playerDE.vue";

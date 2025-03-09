@@ -11,9 +11,9 @@ const musicPlayStore = useMusicPlayStore();
 let songList = ref([{
   song_ID: '',
   song_Name: '',
-  singer_name: '',
+  singer_Name: '',
   singer_ID: '',
-  album_name: '',
+  album_Name: '',
   album_ID: '',
   song_Cover: '',
   song_Directory: '',
@@ -128,11 +128,11 @@ function play(index) {
         <img :src="item.song_Cover">
         <div class="songInfo_mod">
           <span class="song_Name">{{ item.song_Name }}</span>
-          <span class="singer_Name" @click="toSinger(item.singer_ID)">{{ item.singer_name }}</span>
+          <span class="singer_Name" @click="toSinger(item.singer_ID)">{{ item.singer_Name }}</span>
         </div>
       </div>
       <div class="albumName_mod">
-        <span>{{ item.album_name }}</span>
+        <span>{{ item.album_Name }}</span>
       </div>
       <div class="like_mod">
         <img src="/src/photos/logo/like.png" @click="likeSong(item.song_ID)"

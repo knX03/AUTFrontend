@@ -525,14 +525,28 @@ export const aApplySinger = data => {
         data
     })
 }
-
+//粉丝数据
 export const aSelectArtistsFansData = data => {
     return Service({
         url: '/singer/aSelectArtistsFansData',
         method: 'GET',
     })
 }
+//作品数据
+export const aSelectWorkData = data => {
+    return Service({
+        url: '/singer/aSelectWorkData',
+        method: 'GET',
+    })
+}
 
+//歌曲列表
+export const aWorkBySinger = data => {
+    return Service({
+        url: '/singer/aWorkBySinger',
+        method: 'GET',
+    })
+}
 /*comment--------------------------------------------------------------*/
 
 //获取相应评论

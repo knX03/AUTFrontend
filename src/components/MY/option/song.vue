@@ -26,9 +26,9 @@ let songList = ref([{
   song_ID: '',
   song_Name: '',
   singer_ID: '',
-  singer_name: '',
+  singer_Name: '',
   album_ID: '',
-  album_name: '',
+  album_Name: '',
   song_Cover: '',
   song_Directory: '',
 }])
@@ -220,10 +220,10 @@ function handleCurrentChange(val) {
           </div>
         </div>
         <div class="singerName">
-          <span @click="toSinger(item.singer_ID)">{{ item.singer_name }}</span>
+          <span @click="toSinger(item.singer_ID)">{{ item.singer_Name }}</span>
         </div>
         <div class="albumName">
-          <span @click="toAlbum(item.album_ID)">{{ item.album_name }}</span>
+          <span @click="toAlbum(item.album_ID)">{{ item.album_Name }}</span>
         </div>
         <div class="option_mod">
           <div class="deleteAndDownload">

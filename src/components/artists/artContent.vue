@@ -1,5 +1,5 @@
 <script setup>
-import {markRaw, onMounted, reactive, ref} from "vue";
+import {markRaw, onMounted, reactive, ref, watch} from "vue";
 import homeMenu from "@/components/artists/menuDetail/homeMenu.vue";
 import worksManage from "@/components/artists/menuDetail/worksManage.vue";
 import dataMenu from "@/components/artists/menuDetail/dataMenu.vue";
@@ -7,9 +7,11 @@ import publishWorks from "@/components/artists/menuDetail/publishWorks.vue";
 import {store} from "xijs";
 import {aGetArtists} from "@/api/api.js";
 import router from "@/router/index.js";
+import useArtistStore from "@/store/artistStore.js";
 
-
+const artistStore = useArtistStore();
 let singer = ref({singer_ID: '', singer_Name: '', singer_Avatar: ''})
+let comIndex = ref("1")
 const menuRouteList = ref([
   {id: 4, name: '发布作品', component: markRaw(publishWorks)},
   {id: 1, name: '首页', component: markRaw(homeMenu)},
@@ -29,11 +31,13 @@ onMounted(() => {
 })
 
 function selectChange(index) {
+  artistStore.artistComIndex = index
+  comIndex.value = index.toString()
   selectedComponent.value = menuRouteList.value[index].component
 }
 
 function publishing() {
-
+  comIndex.value = "0"
   selectedComponent.value = menuRouteList.value[0].component
 }
 
@@ -43,6 +47,11 @@ function singerInfo() {
     singer.value = resp.data.data
   })
 }
+
+//监听组件切换
+watch(() => artistStore.artistComIndex, (newValue, OldValue) => {
+  selectChange(newValue)
+});
 </script>
 
 <template>
@@ -54,7 +63,7 @@ function singerInfo() {
         <el-button type="warning" plain round @click="publishing">发布作品</el-button>
       </div>
       <el-menu
-          default-active="1"
+          :default-active=comIndex
           class="el-menu-vertical-demo"
           @select="selectChange"
       >
