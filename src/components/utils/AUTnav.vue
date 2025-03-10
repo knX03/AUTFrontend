@@ -254,8 +254,6 @@ function showSearchS() {
 const vClickOutside = {
   mounted(el, binding) {
     function eventHandler(e) {
-
-
       if (el.contains(e.target) || e.target === searchS.value) {
         return false
       }

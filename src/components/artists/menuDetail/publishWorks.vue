@@ -71,29 +71,8 @@ beforeUpload(file) {
   }
 }
 
-function /*上传封面*/
-uploadSong() {
-  ElMessage.success("歌曲正在上传！")
-  let formData = new FormData()
-  fileList.value.forEach((val, index) => {
-    formData.append("file", val);
-  })
-  songFiles.value.forEach((val, index) => {
-    formData.append("songName", val);
-  })
-
-  const json = JSON.stringify(album.value);
-  const blob = new Blob([json], {
-    type: 'application/json'
-  });
-  formData.append('album', blob)
-  aUploadSong(formData).then(resp => {
-
-  })
-}
-
+//上传钩子
 function upload(item) {
-
 }
 
 async function changeSong(index) {
@@ -172,7 +151,7 @@ function creatAlbumBf() {
 function selectAlbum(data) {
   album.value.album_ID = data.album_ID
   album.value.album_Name = data.album_ID
-  album.value.album_Cover=data.album_Cover
+  album.value.album_Cover = data.album_Cover
 }
 
 function uploadAlCover() {
@@ -182,15 +161,16 @@ function uploadAlCover() {
     aUploadAlCover(aFormData).then(resp => {
       if (resp.data.code === 200) {
         album.value.album_Cover = resp.data.data;
-        success()
+        uploadSong()
       }
     })
   } else {
-    success()
+    uploadSong()
   }
 }
 
-function success() {
+function uploadSong() {
+  ElMessage.success("歌曲正在上传！")
   active.value = 2
   let formData = new FormData()
   fileList.value.forEach((val, index) => {

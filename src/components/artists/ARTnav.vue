@@ -90,6 +90,7 @@ function signIn() {
   backdrop-filter: blur(2px);
   opacity: 1;
   width: 100%;
+  min-width: 850px;
   height: 70px;
   display: flex;
   align-items: center;

@@ -547,6 +547,14 @@ export const aWorkBySinger = data => {
         method: 'GET',
     })
 }
+
+//专辑列表
+export const aAlbumBySinger = data => {
+    return Service({
+        url: '/singer/aAlbumBySinger',
+        method: 'GET',
+    })
+}
 /*comment--------------------------------------------------------------*/
 
 //获取相应评论

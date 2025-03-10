@@ -88,18 +88,23 @@ watch(() => artistStore.artistComIndex, (newValue, OldValue) => {
       </el-menu>
     </div>
     <div class="menuDetail_mod">
-      <el-scrollbar>
-        <KeepAlive>
-          <component :is="selectedComponent" :singer="singer"></component>
-        </KeepAlive>
-      </el-scrollbar>
+      <transition name="artC" mode="out-in">
+        <el-scrollbar>
+          <KeepAlive>
+            <component :is="selectedComponent" :singer="singer"></component>
+          </KeepAlive>
+        </el-scrollbar>
+      </transition>
     </div>
   </div>
 </template>
 
 <style scoped>
 .artContent_mod {
-  height: 834px;
+  /*  height: 834px;*/
+  height: 90vh;
+  min-height: 390px;
+  min-width: 850px;
   background-color: #f5f6fa;
   display: flex;
   padding-top: 20px;
@@ -159,5 +164,31 @@ watch(() => artistStore.artistComIndex, (newValue, OldValue) => {
   margin-left: 20px;
   width: 70%;
   border-radius: 12px;
+}
+
+
+/* 切换动画 */
+/* artC-transform */
+.artC-leave-active,
+.artC-enter-active {
+  transition: all 1s;
+}
+
+/*新页面的进入时*/
+.artC-enter-from {
+  opacity: 0.5;
+  transform: rotateX(-90deg);
+}
+
+/*新页面的进入成功时*/
+.artC-enter-to {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+/*原页面的离开时*/
+.artC-leave-to {
+  opacity: 0;
+  transform: rotateX(90deg);
 }
 </style>
